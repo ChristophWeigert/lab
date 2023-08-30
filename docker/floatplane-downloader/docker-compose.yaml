@@ -1,0 +1,21 @@
+services:
+  floatplane-downloader:
+    image: inrix/floatplane-downloader:dev@sha256:a43f4cdafbd56ed13382d2a151af8d24642438f9942a409ca7769427ba30f835
+    container_name: floatplane-downloader
+    environment:
+      - headless=true
+      - username=$username
+      - password=$password
+      - token=$token
+    volumes:
+      - floatplane-downloader:/fp/db
+      - media_floatplane_videos:/fp/videos
+    restart: unless-stopped
+
+volumes:
+  floatplane-downloader: {}
+  media_floatplane_videos:
+    driver_opts:
+      type: "nfs"
+      o: "nfsvers=4,addr=192.168.1.14,rw"
+      device: ":/mnt/pool-main/media/floatplane_videos"

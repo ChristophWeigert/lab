@@ -1,0 +1,121 @@
+---
+# yamllint disable rule:line-length
+
+networks:
+  proxy:
+    external: true
+  immich:
+
+services:
+  immich-server:
+    container_name: immich_server
+    image: ghcr.io/immich-app/immich-server:v2.4.0@sha256:7e2d0df478651551df3358072e68c235200b875eccd6eb4a5c5d8879a7095cf4
+    volumes:
+      - immich_upload:/usr/src/app/upload/upload
+      - immich_thumbs:/usr/src/app/upload/thumbs
+      - immich_encoded_video:/usr/src/app/upload/encoded-video
+      - immich_profile:/usr/src/app/upload/profile
+      - immich_library:/usr/src/app/upload/library
+      - immich_backups:/usr/src/app/upload/backups
+      - /etc/localtime:/etc/localtime:ro
+    networks:
+      - immich
+      - proxy
+    depends_on:
+      - redis
+      - database
+    env_file:
+      - stack.env
+    restart: always
+    labels:
+      traefik.enable: "true"
+      traefik.http.routers.immich.entrypoints: "websecure"
+      traefik.http.routers.immich.rule: "Host(`$HOST`) || Host(`$EXTERNAL_HOST`)"
+      traefik.http.routers.immich.tls: "true"
+      traefik.http.routers.immich.tls.certresolver: "production"
+      traefik.http.routers.immich.tls.domains[0].main: "$DOMAIN"
+      traefik.http.routers.immich.tls.domains[0].sans: "*.$DOMAIN"
+      #traefik.http.routers.immich.tls.domains[1].main: "$EXTERNAL_DOMAIN"
+      #traefik.http.routers.immich.tls.domains[1].sans: "*.$EXTERNAL_DOMAIN"
+      traefik.docker.network: "proxy"
+      homepage.name: immich
+      homepage.group: Services
+      homepage.icon: immich
+      homepage.href: https://$HOST
+      homepage.description: immich
+      homepage.widget.type: immich
+      homepage.widget.version: 2
+      homepage.widget.url: https://$HOST
+      homepage.widget.key: $HOMEPAGE_KEY
+    healthcheck:
+      disable: false
+
+  immich-machine-learning:
+    container_name: immich_machine_learning
+    image: ghcr.io/immich-app/immich-machine-learning:v2.4.0@sha256:204825c8cc626a3f44fb4b61f30ca5c76c3b4c557c9fb8bfc719902bf88daae4
+    volumes:
+      - model-cache:/cache
+    networks:
+      - immich
+    restart: always
+    env_file:
+      - stack.env
+    healthcheck:
+      disable: false
+
+  redis:
+    container_name: immich_redis
+    image: docker.io/valkey/valkey:8-bookworm@sha256:fea8b3e67b15729d4bb70589eb03367bab9ad1ee89c876f54327fc7c6e618571
+    networks:
+      - immich
+    restart: always
+    healthcheck:
+      test: redis-cli ping || exit 1
+
+  database:
+    container_name: immich_postgres
+    image: ghcr.io/immich-app/postgres:14-vectorchord0.3.0-pgvectors0.2.0@sha256:c570d9e1c2494f65d2a0a379a7f6df66e8441964254a30aa62cc58e8ebf1dee0
+    networks:
+      - immich
+    environment:
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_DB: ${DB_DATABASE_NAME}
+      POSTGRES_INITDB_ARGS: '--data-checksums'
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    restart: always
+
+volumes:
+  pgdata:
+  model-cache:
+  immich_upload:
+    driver_opts:
+      type: "nfs"
+      o: "nfsvers=4,addr=192.168.1.14,rw"
+      device: ":/mnt/pool-main/docker_volumes/immich/upload"
+  immich_backups:
+    driver_opts:
+      type: "nfs"
+      o: "nfsvers=4,addr=192.168.1.14,rw"
+      device: ":/mnt/pool-main/docker_volumes/immich/backups"
+  immich_profile:
+    driver_opts:
+      type: "nfs"
+      o: "nfsvers=4,addr=192.168.1.14,rw"
+      device: ":/mnt/pool-main/docker_volumes/immich/profile"
+  immich_library:
+    driver_opts:
+      type: "nfs"
+      o: "nfsvers=4,addr=192.168.1.14,rw"
+      device: ":/mnt/pool-main/docker_volumes/immich/library"
+  immich_thumbs:
+    driver_opts:
+      type: "nfs"
+      o: "nfsvers=4,addr=192.168.1.14,rw"
+      device: ":/mnt/pool-main/no_backup/immich_thumbs"
+  immich_encoded_video:
+    driver_opts:
+      type: "nfs"
+      o: "nfsvers=4,addr=192.168.1.14,rw"
+      device: ":/mnt/pool-main/no_backup/immich_encoded_video"

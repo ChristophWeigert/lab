@@ -1,0 +1,38 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:best-practices",
+    ":dependencyDashboard",
+    ":enableVulnerabilityAlertsWithLabel('security')",
+    ":preserveSemverRanges",
+    ":rebaseStalePrs",
+    "group:recommended",
+    ":timezone(Europe/Paris)",
+    ":label(renovate)",
+    ":semanticPrefixFix",
+    ":separateMultipleMajorReleases"
+    //":automergeBranch",
+    //":automergeStableNonMajor",
+    //":automergeDigest",
+    //":skipStatusChecks"
+  ],
+  "dependencyDashboardTitle": "🤖 Renovate Dashboard",
+  "commitMessageTopic": "{{depName}}",
+  "commitMessageExtra": "to {{newVersion}}",
+  "commitMessageSuffix": "",
+  "ignorePaths": [],
+  "packageRules": [
+    {
+      "matchDatasources": ["helm"],
+      "commitMessageTopic": "chart {{depName}}"
+    },
+    {
+      "matchDatasources": ["docker"],
+      "commitMessageTopic": "image {{depName}}"
+    },
+    {
+      "matchPackageNames": ["/longhorn/", "/crocodilestick\\/calibre-web-automated/"],
+      "enabled": false
+    }
+  ]
+}

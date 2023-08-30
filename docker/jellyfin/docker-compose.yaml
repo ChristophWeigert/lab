@@ -1,0 +1,44 @@
+networks:
+  proxy:
+    external: true
+
+volumes:
+  jellyfin: {}
+  media:
+    driver_opts:
+      type: "nfs"
+      o: "nfsvers=4,addr=192.168.1.14,rw"
+      device: ":/mnt/pool-main/media/"
+
+services:
+  jellyfin:
+    image: ghcr.io/jellyfin/jellyfin:10.11.5@sha256:cd7e4cb71812dd76988a725da615e37c6d0d24c200be904ad5d183e51f1dc6ed
+    container_name: jellyfin
+    group_add:
+      - "109"
+    devices:
+      - /dev/dri/renderD128:/dev/dri/renderD128
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Berlin
+      - JELLYFIN_PublishedServerUrl=https://jellyfin.$DOMAIN
+    volumes:
+      - jellyfin:/config
+      - media:/data
+      - /etc/localtime:/etc/localtime:ro
+      - /var/data/runtime/jellyfin:/cache
+    ports:
+      - "7359:7359/udp"
+      - "1900:1900/udp"
+    restart: always
+    networks: [ proxy ]
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.jellyfin.entryPoints=websecure"
+      - "traefik.http.routers.jellyfin.tls.certResolver=production"
+      - "traefik.http.routers.jellyfin.rule=Host(`jellyfin.$DOMAIN`)"
+      - "traefik.http.routers.jellyfin.tls.domains[0].main=$DOMAIN"
+      - "traefik.http.routers.jellyfin.tls.domains[0].sans=*.$DOMAIN"
+      - "traefik.http.services.jellyfin.loadbalancer.server.port=8096"
+      - "traefik.docker.network=proxy"

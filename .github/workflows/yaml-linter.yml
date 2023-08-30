@@ -1,0 +1,29 @@
+---
+# yamllint disable rule:line-length
+
+name: YAML Lint
+
+"on":
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
+
+      - name: Install yamllint
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y yamllint
+
+      - name: Lint YAML files
+        run: |
+          find . -type f -name '*.yaml' -o -name '*.yml' ! -path "./ansible/*" -exec yamllint {} \+

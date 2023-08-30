@@ -1,0 +1,60 @@
+---
+# (Optional) when using custom network
+networks:
+  proxy:
+    external: true
+
+volumes:
+  influxdb:
+  grafana:
+
+services:
+  influxdb:
+    container_name: influxdb
+    image: docker.io/library/influxdb:2.8.0-alpine@sha256:fb537cf0d57937a57eac33efd079ae5b36a1d35437dc1eba1ecb8800a352b62a
+    volumes:
+      - influxdb:/var/lib/influxdb2
+    environment:
+      - DOCKER_INFLUXDB_INIT_MODE=setup
+      - DOCKER_INFLUXDB_INIT_USERNAME=${INFLUXDB_USERNAME}
+      - DOCKER_INFLUXDB_INIT_PASSWORD=${INFLUXDB_PASSWORD}
+      - DOCKER_INFLUXDB_INIT_ORG=${INFLUXDB_ORG}
+      - DOCKER_INFLUXDB_INIT_BUCKET=${INFLUXDB_BUCKET}
+      - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=${INFLUXDB_ADMIN_TOKEN}
+    labels:
+      traefik.enable: "true"
+      traefik.http.routers.influxdb.entrypoints: "websecure"
+      traefik.http.routers.influxdb.rule: "Host(`influxdb.$DOMAIN`)"
+      traefik.http.routers.influxdb.tls: "true"
+      traefik.http.routers.influxdb.tls.certresolver: "production"
+      traefik.http.routers.influxdb.tls.domains[0].main: "$DOMAIN"
+      traefik.http.routers.influxdb.tls.domains[0].sans: "*.$DOMAIN"
+      traefik.docker.network: "proxy"
+    networks:
+      - proxy
+    restart: unless-stopped
+
+  grafana:
+    image: grafana/grafana:12.3.1@sha256:adaf2d6b44c7e2b711b931b98be153778d313806582a24eab21178804fac2976
+    volumes:
+      - grafana:/var/lib/grafana
+      - /mnt/grafana-provisioning/:/etc/grafana/provisioning/
+    depends_on:
+      - influxdb
+    environment:
+      - GF_SECURITY_ADMIN_USER=${GRAFANA_USERNAME}
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD}
+      - DOCKER_INFLUXDB_INIT_ORG=${INFLUXDB_ORG}
+      - DOCKER_INFLUXDB_INIT_BUCKET=${INFLUXDB_BUCKET}
+      - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=${INFLUXDB_ADMIN_TOKEN}
+    networks:
+      - proxy
+    labels:
+      traefik.enable: "true"
+      traefik.http.routers.grafana.entrypoints: "websecure"
+      traefik.http.routers.grafana.rule: "Host(`grafana.$DOMAIN`)"
+      traefik.http.routers.grafana.tls: "true"
+      traefik.http.routers.grafana.tls.certresolver: "production"
+      traefik.http.routers.grafana.tls.domains[0].main: "$DOMAIN"
+      traefik.http.routers.grafana.tls.domains[0].sans: "*.$DOMAIN"
+      traefik.docker.network: "proxy"
