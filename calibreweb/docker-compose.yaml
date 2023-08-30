@@ -1,0 +1,24 @@
+version: "3.8"
+
+services:
+  calibre-web:
+    container_name: "calibre-web"
+    expose:
+      - "8083"
+    hostname: "calibreweb"
+    image: "linuxserver/calibre-web:2021.12.16"
+    labels:
+      traefik.enable: "true"
+      traefik.http.routers.calibre-web.entrypoints: "websecure"
+      traefik.http.routers.calibre-web.rule: "Host(`calibreweb.christophweigert.com`)"
+      traefik.http.routers.calibre-web.tls: "true"
+      traefik.http.routers.calibre-web.tls.certresolver: "production"
+    restart: "always"
+    network_mode: "bridge"
+    volumes:
+      - "calibre-web_data:/config"
+    working_dir: "/"
+
+volumes:
+  calibre-web_data:
+    external: true
