@@ -1,0 +1,39 @@
+version: "3.8"
+
+volumes:
+  freshrss_data:
+    external: true
+
+networks:
+  proxy:
+    external: true
+
+services:
+  freshrss:
+    container_name: "freshrss"
+    environment:
+      - "TZ=Europe/Berlin"
+    hostname: "freshrss"
+    image: "lscr.io/linuxserver/freshrss:1.22.1"
+    labels:
+      traefik.enable: "true"
+      traefik.http.routers.freshrss.entrypoints: "websecure"
+      traefik.http.routers.freshrss.rule: "Host(`rss.christophweigert.com`)"
+      traefik.http.routers.freshrss.tls: "true"
+      traefik.http.routers.freshrss.tls.certresolver: "production"
+      traefik.docker.network: "proxy"
+      homepage.name: Fresh RSS
+      homepage.group: Services
+      homepage.icon: freshrss.png
+      homepage.href: https://rss.christophweigert.com
+      homepage.description: Fresh RSS
+      homepage.widget.type: freshrss
+      homepage.widget.url: https://rss.christophweigert.com
+      homepage.widget.username: Giswald
+      homepage.widget.password: HxZyrV>.K$532}.R=5dQ;;)M
+    restart: "always"
+    networks:
+      - proxy
+    volumes:
+      - "freshrss_data:/config"
+    working_dir: "/"

@@ -1,0 +1,35 @@
+version: "3.8"
+
+volumes:
+  ghost_data:
+    external: true
+
+networks:
+  proxy:
+    external: true
+
+services:
+  ghost-christophweigertcom:
+    container_name: "ghost-christophweigertcom"
+    environment:
+      - "url=http://christophweigert.com"
+      - "database__client=sqlite3"
+      - "database__connection__filename=/var/lib/ghost/content/data/ghost.db"
+      - "NODE_ENV=production"
+      - "GHOST_INSTALL=/var/lib/ghost"
+      - "GHOST_CONTENT=/var/lib/ghost/content"
+    hostname: "ghostchristophweigertcom"
+    image: "ghost:5.73.1"
+    networks:
+      - proxy
+    labels:
+      traefik.enable: "true"
+      traefik.http.routers.ghost-christophweigertcom.entrypoints: "websecure"
+      traefik.http.routers.ghost-christophweigertcom.rule: "Host(`christophweigert.com`)"
+      traefik.http.routers.ghost-christophweigertcom.tls: "true"
+      traefik.http.routers.ghost-christophweigertcom.tls.certresolver: "production"
+      traefik.docker.network: "proxy"
+    restart: "always"
+    volumes:
+      - "ghost_data:/var/lib/ghost/content"
+    working_dir: "/var/lib/ghost"
