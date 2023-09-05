@@ -3,7 +3,7 @@ version: "2"
 services:
 
   loki:
-    image: grafana/loki:latest
+    image: grafana/loki:1.4.1
     hostname: loki
     container_name: loki
     volumes:
@@ -17,7 +17,7 @@ services:
     #  - monitoring_default
 
   promtail:
-    image: grafana/promtail:latest
+    image: grafana/promtail:2.0.0
     container_name: promtail
     depends_on:
       - loki
@@ -47,7 +47,7 @@ services:
     #  - monitoring_default
 
   telegraf:
-    image: telegraf:latest
+    image: telegraf:1.27.4
     restart: unless-stopped
     user: telegraf:999 # see: https://www.influxdata.com/blog/docker-run-telegraf-as-non-root/
     container_name: telegraf
@@ -81,7 +81,7 @@ services:
       - influxdb
       - loki
       - promtail
-    image: grafana/grafana:latest
+    image: grafana/grafana:10.1.1
     restart: unless-stopped
     environment:
       - GF_SERVER_ROOT_URL=https://monitoring.christophweigert.com
