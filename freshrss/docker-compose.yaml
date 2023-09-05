@@ -5,9 +5,6 @@ services:
     container_name: "freshrss"
     environment:
       - "TZ=Europe/Berlin"
-    expose:
-      - "443"
-#      - "80"
     hostname: "freshrss"
     image: "lscr.io/linuxserver/freshrss:latest"
     labels:
@@ -17,6 +14,7 @@ services:
       traefik.http.routers.freshrss.tls: "true"
       traefik.http.routers.freshrss.tls.certresolver: "production"
     restart: "always"
+    network_mode: "bridge"
     volumes:
       - "freshrss_data:/config"
     working_dir: "/"
