@@ -17,7 +17,7 @@ services:
     #  - monitoring_default
 
   promtail:
-    image: grafana/promtail:2.0.0
+    image: grafana/promtail:2.8.4
     container_name: promtail
     depends_on:
       - loki
