@@ -3,7 +3,7 @@ version: "2"
 services:
 
   loki:
-    image: grafana/loki:1.4.1
+    image: grafana/loki:1.6.1
     hostname: loki
     container_name: loki
     volumes:
