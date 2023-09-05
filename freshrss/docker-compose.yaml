@@ -6,7 +6,7 @@ services:
     environment:
       - "TZ=Europe/Berlin"
     hostname: "freshrss"
-    image: "lscr.io/linuxserver/freshrss:latest"
+    image: "lscr.io/linuxserver/freshrss:1.21.0"
     labels:
       traefik.enable: "true"
       traefik.http.routers.freshrss.entrypoints: "websecure"
