@@ -1,0 +1,24 @@
+﻿version: "3.8"
+
+services:
+  app:
+    container_name: uptime-kuma
+    hostname: uptime-kuma
+    image: louislam/uptime-kuma:1.23.1
+    restart: always
+    dns:
+      - 1.1.1.1
+      - 8.8.8.8
+    volumes:
+      - uptime-kuma:/app/data
+    network_mode: "bridge"
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.uptimekuma.entrypoints=websecure
+      - traefik.http.routers.uptimekuma.rule=Host(`uptimekuma.christophweigert.com`)
+      - traefik.http.routers.uptimekuma.tls=true
+      - traefik.http.routers.uptimekuma.tls.certresolver=production
+
+volumes:
+  uptime-kuma:
+    external: true
