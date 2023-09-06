@@ -1,0 +1,37 @@
+version: "3.6"
+
+services:
+  teamspeak:
+    entrypoint:
+      - "/init"
+    environment:
+      - "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+      - "TIME_ZONE=America/Los_Angeles"
+      - "DIST_UPDATE=0"
+      - "TS_UPDATE=1"
+      - "TS_UPDATE_BACKUP=1"
+      - "UID=1000"
+      - "GID=1000"
+      - "INIFILE=0"
+      - "DEBUG=0"
+      - "QEMU_OFFSET=0x8000"
+      - "TS_ARCHITECTURE=x86"
+      - "SYSTEM_ARCHITECTURE=arm"
+      - "EMULATOR=qemu"
+      - "TS3SERVER_LICENSE=accept"
+      - "LANG=en_US.UTF-8"
+    image: "ertagh/teamspeak3-server:latest-predownloaded"
+    ports:
+      - "10011:10011/tcp"
+      - "1337:1337/udp"
+      - "30033:30033/tcp"
+      - "9987:9987/udp"
+    restart: "always"
+    network_mode: "bridge"
+    volumes:
+      - "teamspeak_data:/teamspeak/save"
+    working_dir: "/teamspeak"
+
+volumes:
+  teamspeak_data:
+    external: true
