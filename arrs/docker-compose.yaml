@@ -6,9 +6,9 @@ services:
     cap_add:
       - NET_ADMIN
     volumes:
-      - ./transmission/data:/data
+      - /mnt/transmission/data:/data
       - /mnt:/video
-      - ./transmission/config:/config
+      - /mnt/transmission/config:/config
     environment:
       - TRANSMISSION_WEB_UI=flood-for-transmission
       - OPENVPN_PROVIDER=MULLVAD
@@ -34,7 +34,7 @@ services:
     ports:
       - 5055:5055
     volumes:
-      - ./overseerr/app/config:/app/config
+      - /mnt/overseerr/app/config:/app/config
     network_mode: "bridge"
     labels:
       - "traefik.enable=true"
@@ -53,7 +53,7 @@ services:
       - DOCKER_MODS=ghcr.io/gilbn/theme.park:sonarr
       - TP_THEME=organizr
     volumes:
-      - ./sonarr/data:/config
+      - /mnt/sonarr/data:/config
       - /mnt:/video
     ports:
       - 7878:7878
@@ -77,7 +77,7 @@ services:
       - PGID=1000
       - TZ=Europe/London
     volumes:
-      - ./bazarr/data/config:/config
+      - /mnt/bazarr/data/config:/config
       - /mnt:/video
     ports:
       - 6767:6767
@@ -100,7 +100,7 @@ services:
       - PGID=1000
       - TZ=Europe/paris
     volumes:
-      - ./readarr/data:/config
+      - /mnt/readarr/data:/config
       - /mnt:/books
     ports:
       - 8788:8787
@@ -123,7 +123,7 @@ services:
       - PGID=1000
       - TZ=Europe/paris
     volumes:
-      - ./lidarr/data:/config
+      - /mnt/lidarr/data:/config
       - /mnt:/music
     ports:
       - 8686:8686
@@ -146,7 +146,7 @@ services:
       - PGID=1000
       - TZ=Europe/paris
     volumes:
-      - ./radarr/data:/config
+      - /mnt/radarr/data:/config
       - /mnt:/video
     ports:
       - 7676:7878
@@ -167,7 +167,7 @@ services:
       - PGID=1000
       - TZ=Europe/paris
     volumes:
-      - ./prowlarr/data:/config
+      - /mnt/prowlarr/data:/config
     # network_mode: "host"
     ports:
       - 9696:9696
