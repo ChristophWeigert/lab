@@ -21,7 +21,7 @@ services:
         max-size: 10m
     ports:
       - '9091:9091'
-    image: haugene/transmission-openvpn
+    image: haugene/transmission-openvpn:5.2.0
     restart: unless-stopped
   
   ###### ----- Media related ----- ######            
@@ -139,7 +139,7 @@ services:
     restart: unless-stopped
   
   radarr:
-    image: linuxserver/radarr:4.7.4
+    image: linuxserver/radarr:4.7.5.7809-ls187
     container_name: radarr
     environment:
       - PUID=1000
