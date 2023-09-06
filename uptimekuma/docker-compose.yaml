@@ -11,6 +11,7 @@ services:
       - 8.8.8.8
     volumes:
       - uptime-kuma:/app/data
+      - /var/run/docker.sock:/var/run/docker.sock:ro
     network_mode: "bridge"
     labels:
       - traefik.enable=true
