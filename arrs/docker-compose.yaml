@@ -139,7 +139,7 @@ services:
     restart: unless-stopped
   
   radarr:
-    image: linuxserver/radarr:4.7.5.7809-ls187
+    image: linuxserver/radarr
     container_name: radarr
     environment:
       - PUID=1000
@@ -160,7 +160,7 @@ services:
       - "traefik.http.services.radarr.loadbalancer.server.port=7878"
   
   prowlarr:
-    image: ghcr.io/linuxserver/prowlarr:1.7.3
+    image: ghcr.io/linuxserver/prowlarr
     container_name: prowlarr
     environment:
       - PUID=1000
