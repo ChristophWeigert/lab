@@ -22,6 +22,11 @@ services:
     ports:
       - '9091:9091'
     image: haugene/transmission-openvpn:5.2.0
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.overseerr.entryPoints=websecure"
+      - "traefik.http.routers.overseerr.tls.certResolver=production"
+      - "traefik.http.routers.overseerr.rule=Host(`transmission.christophweigert.com`)"
     restart: unless-stopped
   
   overseerr:
