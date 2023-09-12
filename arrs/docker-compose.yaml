@@ -13,7 +13,7 @@ services:
       - OPENVPN_PROVIDER=MULLVAD
       - OPENVPN_USERNAME=0691702635288960 # Edit here to change the username
       - OPENVPN_PASSWORD=m # Edit here to change the password
-      - OPENVPN_CONFIG=de-all
+      - OPENVPN_CONFIG=de_all
       - LOCAL_NETWORK=192.168.1.0/24 # Edit here to match your network
     logging:
       driver: json-file
