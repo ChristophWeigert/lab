@@ -1,6 +1,5 @@
 ﻿version: "3.8"
 services:
-  ###### ----- Networking ----- ######
   transmission-openvpn:
     container_name: transmission
     cap_add:
@@ -12,8 +11,9 @@ services:
     environment:
       - TRANSMISSION_WEB_UI=flood-for-transmission
       - OPENVPN_PROVIDER=MULLVAD
-      - OPENVPN_USERNAME=USERNAME # Edit here to change the username
-      - OPENVPN_PASSWORD=PASSWORD # Edit here to change the password
+      - OPENVPN_USERNAME=0691702635288960 # Edit here to change the username
+      - OPENVPN_PASSWORD=m # Edit here to change the password
+      - OPENVPN_CONFIG=de-all
       - LOCAL_NETWORK=192.168.1.0/24 # Edit here to match your network
     logging:
       driver: json-file
@@ -24,7 +24,6 @@ services:
     image: haugene/transmission-openvpn:5.2.0
     restart: unless-stopped
   
-  ###### ----- Media related ----- ######            
   overseerr:
     image: sctx/overseerr:1.33.2
     container_name: overseerr
@@ -32,7 +31,7 @@ services:
       - LOG_LEVEL=info
       - TZ=Europe/Paris
     ports:
-      - 5055:5055
+      - "5055:5055"
     volumes:
       - /mnt/overseerr/app/config:/app/config
     network_mode: "bridge"
@@ -56,8 +55,8 @@ services:
       - /mnt/sonarr/data:/config
       - /mnt:/video
     ports:
-      - 7878:7878
-      - 8989:8989
+      - "7878:7878"
+      - "8989:8989"
     network_mode: "bridge"
     labels:
       - "traefik.enable=true"
@@ -80,7 +79,7 @@ services:
       - /mnt/bazarr/data/config:/config
       - /mnt:/video
     ports:
-      - 6767:6767
+      - "6767:6767"
     network_mode: "bridge"
     labels:
       - "traefik.enable=true"
@@ -103,7 +102,7 @@ services:
       - /mnt/readarr/data:/config
       - /mnt:/books
     ports:
-      - 8788:8787
+      - "8788:8787"
     network_mode: "bridge"
     labels:
       - "traefik.enable=true"
@@ -126,7 +125,7 @@ services:
       - /mnt/lidarr/data:/config
       - /mnt:/music
     ports:
-      - 8686:8686
+      - "8686:8686"
     network_mode: "bridge"
     labels:
       - "traefik.enable=true"
@@ -149,7 +148,7 @@ services:
       - /mnt/radarr/data:/config
       - /mnt:/video
     ports:
-      - 7676:7878
+      - "7676:7878"
     restart: unless-stopped
     network_mode: "bridge"
     labels:
@@ -170,7 +169,7 @@ services:
       - /mnt/prowlarr/data:/config
     # network_mode: "host"
     ports:
-      - 9696:9696
+      - "9696:9696"
     restart: unless-stopped
     network_mode: "bridge"
     labels:
