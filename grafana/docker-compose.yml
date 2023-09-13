@@ -5,7 +5,6 @@ services:
   loki:
     image: grafana/loki:1.4.1
     hostname: loki
-    network_mode: bridge
     container_name: loki
     volumes:
       - /var/lib/docker/volumes/monitoring-data/_data/loki:/etc/loki # place loki-config.yml
