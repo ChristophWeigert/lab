@@ -33,8 +33,7 @@ services:
     image: influxdb:1.8.10
     container_name: influxdb
     hostname: influxdb
-    networks:
-      - monitoring-network
+    network_mode: bridge
     restart: unless-stopped
     volumes:
       - /var/lib/docker/volumes/monitoring-data/_data/influxdb/data:/var/lib/influxdb
