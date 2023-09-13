@@ -12,9 +12,8 @@ services:
       - "127.0.0.1:3100:3100"
     restart: unless-stopped
     user: 1000:1000
-    command: -config.file=/etc/loki/loki-config.yml  
-    #networks:
-    #  - monitoring_default
+    command: -config.file=/etc/loki/loki-config.yml
+    network_mode: "bridge"
 
   promtail:
     image: grafana/promtail:2.9.0
@@ -28,8 +27,7 @@ services:
       #- ${DOCKER_VOLUME_STORAGE:-/mnt/docker-volumes}/traefik/logs:/var/log/traefik # let promtail access your traefik reverse logs
     restart: unless-stopped
     command: -config.file=/etc/promtail/promtail-config.yml
-    #networks:
-    #  - monitoring_default
+    network_mode: "bridge"
 
   influxdb:
     image: influxdb:1.8.10
@@ -43,8 +41,7 @@ services:
     environment:
       - INFLUXDB_ADMIN_USER=telegrafuser
       - INFLUXDB_ADMIN_PASSWORD=yrK1WPs6G2vOut3E3cJNuZ7CyDgZUYax30eDRVl4GflP3l2nIon30uA41pLqm4fj
-    #networks:
-    #  - monitoring_default
+    network_mode: "bridge"
 
   telegraf:
     image: telegraf:1.27.4
@@ -70,8 +67,7 @@ services:
       - HOST_PROC=/hostfs/proc
       - HOST_SYS=/hostfs/sys
       - HOST_MOUNT_PREFIX=/hostfs
-    #networks:
-    #  - monitoring_default
+    network_mode: "bridge"
 
   grafana:
     container_name: grafana
@@ -89,15 +85,13 @@ services:
       - /var/lib/docker/volumes/monitoring-data/grafana:/var/lib/grafana
     ports:
       - 3000:3000
-    #networks:
-    #  - monitoring_default
-    #labels:
-    #  - traefik.enable=true
-    #  - traefik.http.routers.grafana.rule=Host(`grafana.example.com`)
-    #  - traefik.http.services.grafana.loadbalancer.server.port=3000
-    #  - traefik.docker.network=proxy
-    #  # Part for local lan services only
-    #  - traefik.http.routers.grafana.middlewares=local-ipwhitelist@file
+    network_mode: "bridge"
+    labels:
+      traefik.enable: "true"
+      traefik.http.routers.nextcloud.entrypoints: "websecure"
+      traefik.http.routers.nextcloud.rule: "Host(`monitoring.christophweigert.com`)"
+      traefik.http.routers.nextcloud.tls: "true"
+      traefik.http.routers.nextcloud.tls.certresolver: "production"
 
 #networks:
 #  monitoring_default:

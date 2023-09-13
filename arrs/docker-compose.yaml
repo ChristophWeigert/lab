@@ -1,6 +1,6 @@
 ﻿version: "3.8"
 services:
-  transmission-openvpn:
+  transmission:
     container_name: transmission
     cap_add:
       - NET_ADMIN
@@ -14,20 +14,33 @@ services:
       - OPENVPN_USERNAME=0691702635288960 # Edit here to change the username
       - OPENVPN_PASSWORD=m # Edit here to change the password
       - OPENVPN_CONFIG=de_all
-      - LOCAL_NETWORK=192.168.1.0/24 # Edit here to match your network
+    #      - LOCAL_NETWORK=192.168.1.0/24 # Edit here to match your network
+    sysctls:
+      - "net.ipv6.conf.all.disable_ipv6=0"
     logging:
       driver: json-file
       options:
         max-size: 10m
     ports:
       - '9091:9091'
-    image: haugene/transmission-openvpn:5.2.0
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.overseerr.entryPoints=websecure"
-      - "traefik.http.routers.overseerr.tls.certResolver=production"
-      - "traefik.http.routers.overseerr.rule=Host(`transmission.christophweigert.com`)"
+    image: haugene/transmission-openvpn:latest
+    network_mode: "bridge"
     restart: unless-stopped
+
+  proxy:
+    image: haugene/transmission-openvpn-proxy:latest
+    links:
+      - transmission
+#    ports:
+#      - 8080:8080
+    network_mode: "bridge"
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+    labels:
+      - "traefik.http.routers.transmission-rtr.entrypoints=https"
+      - "traefik.http.routers.transmission-rtr.tls.certresolver=production"
+      - "traefik.http.routers.transmission-rtr.tls=true"
+      - "traefik.http.routers.transmission-rtr.rule=Host(`transmission.christophweigert.com`)"
   
   overseerr:
     image: sctx/overseerr:1.33.2
@@ -194,5 +207,5 @@ services:
       - TZ=Europe/Paris
     # network_mode: "host"
     ports:
-      - "${PORT:-8191}:8191"
+      - "8191:8191"
     restart: unless-stopped
