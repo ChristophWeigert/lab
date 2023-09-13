@@ -87,7 +87,6 @@ services:
       traefik.http.routers.grafana.rule: "Host(`monitoring.christophweigert.com`)"
       traefik.http.routers.grafana.tls: "true"
       traefik.http.routers.grafana.tls.certresolver: "production"
-      traefik.docker.network: "grafana_default"
 
 volumes:
   monitoring-data:
