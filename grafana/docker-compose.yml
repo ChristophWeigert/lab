@@ -19,7 +19,7 @@ services:
     container_name: promtail
     depends_on:
       - loki
-    hostname: "promtail"
+    hostname: promtail
     volumes:
       - /var/log:/var/log:ro # let promtail access the docker host's log files
       - /var/lib/docker/volumes/monitoring-data/_data/promtail:/etc/promtail # place promtail-config.yml
@@ -30,7 +30,7 @@ services:
   influxdb:
     image: influxdb:1.8.10
     container_name: influxdb
-    hostname: "influxdb"
+    hostname: influxdb
     restart: unless-stopped
     volumes:
       - /var/lib/docker/volumes/monitoring-data/_data/influxdb/data:/var/lib/influxdb
@@ -39,7 +39,6 @@ services:
     environment:
       - INFLUXDB_ADMIN_USER=telegrafuser
       - INFLUXDB_ADMIN_PASSWORD=yrK1WPs6G2vOut3E3cJNuZ7CyDgZUYax30eDRVl4GflP3l2nIon30uA41pLqm4fj
-    network_mode: "bridge"
 
   telegraf:
     image: telegraf:1.27.4
