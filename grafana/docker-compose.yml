@@ -16,7 +16,7 @@ services:
     network_mode: "bridge"
 
   promtail:
-    image: grafana/promtail:2.0.0
+    image: grafana/promtail:2.9.0
     container_name: promtail
     depends_on:
       - loki
