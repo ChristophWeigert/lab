@@ -47,6 +47,9 @@ services:
     user: telegraf:999 # see: https://www.influxdata.com/blog/docker-run-telegraf-as-non-root/
     container_name: telegraf
     hostname: telegraf
+    dns:
+      - 1.1.1.1
+      - 8.8.8.8
     depends_on:
       - influxdb
     volumes:
