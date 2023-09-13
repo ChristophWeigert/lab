@@ -80,9 +80,9 @@ services:
       - GF_SERVER_ROOT_URL=https://monitoring.christophweigert.com
     volumes:
       - /var/lib/docker/volumes/monitoring-data/_data/grafana:/var/lib/grafana
-#    ports:
-#      - 3000:3000
-#    network_mode: "bridge"
+    ports:
+      - 3000:3000
+    network_mode: "bridge"
     labels:
       traefik.enable: "true"
       traefik.http.routers.grafana.entrypoints: "websecure"
