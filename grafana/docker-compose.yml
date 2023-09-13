@@ -7,7 +7,7 @@ services:
     hostname: loki
     container_name: loki
     volumes:
-      - /var/lib/docker/volumes/monitoring-data/loki:/etc/loki # place loki-config.yml
+      - /var/lib/docker/volumes/monitoring-data/_data/loki:/etc/loki # place loki-config.yml
     ports:
       - "127.0.0.1:3100:3100"
     restart: unless-stopped
@@ -23,7 +23,7 @@ services:
     hostname: "promtail"
     volumes:
       - /var/log:/var/log:ro # let promtail access the docker host's log files
-      - /var/lib/docker/volumes/monitoring-data/promtail:/etc/promtail # place promtail-config.yml
+      - /var/lib/docker/volumes/monitoring-data/_data/promtail:/etc/promtail # place promtail-config.yml
       #- ${DOCKER_VOLUME_STORAGE:-/mnt/docker-volumes}/traefik/logs:/var/log/traefik # let promtail access your traefik reverse logs
     restart: unless-stopped
     command: -config.file=/etc/promtail/promtail-config.yml
@@ -35,9 +35,9 @@ services:
     hostname: "influxdb"
     restart: unless-stopped
     volumes:
-      - /var/lib/docker/volumes/monitoring-data/influxdb/data:/var/lib/influxdb
-      - /var/lib/docker/volumes/monitoring-data/influxdb/influxdb.conf:/etc/influxdb/influxdb.conf:ro # place infuxdb.conf
-      - /var/lib/docker/volumes/monitoring-data/influxdb/init:/docker-entrypoint-initdb.d # place create-database.iql for database init
+      - /var/lib/docker/volumes/monitoring-data/_data/influxdb/data:/var/lib/influxdb
+      - /var/lib/docker/volumes/monitoring-data/_data/influxdb/influxdb.conf:/etc/influxdb/influxdb.conf:ro # place infuxdb.conf
+      - /var/lib/docker/volumes/monitoring-data/_data/influxdb/init:/docker-entrypoint-initdb.d # place create-database.iql for database init
     environment:
       - INFLUXDB_ADMIN_USER=telegrafuser
       - INFLUXDB_ADMIN_PASSWORD=yrK1WPs6G2vOut3E3cJNuZ7CyDgZUYax30eDRVl4GflP3l2nIon30uA41pLqm4fj
@@ -55,7 +55,7 @@ services:
     depends_on:
       - influxdb
     volumes:
-      - /var/lib/docker/volumes/monitoring-data/telegraf/telegraf.conf:/etc/telegraf/telegraf.conf:ro # place telegraf.conf
+      - /var/lib/docker/volumes/monitoring-data/_data/telegraf/telegraf.conf:/etc/telegraf/telegraf.conf:ro # place telegraf.conf
       - /:/hostfs:ro
       - /etc:/hostfs/etc:ro
       - /proc:/hostfs/proc:ro
@@ -82,7 +82,7 @@ services:
     environment:
       - GF_SERVER_ROOT_URL=https://monitoring.christophweigert.com
     volumes:
-      - /var/lib/docker/volumes/monitoring-data/grafana:/var/lib/grafana
+      - /var/lib/docker/volumes/monitoring-data/_data/grafana:/var/lib/grafana
     ports:
       - 3000:3000
     network_mode: "bridge"
@@ -93,7 +93,10 @@ services:
       traefik.http.routers.grafana.tls: "true"
       traefik.http.routers.grafana.tls.certresolver: "production"
 
-volumne
+volumes:
+  monitoring-data:
+    external: true
+
 #networks:
 #  monitoring_default:
 #   external: true
