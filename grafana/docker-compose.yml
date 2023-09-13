@@ -5,6 +5,8 @@ services:
   loki:
     image: grafana/loki:1.4.1
     hostname: loki
+    networks:
+      - created-network
     container_name: loki
     volumes:
       - /var/lib/docker/volumes/monitoring-data/_data/loki:/etc/loki # place loki-config.yml
@@ -20,6 +22,8 @@ services:
     depends_on:
       - loki
     hostname: promtail
+    networks:
+      - created-network
     volumes:
       - /var/log:/var/log:ro # let promtail access the docker host's log files
       - /var/lib/docker/volumes/monitoring-data/_data/promtail:/etc/promtail # place promtail-config.yml
@@ -31,6 +35,8 @@ services:
     image: influxdb:1.8.10
     container_name: influxdb
     hostname: influxdb
+    networks:
+      - created-network
     restart: unless-stopped
     volumes:
       - /var/lib/docker/volumes/monitoring-data/_data/influxdb/data:/var/lib/influxdb
@@ -46,6 +52,8 @@ services:
     user: telegraf:999 # see: https://www.influxdata.com/blog/docker-run-telegraf-as-non-root/
     container_name: telegraf
     hostname: telegraf
+    networks:
+      - created-network
     dns:
       - 1.1.1.1
       - 8.8.8.8
@@ -81,7 +89,9 @@ services:
       - /var/lib/docker/volumes/monitoring-data/_data/grafana:/var/lib/grafana
     ports:
       - 3000:3000
-    network_mode: "bridge"
+    networks: # Add these lines
+      - default
+      - created-network
     labels:
       traefik.enable: "true"
       traefik.http.routers.grafana.entrypoints: "websecure"
@@ -93,6 +103,8 @@ volumes:
   monitoring-data:
     external: true
 
-#networks:
-#  monitoring_default:
-#   external: true
+networks: # Uncomment this section
+  default:
+    external:
+      name: bridge
+  monitoring-network: # Your created network
