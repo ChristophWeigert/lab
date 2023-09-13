@@ -13,7 +13,6 @@ services:
     restart: unless-stopped
     user: 1000:1000
     command: -config.file=/etc/loki/loki-config.yml
-    network_mode: "bridge"
 
   promtail:
     image: grafana/promtail:2.0.0
@@ -27,7 +26,6 @@ services:
       #- ${DOCKER_VOLUME_STORAGE:-/mnt/docker-volumes}/traefik/logs:/var/log/traefik # let promtail access your traefik reverse logs
     restart: unless-stopped
     command: -config.file=/etc/promtail/promtail-config.yml
-    network_mode: "bridge"
 
   influxdb:
     image: influxdb:1.8.10
@@ -64,7 +62,6 @@ services:
       - HOST_PROC=/hostfs/proc
       - HOST_SYS=/hostfs/sys
       - HOST_MOUNT_PREFIX=/hostfs
-    network_mode: "bridge"
 
   grafana:
     container_name: grafana
@@ -80,9 +77,9 @@ services:
       - GF_SERVER_ROOT_URL=https://monitoring.christophweigert.com
     volumes:
       - /var/lib/docker/volumes/monitoring-data/_data/grafana:/var/lib/grafana
-    ports:
-      - 3000:3000
-    network_mode: "bridge"
+#    ports:
+#      - 3000:3000
+#    network_mode: "bridge"
     labels:
       traefik.enable: "true"
       traefik.http.routers.grafana.entrypoints: "websecure"
