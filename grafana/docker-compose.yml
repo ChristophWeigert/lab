@@ -6,7 +6,7 @@ services:
     image: grafana/loki:1.4.1
     hostname: loki
     networks:
-      - created-network
+      - monitoring-network
     container_name: loki
     volumes:
       - /var/lib/docker/volumes/monitoring-data/_data/loki:/etc/loki # place loki-config.yml
@@ -23,7 +23,7 @@ services:
       - loki
     hostname: promtail
     networks:
-      - created-network
+      - monitoring-network
     volumes:
       - /var/log:/var/log:ro # let promtail access the docker host's log files
       - /var/lib/docker/volumes/monitoring-data/_data/promtail:/etc/promtail # place promtail-config.yml
@@ -36,7 +36,7 @@ services:
     container_name: influxdb
     hostname: influxdb
     networks:
-      - created-network
+      - monitoring-network
     restart: unless-stopped
     volumes:
       - /var/lib/docker/volumes/monitoring-data/_data/influxdb/data:/var/lib/influxdb
@@ -53,7 +53,7 @@ services:
     container_name: telegraf
     hostname: telegraf
     networks:
-      - created-network
+      - monitoring-network
     dns:
       - 1.1.1.1
       - 8.8.8.8
@@ -91,7 +91,7 @@ services:
       - 3000:3000
     networks: # Add these lines
       - default
-      - created-network
+      - monitoring-network
     labels:
       traefik.enable: "true"
       traefik.http.routers.grafana.entrypoints: "websecure"
