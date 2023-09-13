@@ -3,7 +3,7 @@ version: "2"
 services:
 
   loki:
-    image: grafana/loki:1.6.1
+    image: grafana/loki:1.4.1
     hostname: loki
     container_name: loki
     volumes:
@@ -16,11 +16,11 @@ services:
     network_mode: "bridge"
 
   promtail:
-    image: grafana/promtail:2.9.0
+    image: grafana/promtail:2.0.0
     container_name: promtail
     depends_on:
       - loki
-    hostname: promtail
+    hostname: "promtail"
     volumes:
       - /var/log:/var/log:ro # let promtail access the docker host's log files
       - /var/lib/docker/volumes/monitoring-data/promtail:/etc/promtail # place promtail-config.yml
@@ -32,7 +32,7 @@ services:
   influxdb:
     image: influxdb:1.8.10
     container_name: influxdb
-    hostname: influxdb
+    hostname: "influxdb"
     restart: unless-stopped
     volumes:
       - /var/lib/docker/volumes/monitoring-data/influxdb/data:/var/lib/influxdb
@@ -88,11 +88,12 @@ services:
     network_mode: "bridge"
     labels:
       traefik.enable: "true"
-      traefik.http.routers.nextcloud.entrypoints: "websecure"
-      traefik.http.routers.nextcloud.rule: "Host(`monitoring.christophweigert.com`)"
-      traefik.http.routers.nextcloud.tls: "true"
-      traefik.http.routers.nextcloud.tls.certresolver: "production"
+      traefik.http.routers.grafana.entrypoints: "websecure"
+      traefik.http.routers.grafana.rule: "Host(`monitoring.christophweigert.com`)"
+      traefik.http.routers.grafana.tls: "true"
+      traefik.http.routers.grafana.tls.certresolver: "production"
 
+volumne
 #networks:
 #  monitoring_default:
 #   external: true
