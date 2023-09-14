@@ -1,0 +1,84 @@
+﻿version: "3.8"
+services:
+  broker:
+    image: docker.io/library/redis:7.2
+    restart: unless-stopped
+    networks:
+      - internal
+    volumes:
+      - redisdata:/data
+
+  webserver:
+    image: ghcr.io/paperless-ngx/paperless-ngx:1.17.4
+    restart: unless-stopped
+    depends_on:
+      - broker
+      - gotenberg
+      - tika
+    ports:
+      - "4574:8000"
+    networks:
+      - internal
+      - proxy
+    healthcheck:
+      test: ["CMD", "curl", "-fs", "-S", "--max-time", "2", "http://localhost:8000"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    volumes:
+      - data:/usr/src/paperless/data
+      - media:/usr/src/paperless/media
+      - /mnt/export:/usr/src/paperless/export
+      - /mnt/consume:/usr/src/paperless/consume
+    environment:
+      PAPERLESS_REDIS: redis://broker:6379
+      PAPERLESS_TIKA_ENABLED: 1
+      PAPERLESS_TIKA_GOTENBERG_ENDPOINT: http://gotenberg:3000
+      PAPERLESS_TIKA_ENDPOINT: http://tika:9998
+      PAPERLESS_OCR_LANGUAGES: deu
+      PAPERLESS_URL: https://$DOMAIN
+      PAPERLESS_SECRET_KEY: $PAPERLESS_SECRET_KEY
+      PAPERLESS_TIME_ZONE: Europe/Berlin
+      PAPERLESS_OCR_LANGUAGE: deu
+    labels:
+      traefik.enable: "true"
+      traefik.http.routers.paperless-ngx.entrypoints: "websecure"
+      traefik.http.routers.paperless-ngx.rule: "Host(`$DOMAIN`)"
+      traefik.http.routers.paperless-ngx.tls: "true"
+      traefik.http.routers.paperless-ngx.tls.certresolver: "production"
+      traefik.docker.network: "proxy"
+      homepage.name: paperless-ngx
+      homepage.group: Services
+      homepage.icon: paperless-ngx
+      homepage.href: https://$DOMAIN
+      homepage.description: paperless-ngx
+      homepage.widget.type: paperlessngx
+      homepage.widget.url: https://$DOMAIN
+      homepage.widget.username: $HOMEPAGE_USERNAME
+      homepage.widget.password: $HOMEPAGE_PASSWORD
+
+  gotenberg:
+    image: docker.io/gotenberg/gotenberg:7.9
+    restart: unless-stopped
+    networks:
+      - internal
+    # The gotenberg chromium route is used to convert .eml files. We do not
+    # want to allow external content like tracking pixels or even javascript.
+    command:
+      - "gotenberg"
+      - "--chromium-disable-javascript=true"
+      - "--chromium-allow-list=file:///tmp/.*"
+
+  tika:
+    image: ghcr.io/paperless-ngx/tika:2.9.0-minimal
+    restart: unless-stopped
+
+volumes:
+  data:
+  media:
+  redisdata:
+
+networks:
+  internal:
+  proxy:
+    external: true

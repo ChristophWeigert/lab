@@ -1,5 +1,9 @@
 version: "3.8"
 
+volumes:
+  teamspeak_data:
+    external: true
+
 services:
   teamspeak:
     entrypoint:
@@ -31,7 +35,3 @@ services:
     volumes:
       - "teamspeak_data:/teamspeak/save"
     working_dir: "/teamspeak"
-
-volumes:
-  teamspeak_data:
-    external: true

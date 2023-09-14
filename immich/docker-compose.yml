@@ -1,0 +1,132 @@
+version: "3.8"
+
+networks:
+  proxy:
+    external: true
+  immich:
+
+services:
+  immich-server:
+    container_name: immich_server
+    image: ghcr.io/immich-app/immich-server:v1.86.0
+    command: [ "start.sh", "immich" ]
+    volumes:
+      - ${UPLOAD_LOCATION}:/usr/src/app/upload
+      - /etc/localtime:/etc/localtime:ro
+    networks:
+      - immich
+    depends_on:
+      - redis
+      - database
+      - typesense
+    env_file:
+      - stack.env
+    restart: always
+
+  immich-microservices:
+    container_name: immich_microservices
+    image: ghcr.io/immich-app/immich-server:v1.86.0
+    command: [ "start.sh", "microservices" ]
+    volumes:
+      - ${UPLOAD_LOCATION}:/usr/src/app/upload
+      - /etc/localtime:/etc/localtime:ro
+    networks:
+      - immich 
+    depends_on:
+      - redis
+      - database
+      - typesense
+    env_file:
+      - stack.env
+    restart: always
+
+  immich-machine-learning:
+    container_name: immich_machine_learning
+    image: ghcr.io/immich-app/immich-machine-learning:v1.86.0
+    volumes:
+      - model-cache:/cache
+    networks:
+      - immich
+    restart: always
+    env_file:
+      - stack.env
+
+  immich-web:
+    container_name: immich_web
+    image: ghcr.io/immich-app/immich-web:v1.86.0
+    networks:
+      - immich
+    env_file:
+      - stack.env
+    restart: always
+
+  typesense:
+    container_name: immich_typesense
+    image: typesense/typesense:0.25.1@sha256:035ccfbc3fd8fb9085ea205fdcb62de63eaefdbebd710e88e57f978a30f2090d
+    environment:
+      - TYPESENSE_API_KEY=${TYPESENSE_API_KEY}
+      - TYPESENSE_DATA_DIR=/data
+      # remove this to get debug messages
+      - GLOG_minloglevel=1
+    volumes:
+      - tsdata:/data
+    env_file:
+      - stack.env
+    networks:
+      - immich
+    restart: always
+
+  redis:
+    container_name: immich_redis
+    image: redis:7.2-alpine@sha256:5482672695b73780afeddb2ee84d58f393f16f34718d76b246c76afe27465d4c
+    networks:
+      - immich
+    restart: always
+    env_file:
+      - stack.env
+
+  database:
+    container_name: immich_postgres
+    image: postgres:16-alpine@sha256:c6799f4b7e44d814c5c59f7c47fcc1351e856d097e971a345b4ea236acd45cca
+    networks:
+      - immich
+    environment:
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_DB: ${DB_DATABASE_NAME}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    restart: always
+
+  immich-proxy:
+    container_name: immich_proxy
+    image: ghcr.io/immich-app/immich-proxy:v1.86.0
+    depends_on:
+      - immich-server
+      - immich-web
+    restart: always
+    networks:
+      - immich
+      - proxy
+    env_file:
+      - stack.env
+    labels:
+      traefik.enable: "true"
+      traefik.http.routers.immich.entrypoints: "websecure"
+      traefik.http.routers.immich.rule: "Host(`$DOMAIN`)"
+      traefik.http.routers.immich.tls: "true"
+      traefik.http.routers.immich.tls.certresolver: "production"
+      traefik.docker.network: "proxy"
+      homepage.name: immich
+      homepage.group: Services
+      homepage.icon: immich
+      homepage.href: https://$DOMAIN
+      homepage.description: immich
+      homepage.widget.type: immich
+      homepage.widget.url: https://$DOMAIN
+      homepage.widget.key: $HOMEPAGE_KEY
+
+volumes:
+  pgdata:
+  model-cache:
+  tsdata:

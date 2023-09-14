@@ -1,4 +1,10 @@
 ﻿version: "3.8"
+
+networks:
+  proxy:
+    external: true
+  arrs:
+
 services:
   transmission:
     container_name: transmission
@@ -6,7 +12,6 @@ services:
       - NET_ADMIN
     volumes:
       - /mnt/transmission/data:/data
-      - /mnt:/video
       - /mnt/transmission/config:/config
     environment:
       - TRANSMISSION_WEB_UI=flood-for-transmission
@@ -16,6 +21,7 @@ services:
       - OPENVPN_CONFIG=de_all
       - LOCAL_NETWORK=172.17.0.0/16 # Edit here to match your network
       - WEBPROXY_ENABLED=true
+      - TZ=Europe/Berlin
     sysctls:
       - "net.ipv6.conf.all.disable_ipv6=0"
     logging:
@@ -25,8 +31,8 @@ services:
     ports:
       - '9091:9091'
       - '8888:8888'
-    image: haugene/transmission-openvpn:latest
-    network_mode: "bridge"
+    image: haugene/transmission-openvpn:5.2.0
+    networks: [ arrs ]
     restart: unless-stopped
     labels:
       - "traefik.enable=true"
@@ -44,17 +50,19 @@ services:
     container_name: overseerr
     environment:
       - LOG_LEVEL=info
-      - TZ=Europe/Paris
+      - TZ=Europe/Berlin
     ports:
       - "5055:5055"
     volumes:
       - /mnt/overseerr/app/config:/app/config
-    network_mode: "bridge"
+    networks: [ arrs, proxy ]
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.overseerr.entryPoints=websecure"
       - "traefik.http.routers.overseerr.tls.certResolver=production"
       - "traefik.http.routers.overseerr.rule=Host(`request.christophweigert.com`)"
+      - "traefik.http.routers.transmission.tls=true"
+      - "traefik.docker.network=proxy"
     restart: unless-stopped
   
   sonarr:
@@ -63,23 +71,24 @@ services:
     environment:
       - PUID=1000
       - PGID=1000
-      - TZ=Europe/paris
+      - TZ=Europe/Berlin
       - DOCKER_MODS=ghcr.io/gilbn/theme.park:sonarr
       - TP_THEME=organizr
     volumes:
       - /mnt/sonarr/data:/config
-      - /mnt/video:/video
+      - /mnt/tv:/tv
+      - /mnt/transmission/data/completed:/downloads
     ports:
       - "7878:7878"
       - "8989:8989"
-    network_mode: "bridge"
+    networks: [ arrs, proxy ]
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.sonarr.entryPoints=websecure"
       - "traefik.http.routers.sonarr.tls.certResolver=production"
       - "traefik.http.routers.sonarr.rule=Host(`sonarr.christophweigert.com`)" # Edit here to change the domain name
       - "traefik.http.services.sonarr.loadbalancer.server.port=8989"
-      - "traefik.docker.network=traefik-public"
+      - "traefik.docker.network=proxy"
       - "traefik.port=8989"
     restart: unless-stopped
 
@@ -92,17 +101,17 @@ services:
       - TZ=Europe/London
     volumes:
       - /mnt/bazarr/data/config:/config
-      - /mnt:/video
+      - /mnt:/media
     ports:
       - "6767:6767"
-    network_mode: "bridge"
+    networks: [ arrs, proxy ]
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.bazarr.entryPoints=websecure"
       - "traefik.http.routers.bazarr.tls.certResolver=production"
       - "traefik.http.routers.bazarr.rule=Host(`bazarr.christophweigert.com`)" # Edit here to change the domain name
       - "traefik.http.services.bazarr.loadbalancer.server.port=6767"
-      - "traefik.docker.network=traefik-public"
+      - "traefik.docker.network=proxy"
       - "traefik.port=6767"
     restart: unless-stopped
   
@@ -112,20 +121,19 @@ services:
     environment:
       - PUID=1000
       - PGID=1000
-      - TZ=Europe/paris
+      - TZ=Europe/Berlin
     volumes:
       - /mnt/readarr/data:/config
-      - /mnt:/books
-    ports:
-      - "8788:8787"
-    network_mode: "bridge"
+      - /mnt/books:/books
+      - /mnt/completed:/data/completed
+    networks: [ arrs, proxy ]
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.readarr.entryPoints=websecure"
       - "traefik.http.routers.readarr.tls.certResolver=production"
       - "traefik.http.routers.readarr.rule=Host(`readarr.christophweigert.com`)" # Edit here to change the domain name
       - "traefik.http.services.readarr.loadbalancer.server.port=8787"
-      - "traefik.docker.network=traefik-public"
+      - "traefik.docker.network=proxy"
       - "traefik.port=8787"
     restart: unless-stopped
   
@@ -135,20 +143,19 @@ services:
     environment:
       - PUID=1000
       - PGID=1000
-      - TZ=Europe/paris
+      - TZ=Europe/Berlin
     volumes:
       - /mnt/lidarr/data:/config
-      - /mnt:/music
-    ports:
-      - "8686:8686"
-    network_mode: "bridge"
+      - /mnt/music:/music
+      - /mnt/transmission/data/completed:/downloads
+    networks: [ arrs, proxy ]
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.lidarr.entryPoints=websecure"
       - "traefik.http.routers.lidarr.tls.certResolver=production"
       - "traefik.http.routers.lidarr.rule=Host(`lidarr.christophweigert.com`)" # Edit here to change the domain name
       - "traefik.http.services.lidarr.loadbalancer.server.port=8686"
-      - "traefik.docker.network=traefik-public"
+      - "traefik.docker.network=proxy"
       - "traefik.port=8686"
     restart: unless-stopped
   
@@ -158,20 +165,20 @@ services:
     environment:
       - PUID=1000
       - PGID=1000
-      - TZ=Europe/paris
+      - TZ=Europe/Berlin
     volumes:
       - /mnt/radarr/data:/config
-      - /mnt:/video
-    ports:
-      - "7676:7878"
+      - /mnt/movies:/movies
+      - /mnt/transmission/data/completed:/downloads
+    networks: [ arrs, proxy ]
     restart: unless-stopped
-    network_mode: "bridge"
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.radarr.entryPoints=websecure"
       - "traefik.http.routers.radarr.tls.certResolver=production"
       - "traefik.http.routers.radarr.rule=Host(`radarr.christophweigert.com`)" # Edit here to change the domain name
       - "traefik.http.services.radarr.loadbalancer.server.port=7878"
+      - "traefik.docker.network=proxy"
   
   prowlarr:
     image: ghcr.io/linuxserver/prowlarr
@@ -179,30 +186,39 @@ services:
     environment:
       - PUID=1000
       - PGID=1000
-      - TZ=Europe/paris
+      - TZ=Europe/Berlin
     volumes:
       - /mnt/prowlarr/data:/config
-    # network_mode: "host"
-    ports:
-      - "9696:9696"
+    networks: [ arrs, proxy ]
     restart: unless-stopped
-    network_mode: "bridge"
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.prowlarr.entryPoints=websecure"
       - "traefik.http.routers.prowlarr.tls.certResolver=production"
       - "traefik.http.routers.prowlarr.rule=Host(`prowlarr.christophweigert.com`)" # Edit here to change the domain name
       - "traefik.http.services.prowlarr.loadbalancer.server.port=9696"
+      - "traefik.docker.network=proxy"
 
   flaresolverr:
-    image: flaresolverr/flaresolverr:v3.3.4
+    image: flaresolverr/flaresolverr:v3.3.10
     container_name: flaresolverr
     environment:
       - LOG_LEVEL=${LOG_LEVEL:-info}
       - LOG_HTML=${LOG_HTML:-false}
       - CAPTCHA_SOLVER=${CAPTCHA_SOLVER:-none}
-      - TZ=Europe/Paris
-    network_mode: "bridge"
+      - TZ=Europe/Berlin
+    networks: [ arrs, proxy ]
     ports:
       - "8191:8191"
     restart: unless-stopped
+
+#  recyclarr:
+#    image: ghcr.io/recyclarr/recyclarr:5.4.3
+#    container_name: recyclarr
+#    user: 1000:1000
+#    networks:
+#      - proxy
+#    volumes:
+#      - ./config:/config
+#    environment:
+#      - TZ=Europe/Berlin

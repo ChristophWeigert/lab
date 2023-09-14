@@ -1,9 +1,13 @@
-version: "2"
+version: "3.8"
+
+networks:
+  proxy:
+    external: true
 
 services:
 
   loki:
-    image: grafana/loki:1.6.1
+    image: grafana/loki:2.9.2
     hostname: loki
     container_name: loki
     volumes:
@@ -12,14 +16,18 @@ services:
       - "127.0.0.1:3100:3100"
     restart: unless-stopped
     user: 1000:1000
+    networks:
+      - proxy
     command: -config.file=/etc/loki/loki-config.yml
 
   promtail:
-    image: grafana/promtail:2.9.0
+    image: grafana/promtail:2.9.2
     container_name: promtail
     depends_on:
       - loki
     hostname: promtail
+    networks:
+      - proxy
     volumes:
       - /var/log:/var/log:ro # let promtail access the docker host's log files
       - /var/lib/docker/volumes/monitoring-data/_data/promtail:/etc/promtail # place promtail-config.yml
@@ -28,10 +36,12 @@ services:
     command: -config.file=/etc/promtail/promtail-config.yml
 
   influxdb:
-    image: influxdb:1.8.10
+    image: influxdb:2.7.3
     container_name: influxdb
     hostname: influxdb
     restart: unless-stopped
+    networks:
+      - proxy
     volumes:
       - /var/lib/docker/volumes/monitoring-data/_data/influxdb/data:/var/lib/influxdb
       - /var/lib/docker/volumes/monitoring-data/_data/influxdb/influxdb.conf:/etc/influxdb/influxdb.conf:ro # place infuxdb.conf
@@ -41,18 +51,20 @@ services:
       - INFLUXDB_ADMIN_PASSWORD=yrK1WPs6G2vOut3E3cJNuZ7CyDgZUYax30eDRVl4GflP3l2nIon30uA41pLqm4fj
 
   telegraf:
-    image: telegraf:1.28.1
+    image: telegraf:1.28.4
     restart: unless-stopped
     user: telegraf:999 # see: https://www.influxdata.com/blog/docker-run-telegraf-as-non-root/
     container_name: telegraf
     hostname: telegraf
+    networks:
+      - proxy
     dns:
       - 1.1.1.1
       - 8.8.8.8
     depends_on:
       - influxdb
     volumes:
-      - /var/lib/docker/volumes/monitoring-data/_data/telegraf/telegraf.conf:/etc/telegraf/telegraf.conf:ro # place telegraf.conf
+      - /var/lib/docker/volumes/monitoring-data/_data/telegraf/telegraf.conf:/etc/telegraf/telegraf.conf:ro
       - /:/hostfs:ro
       - /etc:/hostfs/etc:ro
       - /proc:/hostfs/proc:ro
@@ -73,21 +85,27 @@ services:
       - influxdb
       - loki
       - promtail
-    image: grafana/grafana:10.1.1
+    image: grafana/grafana:10.2.0
     restart: unless-stopped
+    networks:
+      - proxy
     environment:
       - GF_SERVER_ROOT_URL=https://monitoring.christophweigert.com
     volumes:
       - /var/lib/docker/volumes/monitoring-data/_data/grafana:/var/lib/grafana
-    ports:
-      - 3000:3000
     labels:
       traefik.enable: "true"
       traefik.http.routers.grafana.entrypoints: "websecure"
       traefik.http.routers.grafana.rule: "Host(`monitoring.christophweigert.com`)"
       traefik.http.routers.grafana.tls: "true"
       traefik.http.routers.grafana.tls.certresolver: "production"
-
-volumes:
-  monitoring-data:
-    external: true
+      traefik.docker.network: "proxy"
+      homepage.name: Grafana
+      homepage.group: Services
+      homepage.icon: grafana.png
+      homepage.href: https://monitoring.christophweigert.com
+      homepage.description: Grafana
+      homepage.widget.type: grafana
+      homepage.widget.url: https://monitoring.christophweigert.com
+      homepage.widget.username: admin
+      homepage.widget.password: ecp0wbn5RAJ_cdw_cye

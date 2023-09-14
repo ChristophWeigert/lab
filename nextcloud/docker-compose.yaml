@@ -1,30 +1,33 @@
 version: "3.8"
 
+volumes:
+  nextcloud_config:
+    external: true
+  nextcloud_data:
+    external: true
+
+networks:
+  proxy:
+    external: true
+
 services:
   nextcloud:
     container_name: "nextcloud"
     environment:
       - "NEXTCLOUD_PATH=/config/www/nextcloud"
-    expose:
-      - "443/tcp"
-      - "80/tcp"
     hostname: "nextcloud"
-    image: "linuxserver/nextcloud:27.0.2"
+    image: "linuxserver/nextcloud:27.1.3"
     labels:
       traefik.enable: "true"
       traefik.http.routers.nextcloud.entrypoints: "websecure"
       traefik.http.routers.nextcloud.rule: "Host(`cloud.christophweigert.com`)"
       traefik.http.routers.nextcloud.tls: "true"
       traefik.http.routers.nextcloud.tls.certresolver: "production"
-    network_mode: "bridge"
+      traefik.docker.network: "proxy"
+    networks:
+      - proxy
     restart: "always"
     volumes:
       - "nextcloud_config:/config"
       - "nextcloud_data:/data"
     working_dir: "/"
-
-volumes:
-  nextcloud_config:
-    external: true
-  nextcloud_data:
-    external: true
