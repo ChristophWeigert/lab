@@ -1,5 +1,13 @@
 version: "3.8"
 
+volumes:
+  freshrss_data:
+    external: true
+
+networks:
+  proxy:
+    external: true
+
 services:
   freshrss:
     container_name: "freshrss"
@@ -13,12 +21,10 @@ services:
       traefik.http.routers.freshrss.rule: "Host(`rss.christophweigert.com`)"
       traefik.http.routers.freshrss.tls: "true"
       traefik.http.routers.freshrss.tls.certresolver: "production"
+      traefik.docker.network: "proxy"
     restart: "always"
-    network_mode: "bridge"
+    networks:
+      - proxy
     volumes:
       - "freshrss_data:/config"
     working_dir: "/"
-
-volumes:
-  freshrss_data:
-    external: true

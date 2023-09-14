@@ -1,4 +1,13 @@
-version: "2"
+version: "3.8"
+
+volumes:
+  monitoring-data:
+    external: true
+
+networks:
+  proxy:
+    external: true
+  grafana:
 
 services:
 
@@ -7,11 +16,13 @@ services:
     hostname: loki
     container_name: loki
     volumes:
-      - /var/lib/docker/volumes/monitoring-data/_data/loki:/etc/loki # place loki-config.yml
+      - monitoring-data/loki:/etc/loki # place loki-config.yml
     ports:
       - "127.0.0.1:3100:3100"
     restart: unless-stopped
     user: 1000:1000
+    networks:
+      - grafana
     command: -config.file=/etc/loki/loki-config.yml
 
   promtail:
@@ -20,9 +31,11 @@ services:
     depends_on:
       - loki
     hostname: promtail
+    networks:
+      - grafana
     volumes:
       - /var/log:/var/log:ro # let promtail access the docker host's log files
-      - /var/lib/docker/volumes/monitoring-data/_data/promtail:/etc/promtail # place promtail-config.yml
+      - monitoring-data/promtail:/etc/promtail # place promtail-config.yml
       #- ${DOCKER_VOLUME_STORAGE:-/mnt/docker-volumes}/traefik/logs:/var/log/traefik # let promtail access your traefik reverse logs
     restart: unless-stopped
     command: -config.file=/etc/promtail/promtail-config.yml
@@ -32,10 +45,12 @@ services:
     container_name: influxdb
     hostname: influxdb
     restart: unless-stopped
+    networks:
+      - grafana
     volumes:
-      - /var/lib/docker/volumes/monitoring-data/_data/influxdb/data:/var/lib/influxdb
-      - /var/lib/docker/volumes/monitoring-data/_data/influxdb/influxdb.conf:/etc/influxdb/influxdb.conf:ro # place infuxdb.conf
-      - /var/lib/docker/volumes/monitoring-data/_data/influxdb/init:/docker-entrypoint-initdb.d # place create-database.iql for database init
+      - monitoring-data/influxdb/data:/var/lib/influxdb
+      - monitoring-data/influxdb/influxdb.conf:/etc/influxdb/influxdb.conf:ro # place infuxdb.conf
+      - monitoring-data/influxdb/init:/docker-entrypoint-initdb.d # place create-database.iql for database init
     environment:
       - INFLUXDB_ADMIN_USER=telegrafuser
       - INFLUXDB_ADMIN_PASSWORD=yrK1WPs6G2vOut3E3cJNuZ7CyDgZUYax30eDRVl4GflP3l2nIon30uA41pLqm4fj
@@ -46,13 +61,15 @@ services:
     user: telegraf:999 # see: https://www.influxdata.com/blog/docker-run-telegraf-as-non-root/
     container_name: telegraf
     hostname: telegraf
+    networks:
+      - grafana
     dns:
       - 1.1.1.1
       - 8.8.8.8
     depends_on:
       - influxdb
     volumes:
-      - /var/lib/docker/volumes/monitoring-data/_data/telegraf/telegraf.conf:/etc/telegraf/telegraf.conf:ro # place telegraf.conf
+      - monitoring-data/telegraf/telegraf.conf:/etc/telegraf/telegraf.conf:ro # place telegraf.conf
       - /:/hostfs:ro
       - /etc:/hostfs/etc:ro
       - /proc:/hostfs/proc:ro
@@ -75,19 +92,17 @@ services:
       - promtail
     image: grafana/grafana:10.1.1
     restart: unless-stopped
+    networks:
+      - grafana
+      - proxy
     environment:
       - GF_SERVER_ROOT_URL=https://monitoring.christophweigert.com
     volumes:
-      - /var/lib/docker/volumes/monitoring-data/_data/grafana:/var/lib/grafana
-    ports:
-      - 3000:3000
+      - monitoring-data/grafana:/var/lib/grafana
     labels:
       traefik.enable: "true"
       traefik.http.routers.grafana.entrypoints: "websecure"
       traefik.http.routers.grafana.rule: "Host(`monitoring.christophweigert.com`)"
       traefik.http.routers.grafana.tls: "true"
       traefik.http.routers.grafana.tls.certresolver: "production"
-
-volumes:
-  monitoring-data:
-    external: true
+      traefik.docker.network: "proxy"

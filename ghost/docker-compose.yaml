@@ -1,5 +1,13 @@
 version: "3.8"
 
+volumes:
+  ghost_data:
+    external: true
+
+networks:
+  proxy:
+    external: true
+
 services:
   ghost-christophweigertcom:
     container_name: "ghost-christophweigertcom"
@@ -25,11 +33,3 @@ services:
     volumes:
       - "ghost_data:/var/lib/ghost/content"
     working_dir: "/var/lib/ghost"
-
-volumes:
-  ghost_data:
-    external: true
-
-networks:
-  proxy:
-    external: true
