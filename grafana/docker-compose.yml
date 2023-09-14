@@ -26,7 +26,7 @@ services:
     command: -config.file=/etc/loki/loki-config.yml
 
   promtail:
-    image: grafana/promtail:2.9.0
+    image: grafana/promtail:2.9.1
     container_name: promtail
     depends_on:
       - loki
