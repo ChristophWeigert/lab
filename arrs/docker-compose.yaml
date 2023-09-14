@@ -198,7 +198,7 @@ services:
       - "traefik.http.services.prowlarr.loadbalancer.server.port=9696"
 
   flaresolverr:
-    image: flaresolverr/flaresolverr:v3.3.4
+    image: flaresolverr/flaresolverr:v3.3.5
     container_name: flaresolverr
     environment:
       - LOG_LEVEL=${LOG_LEVEL:-info}
