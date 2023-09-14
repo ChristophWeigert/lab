@@ -14,7 +14,8 @@ services:
       - OPENVPN_USERNAME=0691702635288960 # Edit here to change the username
       - OPENVPN_PASSWORD=m # Edit here to change the password
       - OPENVPN_CONFIG=de_all
-    #      - LOCAL_NETWORK=192.168.1.0/24 # Edit here to match your network
+      - LOCAL_NETWORK=172.17.0.0/16 # Edit here to match your network
+      - WEBPROXY_ENABLED=true
     sysctls:
       - "net.ipv6.conf.all.disable_ipv6=0"
     logging:
@@ -23,24 +24,20 @@ services:
         max-size: 10m
     ports:
       - '9091:9091'
+      - '8888:8888'
     image: haugene/transmission-openvpn:latest
     network_mode: "bridge"
     restart: unless-stopped
-
-  proxy:
-    image: haugene/transmission-openvpn-proxy:latest
-    links:
-      - transmission
-#    ports:
-#      - 8080:8080
-    network_mode: "bridge"
-    volumes:
-      - /etc/localtime:/etc/localtime:ro
     labels:
-      - "traefik.http.routers.transmission-rtr.entrypoints=https"
-      - "traefik.http.routers.transmission-rtr.tls.certresolver=production"
-      - "traefik.http.routers.transmission-rtr.tls=true"
-      - "traefik.http.routers.transmission-rtr.rule=Host(`transmission.christophweigert.com`)"
+      - "traefik.enable=true"
+      - "traefik.http.routers.transmission.entrypoints=websecure"
+      - "traefik.http.routers.transmission.tls.certresolver=production"
+      - "traefik.http.routers.transmission.rule=Host(`transmission.christophweigert.com`)"
+      - "traefik.http.routers.transmission.tls=true"
+      - "traefik.http.routers.transmission.middlewares=user-auth@file"
+      - "traefik.http.routers.transmission.service=transmission"
+      - "traefik.http.services.transmission.loadbalancer.server.port=8888"
+      - "traefik.http.services.transmission.loadbalancer.server.scheme=http"
   
   overseerr:
     image: sctx/overseerr:1.33.2
@@ -71,7 +68,7 @@ services:
       - TP_THEME=organizr
     volumes:
       - /mnt/sonarr/data:/config
-      - /mnt:/video
+      - /mnt/video:/video
     ports:
       - "7878:7878"
       - "8989:8989"
@@ -102,7 +99,7 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.bazarr.entryPoints=websecure"
-      - "traefik.http.routers.bazarr.tls.certResolver=letsEncrypt"
+      - "traefik.http.routers.bazarr.tls.certResolver=production"
       - "traefik.http.routers.bazarr.rule=Host(`bazarr.christophweigert.com`)" # Edit here to change the domain name
       - "traefik.http.services.bazarr.loadbalancer.server.port=6767"
       - "traefik.docker.network=traefik-public"
@@ -125,7 +122,7 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.readarr.entryPoints=websecure"
-      - "traefik.http.routers.readarr.tls.certResolver=letsEncrypt"
+      - "traefik.http.routers.readarr.tls.certResolver=production"
       - "traefik.http.routers.readarr.rule=Host(`readarr.christophweigert.com`)" # Edit here to change the domain name
       - "traefik.http.services.readarr.loadbalancer.server.port=8787"
       - "traefik.docker.network=traefik-public"
@@ -148,7 +145,7 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.lidarr.entryPoints=websecure"
-      - "traefik.http.routers.lidarr.tls.certResolver=letsEncrypt"
+      - "traefik.http.routers.lidarr.tls.certResolver=production"
       - "traefik.http.routers.lidarr.rule=Host(`lidarr.christophweigert.com`)" # Edit here to change the domain name
       - "traefik.http.services.lidarr.loadbalancer.server.port=8686"
       - "traefik.docker.network=traefik-public"
@@ -172,7 +169,7 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.radarr.entryPoints=websecure"
-      - "traefik.http.routers.radarr.tls.certResolver=letsEncrypt"
+      - "traefik.http.routers.radarr.tls.certResolver=production"
       - "traefik.http.routers.radarr.rule=Host(`radarr.christophweigert.com`)" # Edit here to change the domain name
       - "traefik.http.services.radarr.loadbalancer.server.port=7878"
   
@@ -193,19 +190,19 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.prowlarr.entryPoints=websecure"
-      - "traefik.http.routers.prowlarr.tls.certResolver=letsEncrypt"
+      - "traefik.http.routers.prowlarr.tls.certResolver=production"
       - "traefik.http.routers.prowlarr.rule=Host(`prowlarr.christophweigert.com`)" # Edit here to change the domain name
       - "traefik.http.services.prowlarr.loadbalancer.server.port=9696"
 
   flaresolverr:
-    image: flaresolverr/flaresolverr:v3.3.5
+    image: flaresolverr/flaresolverr:v3.3.4
     container_name: flaresolverr
     environment:
       - LOG_LEVEL=${LOG_LEVEL:-info}
       - LOG_HTML=${LOG_HTML:-false}
       - CAPTCHA_SOLVER=${CAPTCHA_SOLVER:-none}
       - TZ=Europe/Paris
-    # network_mode: "host"
+    network_mode: "bridge"
     ports:
       - "8191:8191"
     restart: unless-stopped
