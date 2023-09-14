@@ -1,0 +1,52 @@
+version: "3.6"
+
+networks:
+  proxy:
+    external: true
+
+services:
+  traefik:
+    command:
+      - "--global.checkNewVersion=false"
+      - "--global.sendAnonymousUsage=false"
+      - "--log.filePath=/etc/traefik/traefik.log"
+      - "--api.dashboard=true"
+      - "--api.insecure=false"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.web.http.redirections.entrypoint.to=websecure"
+      - "--entrypoints.web.http.redirections.entrypoint.scheme=https"
+      - "--entrypoints.websecure.address=:443"
+      - "--entrypoints.websecure.address=:443"
+      - "--certificatesresolvers.production.acme.email=christoph.weigert93@gmail.com"
+      - "--certificatesresolvers.production.acme.storage=/etc/traefik/certs/acme.json"
+      - "--certificatesresolvers.production.acme.caServer=https://acme-v02.api.letsencrypt.org/directory"
+      - "--certificatesresolvers.production.acme.dnsChallenge.provider=cloudflare"
+      - "--certificatesresolvers.production.acme.dnsChallenge.resolvers[0]=1.1.1.1:53"
+      - "--certificatesresolvers.production.acme.dnsChallenge.resolvers[1]=8.8.8.8:53"
+      - "--serversTransport.insecureSkipVerify=true"
+      - "--certificatesresolvers.production.acme.email=christoph.weigert93@gmail.com"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+    container_name: "traefik"
+    environment:
+      - "CF_DNS_API_TOKEN=3VXJSW06sodHtK86XhZqRLVdDBF8XVzqMvR7GrX5"
+    image: "traefik:v2.10.4"
+    networks:
+      - proxy
+    ports:
+      - "443:443/tcp"
+      - "80:80/tcp"
+      - "8080:8080/tcp"
+    restart: "unless-stopped"
+    volumes:
+      - "/etc/traefik:/etc/traefik"
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+    labels:
+      traefik.enable: true
+      traefik.http.routers.traefik_https.rule: Host(`traefik.christophweigert.com`)
+      traefik.http.routers.traefik_https.entrypoints: websecure
+      traefik.http.routers.traefik_https.tls: true
+      traefik.http.routers.traefik_https.tls.certResolver: production
+      traefik.http.routers.traefik_https.service: api@internal
+      traefik.http.routers.traefik_https.middlewares: basic-auth-global
+      traefik.http.middlewares.basic-auth-global.basicauth.users: test:$$2y$$12$$ci.4U63YX83CwkyUrjqxAucnmi2xXOIlEF6T/KdP9824f1Rf1iyNG #test:test
