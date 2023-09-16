@@ -25,7 +25,7 @@ services:
     ports:
       - '9091:9091'
       - '8888:8888'
-    image: haugene/transmission-openvpn:latest
+    image: haugene/transmission-openvpn:5.1.0
     network_mode: "bridge"
     restart: unless-stopped
     labels:
