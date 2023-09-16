@@ -22,6 +22,15 @@ services:
       traefik.http.routers.freshrss.tls: "true"
       traefik.http.routers.freshrss.tls.certresolver: "production"
       traefik.docker.network: "proxy"
+      homepage.name: Fresh RSS
+      homepage.group: Services
+      homepage.icon: freshrss.png
+      homepage.href: https://rss.christophweigert.com
+      homepage.description: Fresh RSS
+      homepage.widget.type: freshrss
+      homepage.widget.url: https://rss.christophweigert.com
+      homepage.widget.username: Giswald
+      homepage.widget.password: HxZyrV>.K$532}.R=5dQ;;)M
     restart: "always"
     networks:
       - proxy

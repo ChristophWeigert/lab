@@ -106,3 +106,12 @@ services:
       traefik.http.routers.grafana.tls: "true"
       traefik.http.routers.grafana.tls.certresolver: "production"
       traefik.docker.network: "proxy"
+      homepage.name: Grafana
+      homepage.group: Services
+      homepage.icon: grafana.png
+      homepage.href: https://monitoring.christophweigert.com
+      homepage.description: Grafana
+      homepage.widget.type: grafana
+      homepage.widget.url: https://monitoring.christophweigert.com
+      homepage.widget.username: admin
+      homepage.widget.password: ecp0wbn5RAJ_cdw_cye

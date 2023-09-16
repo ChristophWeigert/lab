@@ -50,3 +50,12 @@ services:
       traefik.http.routers.traefik_https.service: api@internal
       traefik.http.routers.traefik_https.middlewares: basic-auth-global
       traefik.http.middlewares.basic-auth-global.basicauth.users: test:$$2y$$12$$ci.4U63YX83CwkyUrjqxAucnmi2xXOIlEF6T/KdP9824f1Rf1iyNG #test:test
+      homepage.name: Traefik
+      homepage.group: Hosting
+      homepage.icon: traefik.png
+      homepage.href: https://traefik.christophweigert.com
+      homepage.description: Traefikmanagement
+      homepage.widget.type: traefik
+      homepage.widget.url: https://traefik.christophweigert.com
+      homepage.widget.username: test
+      homepage.widget.password: test
