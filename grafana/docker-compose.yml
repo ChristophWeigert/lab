@@ -17,7 +17,7 @@ services:
     restart: unless-stopped
     user: 1000:1000
     networks:
-      - grafana
+      - proxy
     command: -config.file=/etc/loki/loki-config.yml
 
   promtail:
