@@ -3,7 +3,6 @@ version: "3.8"
 networks:
   proxy:
     external: true
-  grafana:
 
 services:
 
@@ -28,7 +27,7 @@ services:
       - loki
     hostname: promtail
     networks:
-      - grafana
+      - proxy
     volumes:
       - /var/log:/var/log:ro # let promtail access the docker host's log files
       - /var/lib/docker/volumes/monitoring-data/_data/promtail:/etc/promtail # place promtail-config.yml
@@ -42,7 +41,7 @@ services:
     hostname: influxdb
     restart: unless-stopped
     networks:
-      - grafana
+      - proxy
     volumes:
       - /var/lib/docker/volumes/monitoring-data/_data/influxdb/data:/var/lib/influxdb
       - /var/lib/docker/volumes/monitoring-data/_data/influxdb/influxdb.conf:/etc/influxdb/influxdb.conf:ro # place infuxdb.conf
@@ -58,7 +57,7 @@ services:
     container_name: telegraf
     hostname: telegraf
     networks:
-      - grafana
+      - proxy
     dns:
       - 1.1.1.1
       - 8.8.8.8
@@ -89,7 +88,6 @@ services:
     image: grafana/grafana:10.1.2
     restart: unless-stopped
     networks:
-      - grafana
       - proxy
     environment:
       - GF_SERVER_ROOT_URL=https://monitoring.christophweigert.com
