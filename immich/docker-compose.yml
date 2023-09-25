@@ -116,6 +116,14 @@ services:
       traefik.http.routers.immich.tls: "true"
       traefik.http.routers.immich.tls.certresolver: "production"
       traefik.docker.network: "proxy"
+      homepage.name: immich
+      homepage.group: Services
+      homepage.icon: immich.png
+      homepage.href: https://immich.christophweigert.com
+      homepage.description: immich
+      homepage.widget.type: immich
+      homepage.widget.url: https://immich.christophweigert.com
+      homepage.widget.key: 4gykc4iuPiG64zjhuzKGRIcxAN5GkmjbqGJZpMsyRY
 
 volumes:
   pgdata:
