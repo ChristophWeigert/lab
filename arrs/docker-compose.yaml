@@ -76,7 +76,7 @@ services:
       - TP_THEME=organizr
     volumes:
       - /mnt/sonarr/data:/config
-      - /mnt/video:/video
+      - /mnt:/media
     ports:
       - "7878:7878"
       - "8989:8989"
@@ -100,7 +100,7 @@ services:
       - TZ=Europe/London
     volumes:
       - /mnt/bazarr/data/config:/config
-      - /mnt:/video
+      - /mnt:/media
     ports:
       - "6767:6767"
     networks: [ arrs, proxy ]
@@ -123,7 +123,7 @@ services:
       - TZ=Europe/Berlin
     volumes:
       - /mnt/readarr/data:/config
-      - /mnt:/books
+      - /mnt:/media
     networks: [ arrs, proxy ]
     labels:
       - "traefik.enable=true"
@@ -144,7 +144,7 @@ services:
       - TZ=Europe/Berlin
     volumes:
       - /mnt/lidarr/data:/config
-      - /mnt:/music
+      - /mnt:/media
     networks: [ arrs, proxy ]
     labels:
       - "traefik.enable=true"
@@ -165,7 +165,7 @@ services:
       - TZ=Europe/Berlin
     volumes:
       - /mnt/radarr/data:/config
-      - /mnt:/video
+      - /mnt:/media
     networks: [ arrs, proxy ]
     restart: unless-stopped
     labels:
@@ -207,3 +207,14 @@ services:
     ports:
       - "8191:8191"
     restart: unless-stopped
+
+#  recyclarr:
+#    image: ghcr.io/recyclarr/recyclarr:5.4.3
+#    container_name: recyclarr
+#    user: 1000:1000
+#    networks:
+#      - proxy
+#    volumes:
+#      - ./config:/config
+#    environment:
+#      - TZ=Europe/Berlin
