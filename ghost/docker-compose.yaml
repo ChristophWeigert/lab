@@ -19,7 +19,7 @@ services:
       - "GHOST_INSTALL=/var/lib/ghost"
       - "GHOST_CONTENT=/var/lib/ghost/content"
     hostname: "ghostchristophweigertcom"
-    image: "ghost:5.65.1"
+    image: "ghost:5.66.0"
     networks:
       - proxy
     labels:
