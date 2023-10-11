@@ -30,7 +30,7 @@ services:
     container_name: "traefik"
     environment:
       - "CF_DNS_API_TOKEN=3VXJSW06sodHtK86XhZqRLVdDBF8XVzqMvR7GrX5"
-    image: "traefik:v2.10.4"
+    image: "traefik:2.10.5"
     networks:
       - proxy
     ports:
