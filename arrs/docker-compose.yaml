@@ -11,7 +11,7 @@ services:
     cap_add:
       - NET_ADMIN
     volumes:
-      - /mnt:/data
+      - /mnt/transmission/data:/data
       - /mnt/transmission/config:/config
     environment:
       - TRANSMISSION_WEB_UI=flood-for-transmission
@@ -76,7 +76,8 @@ services:
       - TP_THEME=organizr
     volumes:
       - /mnt/sonarr/data:/config
-      - /mnt:/media
+      - /mnt/tv:/tv
+      - /mnt/transmission/data/completed:/downloads
     ports:
       - "7878:7878"
       - "8989:8989"
@@ -123,7 +124,8 @@ services:
       - TZ=Europe/Berlin
     volumes:
       - /mnt/readarr/data:/config
-      - /mnt:/media
+      - /mnt/books:/books
+      - /mnt/completed:/data/completed
     networks: [ arrs, proxy ]
     labels:
       - "traefik.enable=true"
@@ -144,7 +146,8 @@ services:
       - TZ=Europe/Berlin
     volumes:
       - /mnt/lidarr/data:/config
-      - /mnt:/media
+      - /mnt/music:/music
+      - /mnt/transmission/data/completed:/downloads
     networks: [ arrs, proxy ]
     labels:
       - "traefik.enable=true"
@@ -165,7 +168,8 @@ services:
       - TZ=Europe/Berlin
     volumes:
       - /mnt/radarr/data:/config
-      - /mnt:/media
+      - /mnt/movies:/movies
+      - /mnt/transmission/data/completed:/downloads
     networks: [ arrs, proxy ]
     restart: unless-stopped
     labels:
