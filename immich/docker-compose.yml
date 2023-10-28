@@ -52,7 +52,7 @@ services:
 
   immich-web:
     container_name: immich_web
-    image: ghcr.io/immich-app/immich-web:v1.82.1
+    image: ghcr.io/immich-app/immich-web:v1.83.0
     networks:
       - immich
     env_file:
