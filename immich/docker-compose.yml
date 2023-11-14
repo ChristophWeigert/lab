@@ -2,8 +2,7 @@ version: "3.8"
 
 networks:
   proxy:
-    external:
-      name: proxy
+    external: true
   immich:
 
 services:
