@@ -36,26 +36,26 @@ services:
       PAPERLESS_TIKA_GOTENBERG_ENDPOINT: http://gotenberg:3000
       PAPERLESS_TIKA_ENDPOINT: http://tika:9998
       PAPERLESS_OCR_LANGUAGES: deu
-      PAPERLESS_URL: https://${DOMAIN}
-      PAPERLESS_SECRET_KEY: ${PAPERLESS_SECRET_KEY}
+      PAPERLESS_URL: https://$DOMAIN
+      PAPERLESS_SECRET_KEY: $PAPERLESS_SECRET_KEY
       PAPERLESS_TIME_ZONE: Europe/Berlin
       PAPERLESS_OCR_LANGUAGE: deu
     labels:
       traefik.enable: "true"
       traefik.http.routers.paperless-ngx.entrypoints: "websecure"
-      traefik.http.routers.paperless-ngx.rule: "Host(`${DOMAIN}`)"
+      traefik.http.routers.paperless-ngx.rule: "Host(`$DOMAIN`)"
       traefik.http.routers.paperless-ngx.tls: "true"
       traefik.http.routers.paperless-ngx.tls.certresolver: "production"
       traefik.docker.network: "proxy"
       homepage.name: paperless-ngx
       homepage.group: Services
       homepage.icon: paperlessngx.png
-      homepage.href: https://${DOMAIN}
+      homepage.href: https://$DOMAIN
       homepage.description: paperless-ngx
       homepage.widget.type: paperlessngx
-      homepage.widget.url: https://${DOMAIN}
-      homepage.widget.username: ${HOMEPAGE_USERNAME}
-      homepage.widget.password: ${HOMEPAGE_PASSWORD}
+      homepage.widget.url: https://$DOMAIN
+      homepage.widget.username: $HOMEPAGE_USERNAME
+      homepage.widget.password: $HOMEPAGE_PASSWORD
 
   gotenberg:
     image: docker.io/gotenberg/gotenberg:7.9
