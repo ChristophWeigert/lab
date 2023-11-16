@@ -13,24 +13,25 @@ services:
     container_name: "freshrss"
     environment:
       - "TZ=Europe/Berlin"
+      - "'CRON_MIN=1,31'"
     hostname: "freshrss"
-    image: "lscr.io/linuxserver/freshrss:1.22.1"
+    image: "lscr.io/linuxserver/freshrss:1.23.1"
     labels:
       traefik.enable: "true"
       traefik.http.routers.freshrss.entrypoints: "websecure"
-      traefik.http.routers.freshrss.rule: "Host(`rss.christophweigert.com`)"
+      traefik.http.routers.freshrss.rule: "Host(`$DOMAIN`)"
       traefik.http.routers.freshrss.tls: "true"
       traefik.http.routers.freshrss.tls.certresolver: "production"
       traefik.docker.network: "proxy"
       homepage.name: Fresh RSS
       homepage.group: Services
       homepage.icon: freshrss.png
-      homepage.href: https://rss.christophweigert.com
+      homepage.href: https://$DOMAIN
       homepage.description: Fresh RSS
       homepage.widget.type: freshrss
-      homepage.widget.url: https://rss.christophweigert.com
-      homepage.widget.username: Giswald
-      homepage.widget.password: HxZyrV>.K$532}.R=5dQ;;)M
+      homepage.widget.url: https://$DOMAIN
+      homepage.widget.username: $HOMEPAGE_USER
+      homepage.widget.password: $HOMEPAGE_PASSWORD
     restart: "always"
     networks:
       - proxy

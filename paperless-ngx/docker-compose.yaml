@@ -9,14 +9,12 @@ services:
       - redisdata:/data
 
   webserver:
-    image: ghcr.io/paperless-ngx/paperless-ngx:1.17.4
+    image: ghcr.io/paperless-ngx/paperless-ngx:2.3.3
     restart: unless-stopped
     depends_on:
       - broker
       - gotenberg
       - tika
-    ports:
-      - "4574:8000"
     networks:
       - internal
       - proxy
@@ -58,7 +56,7 @@ services:
       homepage.widget.password: $HOMEPAGE_PASSWORD
 
   gotenberg:
-    image: docker.io/gotenberg/gotenberg:7.9
+    image: docker.io/gotenberg/gotenberg:7.10
     restart: unless-stopped
     networks:
       - internal
@@ -70,7 +68,7 @@ services:
       - "--chromium-allow-list=file:///tmp/.*"
 
   tika:
-    image: ghcr.io/paperless-ngx/tika:2.9.0-minimal
+    image: ghcr.io/paperless-ngx/tika:2.9.0-full
     restart: unless-stopped
 
 volumes:

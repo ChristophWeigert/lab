@@ -7,7 +7,7 @@ networks:
 services:
 
   loki:
-    image: grafana/loki:2.9.2
+    image: grafana/loki:2.9.3
     hostname: loki
     container_name: loki
     volumes:
@@ -21,7 +21,7 @@ services:
     command: -config.file=/etc/loki/loki-config.yml
 
   promtail:
-    image: grafana/promtail:2.9.2
+    image: grafana/promtail:2.9.3
     container_name: promtail
     depends_on:
       - loki
@@ -36,7 +36,7 @@ services:
     command: -config.file=/etc/promtail/promtail-config.yml
 
   influxdb:
-    image: influxdb:2.7.4
+    image: influxdb:2.7.5
     container_name: influxdb
     hostname: influxdb
     restart: unless-stopped
@@ -47,11 +47,11 @@ services:
       - /var/lib/docker/volumes/monitoring-data/_data/influxdb/influxdb.conf:/etc/influxdb/influxdb.conf:ro # place infuxdb.conf
       - /var/lib/docker/volumes/monitoring-data/_data/influxdb/init:/docker-entrypoint-initdb.d # place create-database.iql for database init
     environment:
-      - INFLUXDB_ADMIN_USER=telegrafuser
-      - INFLUXDB_ADMIN_PASSWORD=yrK1WPs6G2vOut3E3cJNuZ7CyDgZUYax30eDRVl4GflP3l2nIon30uA41pLqm4fj
+      - INFLUXDB_ADMIN_USER=$INFLUXDBB_ADMIN_USER
+      - INFLUXDB_ADMIN_PASSWORD=$INFLUXDB_ADMIN_PASSWORD
 
   telegraf:
-    image: telegraf:1.28.5
+    image: telegraf:1.29.2
     restart: unless-stopped
     user: telegraf:999 # see: https://www.influxdata.com/blog/docker-run-telegraf-as-non-root/
     container_name: telegraf
@@ -85,27 +85,27 @@ services:
       - influxdb
       - loki
       - promtail
-    image: grafana/grafana:10.2.1
+    image: grafana/grafana:10.2.3
     restart: unless-stopped
     networks:
       - proxy
     environment:
-      - GF_SERVER_ROOT_URL=https://monitoring.christophweigert.com
+      - GF_SERVER_ROOT_URL=https://$DOMAIN
     volumes:
       - /var/lib/docker/volumes/monitoring-data/_data/grafana:/var/lib/grafana
     labels:
       traefik.enable: "true"
       traefik.http.routers.grafana.entrypoints: "websecure"
-      traefik.http.routers.grafana.rule: "Host(`monitoring.christophweigert.com`)"
+      traefik.http.routers.grafana.rule: "Host(`$DOMAIN`)"
       traefik.http.routers.grafana.tls: "true"
       traefik.http.routers.grafana.tls.certresolver: "production"
       traefik.docker.network: "proxy"
       homepage.name: Grafana
       homepage.group: Services
       homepage.icon: grafana.png
-      homepage.href: https://monitoring.christophweigert.com
+      homepage.href: https://$DOMAIN
       homepage.description: Grafana
       homepage.widget.type: grafana
-      homepage.widget.url: https://monitoring.christophweigert.com
-      homepage.widget.username: admin
-      homepage.widget.password: ecp0wbn5RAJ_cdw_cye
+      homepage.widget.url: https://$DOMAIN
+      homepage.widget.username: $HOMEPAGE_USER
+      homepage.widget.password: $HOMEPAGE_PASSWORD

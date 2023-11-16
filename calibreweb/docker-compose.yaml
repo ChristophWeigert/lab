@@ -16,7 +16,7 @@ services:
     labels:
       traefik.enable: "true"
       traefik.http.routers.calibre-web.entrypoints: "websecure"
-      traefik.http.routers.calibre-web.rule: "Host(`calibreweb.christophweigert.com`)"
+      traefik.http.routers.calibre-web.rule: "Host(`$DOMAIN`)"
       traefik.http.routers.calibre-web.tls: "true"
       traefik.http.routers.calibre-web.tls.certresolver: "production"
       traefik.docker.network: "proxy"
