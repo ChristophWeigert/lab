@@ -8,7 +8,7 @@ networks:
 services:
   immich-server:
     container_name: immich_server
-    image: ghcr.io/immich-app/immich-server:v1.86.0
+    image: ghcr.io/immich-app/immich-server:v1.89.0
     command: [ "start.sh", "immich" ]
     volumes:
       - ${UPLOAD_LOCATION}:/usr/src/app/upload
@@ -22,10 +22,25 @@ services:
     env_file:
       - stack.env
     restart: always
+    labels:
+      traefik.enable: "true"
+      traefik.http.routers.immich.entrypoints: "websecure"
+      traefik.http.routers.immich.rule: "Host(`$DOMAIN`)"
+      traefik.http.routers.immich.tls: "true"
+      traefik.http.routers.immich.tls.certresolver: "production"
+      traefik.docker.network: "proxy"
+      homepage.name: immich
+      homepage.group: Services
+      homepage.icon: immich
+      homepage.href: https://$DOMAIN
+      homepage.description: immich
+      homepage.widget.type: immich
+      homepage.widget.url: https://$DOMAIN
+      homepage.widget.key: $HOMEPAGE_KEY
 
   immich-microservices:
     container_name: immich_microservices
-    image: ghcr.io/immich-app/immich-server:v1.86.0
+    image: ghcr.io/immich-app/immich-server:v1.89.0
     command: [ "start.sh", "microservices" ]
     volumes:
       - ${UPLOAD_LOCATION}:/usr/src/app/upload
@@ -42,7 +57,7 @@ services:
 
   immich-machine-learning:
     container_name: immich_machine_learning
-    image: ghcr.io/immich-app/immich-machine-learning:v1.86.0
+    image: ghcr.io/immich-app/immich-machine-learning:v1.89.0
     volumes:
       - model-cache:/cache
     networks:
@@ -50,15 +65,6 @@ services:
     restart: always
     env_file:
       - stack.env
-
-  immich-web:
-    container_name: immich_web
-    image: ghcr.io/immich-app/immich-web:v1.86.0
-    networks:
-      - immich
-    env_file:
-      - stack.env
-    restart: always
 
   typesense:
     container_name: immich_typesense
@@ -78,7 +84,7 @@ services:
 
   redis:
     container_name: immich_redis
-    image: redis:7.2-alpine@sha256:6a7b3c6e3a6854424d96953172cac1ca97f0fc90094bcc479f3949e29bb053af
+    image: redis:7.2-alpine@sha256:3ce533b2b057f74b235d1d8697ae08b1b6ff0a5e16827ea6a377b6365693c7ed
     networks:
       - immich
     restart: always
@@ -87,7 +93,7 @@ services:
 
   database:
     container_name: immich_postgres
-    image: postgres:15.5-alpine
+    image: postgres:14.10-alpine
     networks:
       - immich
     environment:
@@ -97,34 +103,6 @@ services:
     volumes:
       - pgdata:/var/lib/postgresql/data
     restart: always
-
-  immich-proxy:
-    container_name: immich_proxy
-    image: ghcr.io/immich-app/immich-proxy:v1.86.0
-    depends_on:
-      - immich-server
-      - immich-web
-    restart: always
-    networks:
-      - immich
-      - proxy
-    env_file:
-      - stack.env
-    labels:
-      traefik.enable: "true"
-      traefik.http.routers.immich.entrypoints: "websecure"
-      traefik.http.routers.immich.rule: "Host(`$DOMAIN`)"
-      traefik.http.routers.immich.tls: "true"
-      traefik.http.routers.immich.tls.certresolver: "production"
-      traefik.docker.network: "proxy"
-      homepage.name: immich
-      homepage.group: Services
-      homepage.icon: immich
-      homepage.href: https://$DOMAIN
-      homepage.description: immich
-      homepage.widget.type: immich
-      homepage.widget.url: https://$DOMAIN
-      homepage.widget.key: $HOMEPAGE_KEY
 
 volumes:
   pgdata:
