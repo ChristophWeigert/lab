@@ -13,6 +13,7 @@ services:
     container_name: "freshrss"
     environment:
       - "TZ=Europe/Berlin"
+      - "'CRON_MIN=1,31'"
     hostname: "freshrss"
     image: "lscr.io/linuxserver/freshrss:1.22.1"
     labels:
