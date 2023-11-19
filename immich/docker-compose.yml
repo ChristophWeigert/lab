@@ -100,7 +100,7 @@ services:
 
   immich-proxy:
     container_name: immich_proxy
-    image: ghcr.io/immich-app/immich-proxy:v1.86.0
+    image: ghcr.io/immich-app/immich-proxy:v1.87.0
     depends_on:
       - immich-server
       - immich-web
