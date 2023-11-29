@@ -8,7 +8,7 @@ networks:
 services:
   immich-server:
     container_name: immich_server
-    image: ghcr.io/immich-app/immich-server:v1.87.0
+    image: ghcr.io/immich-app/immich-server:v1.88.2
     command: [ "start.sh", "immich" ]
     volumes:
       - ${UPLOAD_LOCATION}:/usr/src/app/upload
@@ -22,10 +22,25 @@ services:
     env_file:
       - stack.env
     restart: always
+    labels:
+      traefik.enable: "true"
+      traefik.http.routers.immich.entrypoints: "websecure"
+      traefik.http.routers.immich.rule: "Host(`$DOMAIN`)"
+      traefik.http.routers.immich.tls: "true"
+      traefik.http.routers.immich.tls.certresolver: "production"
+      traefik.docker.network: "proxy"
+      homepage.name: immich
+      homepage.group: Services
+      homepage.icon: immich
+      homepage.href: https://$DOMAIN
+      homepage.description: immich
+      homepage.widget.type: immich
+      homepage.widget.url: https://$DOMAIN
+      homepage.widget.key: $HOMEPAGE_KEY
 
   immich-microservices:
     container_name: immich_microservices
-    image: ghcr.io/immich-app/immich-server:v1.87.0
+    image: ghcr.io/immich-app/immich-server:v1.88.2
     command: [ "start.sh", "microservices" ]
     volumes:
       - ${UPLOAD_LOCATION}:/usr/src/app/upload
@@ -42,7 +57,7 @@ services:
 
   immich-machine-learning:
     container_name: immich_machine_learning
-    image: ghcr.io/immich-app/immich-machine-learning:v1.87.0
+    image: ghcr.io/immich-app/immich-machine-learning:v1.88.2
     volumes:
       - model-cache:/cache
     networks:
@@ -50,15 +65,6 @@ services:
     restart: always
     env_file:
       - stack.env
-
-  immich-web:
-    container_name: immich_web
-    image: ghcr.io/immich-app/immich-web:v1.87.0
-    networks:
-      - immich
-    env_file:
-      - stack.env
-    restart: always
 
   typesense:
     container_name: immich_typesense
@@ -97,34 +103,6 @@ services:
     volumes:
       - pgdata:/var/lib/postgresql/data
     restart: always
-
-  immich-proxy:
-    container_name: immich_proxy
-    image: ghcr.io/immich-app/immich-proxy:v1.87.0
-    depends_on:
-      - immich-server
-      - immich-web
-    restart: always
-    networks:
-      - immich
-      - proxy
-    env_file:
-      - stack.env
-    labels:
-      traefik.enable: "true"
-      traefik.http.routers.immich.entrypoints: "websecure"
-      traefik.http.routers.immich.rule: "Host(`$DOMAIN`)"
-      traefik.http.routers.immich.tls: "true"
-      traefik.http.routers.immich.tls.certresolver: "production"
-      traefik.docker.network: "proxy"
-      homepage.name: immich
-      homepage.group: Services
-      homepage.icon: immich
-      homepage.href: https://$DOMAIN
-      homepage.description: immich
-      homepage.widget.type: immich
-      homepage.widget.url: https://$DOMAIN
-      homepage.widget.key: $HOMEPAGE_KEY
 
 volumes:
   pgdata:
