@@ -31,7 +31,7 @@ services:
     ports:
       - '9091:9091'
       - '8888:8888'
-    image: haugene/transmission-openvpn:5.2.0
+    image: haugene/transmission-openvpn:5.3.1
     networks: [ arrs ]
     restart: unless-stopped
     labels:
