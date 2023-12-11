@@ -93,7 +93,7 @@ services:
 
   database:
     container_name: immich_postgres
-    image: postgres:14.10-alpine
+    image: postgres:16.1-alpine
     networks:
       - immich
     environment:
