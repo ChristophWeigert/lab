@@ -7,7 +7,7 @@ networks:
 services:
 
   loki:
-    image: grafana/loki:2.9.2
+    image: grafana/loki:2.9.3
     hostname: loki
     container_name: loki
     volumes:
