@@ -15,11 +15,14 @@ services:
       - /etc/localtime:/etc/localtime:ro
     networks:
       - immich
+      - proxy
     depends_on:
       - redis
       - database
     env_file:
       - stack.env
+    ports:
+      - 2283:3001
     restart: always
     labels:
       traefik.enable: "true"
