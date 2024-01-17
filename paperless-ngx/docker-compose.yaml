@@ -9,7 +9,7 @@ services:
       - redisdata:/data
 
   webserver:
-    image: ghcr.io/paperless-ngx/paperless-ngx:2.3.3
+    image: ghcr.io/paperless-ngx/paperless-ngx:2.5.0
     restart: unless-stopped
     depends_on:
       - broker
@@ -68,7 +68,7 @@ services:
       - "--chromium-allow-list=file:///tmp/.*"
 
   tika:
-    image: ghcr.io/paperless-ngx/tika:2.9.0-full
+    image: ghcr.io/paperless-ngx/tika:2.9.1-full
     restart: unless-stopped
 
 volumes:

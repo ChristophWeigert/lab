@@ -7,7 +7,7 @@ networks:
 services:
 
   loki:
-    image: grafana/loki:2.9.3
+    image: grafana/loki:2.9.4
     hostname: loki
     container_name: loki
     volumes:
@@ -21,7 +21,7 @@ services:
     command: -config.file=/etc/loki/loki-config.yml
 
   promtail:
-    image: grafana/promtail:2.9.3
+    image: grafana/promtail:2.9.4
     container_name: promtail
     depends_on:
       - loki
@@ -51,7 +51,7 @@ services:
       - INFLUXDB_ADMIN_PASSWORD=$INFLUXDB_ADMIN_PASSWORD
 
   telegraf:
-    image: telegraf:1.29.2
+    image: telegraf:1.29.4
     restart: unless-stopped
     user: telegraf:999 # see: https://www.influxdata.com/blog/docker-run-telegraf-as-non-root/
     container_name: telegraf
@@ -85,7 +85,7 @@ services:
       - influxdb
       - loki
       - promtail
-    image: grafana/grafana:10.2.3
+    image: grafana/grafana:10.3.1
     restart: unless-stopped
     networks:
       - proxy
