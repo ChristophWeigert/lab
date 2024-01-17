@@ -1,0 +1,32 @@
+---
+networks:
+  proxy:
+    external: true
+
+services:
+  portainer:
+    container_name: "portainer"
+    image: portainer/portainer-ee:2.37.0@sha256:5b0d98a4fb428fa84e6bde3e695e309f765b7ba1801f218bcf4b3f461b53925e
+    volumes:
+        - data:/data
+        - /var/run/docker.sock:/var/run/docker.sock
+    restart: unless-stopped
+    ports:
+      - 9443:9443
+    networks:
+      - proxy
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.frontend.entrypoints=websecure"
+      - "traefik.http.routers.frontend.rule=Host(`portainer.local.weigert.cc`)"
+      - "traefik.http.routers.frontend.tls.domains[0].main=local.weigert.cc"
+      - "traefik.http.routers.frontend.tls.domains[0].sans=*.local.weigert.cc"
+      - "traefik.http.routers.frontend.service=frontend"
+      - "traefik.http.routers.frontend.tls=true"
+      - "traefik.http.routers.frontend.tls.certresolver=production"
+      - "traefik.http.services.frontend.loadbalancer.server.port=9443"
+      - "traefik.http.services.frontend.loadbalancer.server.scheme=https"
+      - "traefik.docker.network=proxy"
+
+volumes:
+  data:

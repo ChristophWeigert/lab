@@ -1,0 +1,45 @@
+---
+volumes:
+  data:
+  extensions:
+
+networks:
+  proxy:
+    external: true
+
+services:
+  freshrss:
+    environment:
+      TZ: Europe/Berlin
+      CRON_MIN: '1,31'
+      OIDC_ENABLED: 1
+      OIDC_PROVIDER_METADATA_URL: $OIDC_PROVIDER_METADATA_URL
+      OIDC_CLIENT_ID: $OIDC_CLIENT_ID
+      OIDC_CLIENT_SECRET: $OIDC_CLIENT_SECRET
+      OIDC_X_FORWARDED_HEADERS: X-Forwarded-Port X-Forwarded-Proto X-Forwarded-Host
+      OIDC_SCOPES: openid email profile
+    image: freshrss/freshrss:1.27.1@sha256:9a56be99f3927cc8fab4c6bbd5723ae098824792d4d98a84007a95eb64e8f905
+    labels:
+      traefik.enable: "true"
+      traefik.http.routers.freshrss.entrypoints: "websecure"
+      traefik.http.routers.freshrss.rule: "Host(`rss.$DOMAIN`)"
+      traefik.http.routers.freshrss.tls: "true"
+      traefik.http.routers.freshrss.tls.certresolver: "production"
+      traefik.http.routers.freshrss.tls.domains[0].main: "$DOMAIN"
+      traefik.http.routers.freshrss.tls.domains[0].sans: "*.$DOMAIN"
+      traefik.docker.network: "proxy"
+      homepage.name: Fresh RSS
+      homepage.group: Services
+      homepage.icon: freshrss.png
+      homepage.href: https://rss.$DOMAIN
+      homepage.description: Fresh RSS
+      homepage.widget.type: freshrss
+      homepage.widget.url: https://rss.$DOMAIN
+      homepage.widget.username: $HOMEPAGE_USER
+      homepage.widget.password: $HOMEPAGE_PASSWORD
+    restart: unless-stopped
+    networks:
+      - proxy
+    volumes:
+      - data:/var/www/FreshRSS/data
+      - extensions:/var/www/FreshRSS/extensions

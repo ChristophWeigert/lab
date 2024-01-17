@@ -1,0 +1,31 @@
+---
+name: Docker Compose Validation
+
+"on":
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    name: Validate Docker Compose File
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
+
+      - name: Download Docker Compose
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y docker-compose
+
+      - name: Validate Docker Compose File
+        run: |
+          set -e
+
+          # Validate Docker Compose file
+          find . -name '*compose.y*ml' -exec docker-compose -f {} config \;

@@ -1,0 +1,11 @@
+---
+- name: Backup mailcow
+  hosts: mailcow
+  gather_facts: false
+  tasks:
+    - name: Backup mailcow locally
+      ansible.builtin.command: /opt/mailcow-dockerized/helper-scripts/backup_and_restore.sh backup all --delete-days 3
+      args:
+        chdir: "{{ mailcow__install_path }}"
+      environment:
+        MAILCOW_BACKUP_LOCATION: /mnt/mailcow_backups

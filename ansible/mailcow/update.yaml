@@ -1,0 +1,29 @@
+---
+- name: Update mailcow if needed
+  hosts: mailcow
+  gather_facts: false
+  tasks:
+    - name: Execute update.sh -c
+      ansible.builtin.command: ./update.sh -c
+      args:
+        chdir: "{{ mailcow__install_path }}"
+      register: update_check_output
+      changed_when: update_check_output.rc == 0
+      failed_when: update_check_output.rc > 3
+
+    - name: Upgrade Mailcow
+      ansible.builtin.command: printf "%s\n" "y" "y" | ./update.sh
+      args:
+        chdir: "{{ mailcow__install_path }}"
+      when: update_check_output.rc == 0
+
+    - name: Collect garbage
+      ansible.builtin.command: echo 'y' | ./update.sh --gc
+      args:
+        chdir: "{{ mailcow__install_path }}"
+      when: update_check_output.rc == 0
+
+    - name: Print message if no updates available
+      ansible.builtin.debug:
+        msg: "No updates are available"
+      when: update_check_output.rc == 3

@@ -1,0 +1,101 @@
+---
+services:
+  postgresql:
+    image: docker.io/library/postgres:16.11-alpine@sha256:6a388fba16e2a94d6d92bc3c435cdc2e20145add88547615b3d8fa545d703afe
+    container_name: "authentik_postgresql"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}"]
+      start_period: 20s
+      interval: 30s
+      retries: 5
+      timeout: 5s
+    volumes:
+      - database:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?error}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_DB: ${POSTGRES_DB}
+    networks:
+      - internal
+  server:
+    image: ghcr.io/goauthentik/server:2025.10.3@sha256:d2b66e851246e7299219b72a4ed43630a2c2bac3745eb665834b72963d836e64
+    restart: unless-stopped
+    command: server
+    container_name: "authentik_server"
+    environment:
+      AUTHENTIK_POSTGRESQL__HOST: authentik_postgresql
+      AUTHENTIK_POSTGRESQL__USER: ${POSTGRES_USER}
+      AUTHENTIK_POSTGRESQL__NAME: ${POSTGRES_DB}
+      AUTHENTIK_POSTGRESQL__PASSWORD: ${POSTGRES_PASSWORD:?error}
+      AUTHENTIK_ERROR_REPORTING__ENABLED: ${AUTHENTIK_ERROR_REPORTING:-false}
+      AUTHENTIK_SECRET_KEY: ${AUTHENTIK_SECRET_KEY?error}
+      # AUTHENTIK_EMAIL__HOST: ${EMAIL_HOST:?error}
+      # AUTHENTIK_EMAIL__USERNAME: ${EMAIL_USERNAME:?error}
+      # AUTHENTIK_EMAIL__PASSWORD: ${EMAIL_PASSWORD:?error}
+      # AUTHENTIK_EMAIL__FROM: ${EMAIL_FROM:?error}
+      AUTHENTIK_EMAIL__PORT: ${EMAIL_PORT:-25}
+      AUTHENTIK_EMAIL__USE_TLS: ${EMAIL_USE_TLS:-false}
+      AUTHENTIK_EMAIL__USE_SSL: ${EMAIL_USE_SSL:-false}
+      AUTHENTIK_EMAIL__TIMEOUT: ${EMAIL_TIMEOUT:-10}
+    labels:
+      traefik.enable: "true"
+      traefik.http.routers.authentik.entrypoints: "websecure"
+      traefik.http.routers.authentik.rule: "Host(`authentik.$DOMAIN`) || Host(`authentik.$EXTERNAL_DOMAIN`)"
+      traefik.http.routers.authentik.tls: "true"
+      traefik.http.routers.authentik.tls.domains[0].main: "$DOMAIN"
+      traefik.http.routers.authentik.tls.domains[0].sans: "*.$DOMAIN"
+      traefik.http.routers.authentik.tls.domains[1].main: "$EXTERNAL_DOMAIN"
+      traefik.http.routers.authentik.tls.domains[1].sans: "*.$EXTERNAL_DOMAIN"
+      traefik.http.routers.authentik.tls.certresolver: "production"
+      traefik.http.services.authentik.loadbalancer.server.port: "9000"
+      traefik.docker.network: "proxy"
+    volumes:
+      - /mnt/authentik/media:/media
+      - /mnt/authentik/custom-templates:/templates
+      - /etc/timezone:/etc/timezone:ro
+    networks:
+      - internal
+      - proxy
+    depends_on:
+      postgresql:
+        condition: service_healthy
+  worker:
+    image: ghcr.io/goauthentik/server:2025.10.3@sha256:d2b66e851246e7299219b72a4ed43630a2c2bac3745eb665834b72963d836e64
+    restart: unless-stopped
+    command: worker
+    container_name: "authentik_worker"
+    environment:
+      AUTHENTIK_POSTGRESQL__HOST: authentik_postgresql
+      AUTHENTIK_POSTGRESQL__USER: ${POSTGRES_USER}
+      AUTHENTIK_POSTGRESQL__NAME: ${POSTGRES_DB}
+      AUTHENTIK_POSTGRESQL__PASSWORD: ${POSTGRES_PASSWORD:?error}
+      AUTHENTIK_ERROR_REPORTING__ENABLED: ${AUTHENTIK_ERROR_REPORTING:-false}
+      AUTHENTIK_SECRET_KEY: ${AUTHENTIK_SECRET_KEY?error}
+      #AUTHENTIK_EMAIL__HOST: ${EMAIL_HOST:?error}
+      #AUTHENTIK_EMAIL__USERNAME: ${EMAIL_USERNAME:?error}
+      #AUTHENTIK_EMAIL__PASSWORD: ${EMAIL_PASSWORD:?error}
+      #AUTHENTIK_EMAIL__FROM: ${EMAIL_FROM:?error}
+      AUTHENTIK_EMAIL__PORT: ${EMAIL_PORT:-25}
+      AUTHENTIK_EMAIL__USE_TLS: ${EMAIL_USE_TLS:-false}
+      AUTHENTIK_EMAIL__USE_SSL: ${EMAIL_USE_SSL:-false}
+      AUTHENTIK_EMAIL__TIMEOUT: ${EMAIL_TIMEOUT:-10}
+    volumes:
+      - /mnt/authentik/media:/media
+      - /mnt/authentik/certs:/certs
+      - /mnt/authentik/custom-templates:/templates
+      - /etc/timezone:/etc/timezone:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - internal
+    depends_on:
+      postgresql:
+        condition: service_healthy
+
+volumes:
+  database:
+
+networks:
+  proxy:
+    external: true
+  internal:

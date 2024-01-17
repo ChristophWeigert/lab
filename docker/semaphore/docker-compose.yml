@@ -1,0 +1,38 @@
+---
+# yamllint disable rule:line-length
+
+volumes:
+  config:
+  data:
+
+networks:
+  proxy:
+    external: true
+
+services:
+  semaphore:
+    container_name: semaphore
+    image: semaphoreui/semaphore:v2.16.47@sha256:71aabf9314d1051ab92025f26809daea72bd90cb78a6a2badfe15400acf11619
+    environment:
+      - SEMAPHORE_DB_DIALECT=bolt
+      - SEMAPHORE_ADMIN_PASSWORD=$ADMINPASSWORD
+      - SEMAPHORE_ADMIN_NAME=$SEMAPHORE_ADMIN_NAME
+      - SEMAPHORE_ADMIN_EMAIL=$SEMAPHORE_ADMIN_EMAIL
+      - SEMAPHORE_ADMIN=$SEMAPHORE_ADMIN_NAME
+      - SEMAPHORE_ACCESS_KEY_ENCRYPTION=$KEY  # add to your access key encryption !
+      - TZ=Europe/Berlin
+    volumes:
+      - config:/etc/semaphore:rw
+      - data:/var/lib/semaphore:rw
+    restart: unless-stopped
+    networks:
+      - proxy
+    labels:
+      traefik.enable: "true"
+      traefik.http.routers.semaphore.entrypoints: "websecure"
+      traefik.http.routers.semaphore.rule: "Host(`semaphoreui.$DOMAIN`)"
+      traefik.http.routers.semaphore.tls: "true"
+      traefik.http.routers.semaphore.tls.certresolver: "production"
+      traefik.http.routers.semaphore.tls.domains[0].main: "$DOMAIN"
+      traefik.http.routers.semaphore.tls.domains[0].sans: "*.$DOMAIN"
+      traefik.docker.network: "proxy"

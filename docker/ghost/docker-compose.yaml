@@ -1,0 +1,41 @@
+---
+volumes:
+  ghost_data:
+    external: true
+
+networks:
+  proxy:
+    external: true
+
+services:
+  ghost:
+    environment:
+      url: "$DOMAIN_GHOST"
+      database__client: "sqlite3"
+      database__connection__filename: "/var/lib/ghost/content/data/ghost.db"
+      mail__transport: "SMTP"
+      mail__options__host: "${MAIL_HOST}"
+      mail__options__port: "${MAIL_PORT}"
+      mail__options__secure: true
+      mail__options__auth__user: "${MAIL_USER}"
+      mail__options__auth__pass: "${MAIL_PASS}"
+      mail__from: "${MAIL_FROM}"
+      NODE_ENV: "production"
+      GHOST_INSTALL: "/var/lib/ghost"
+      GHOST_CONTENT: "/var/lib/ghost/content"
+    image: "ghost:6.10.3@sha256:8984a1bea469dfb641be13a72280c2380420dd2c70ede708e5e18687805aa7e3"
+    networks:
+      - proxy
+    labels:
+      traefik.enable: "true"
+      traefik.http.routers.ghost.entrypoints: "websecure"
+      traefik.http.routers.ghost.rule: "Host(`$HOST`)"
+      traefik.http.routers.ghost.tls: "true"
+      traefik.http.routers.ghost.tls.domains[0].main: "$DOMAIN"
+      traefik.http.routers.ghost.tls.domains[0].sans: "*.$DOMAIN"
+      traefik.http.routers.ghost.tls.certresolver: "production"
+      traefik.docker.network: "proxy"
+    restart: "always"
+    volumes:
+      - "ghost_data:/var/lib/ghost/content"
+    working_dir: "/var/lib/ghost"

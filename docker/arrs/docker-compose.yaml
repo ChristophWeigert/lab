@@ -1,0 +1,320 @@
+---
+networks:
+  proxy:
+    external: true
+  arrs:
+
+volumes:
+  sabnzbd: {}
+  jellyseerr: {}
+  bazarr: {}
+  sonarr: {}
+  readarr: {}
+  lidarr: {}
+  radarr: {}
+  prowlarr: {}
+  mediathekarr: {}
+  configarr: {}
+  huntarr: {}
+  downloads_completed:
+    driver_opts:
+      type: "nfs"
+      o: "nfsvers=4,addr=192.168.1.14,rw"
+      device: ":/mnt/pool-main/media/downloads/completed"
+  downloads_incompleted:
+    driver_opts:
+      type: "nfs"
+      o: "nfsvers=4,addr=192.168.1.14,rw"
+      device: ":/mnt/pool-main/media/downloads/incompleted"
+  media_tv:
+    driver_opts:
+      type: "nfs"
+      o: "nfsvers=4,addr=192.168.1.14,rw"
+      device: ":/mnt/pool-main/media/tv"
+  media_books:
+    driver_opts:
+      type: "nfs"
+      o: "nfsvers=4,addr=192.168.1.14,rw"
+      device: ":/mnt/pool-main/media/books"
+  media_music:
+    driver_opts:
+      type: "nfs"
+      o: "nfsvers=4,addr=192.168.1.14,rw"
+      device: ":/mnt/pool-main/media/music"
+  media_movies:
+    driver_opts:
+      type: "nfs"
+      o: "nfsvers=4,addr=192.168.1.14,rw"
+      device: ":/mnt/pool-main/media/movies"
+
+services:
+  sabnzbd:
+    networks: [ arrs, proxy ]
+    restart: unless-stopped
+    environment:
+      - TZ=Europe/Berlin
+      - PUID=1000
+      - PGID=1000
+    container_name: sabnzbd
+    image: ghcr.io/linuxserver/sabnzbd:4.5.5@sha256:ed10a7e9fc019aded46f1591f236e9be6d75c99e7017b897b502667cd65afc4c
+    volumes:
+      - sabnzbd:/config
+      - downloads_completed:/downloads # completed directory for downloads. this contains the category directories
+      - downloads_incompleted:/incomplete-downloads # "temp" directory for downloads
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.sabnzbd.entryPoints=websecure"
+      - "traefik.http.routers.sabnzbd.tls.certResolver=production"
+      - "traefik.http.routers.sabnzbd.rule=Host(`sabnzbd.$DOMAIN`)"
+      - "traefik.http.routers.sabnzbd.tls.domains[0].main=$DOMAIN"
+      - "traefik.http.routers.sabnzbd.tls.domains[0].sans=*.$DOMAIN"
+      - "traefik.http.routers.sabnzbd.tls=true"
+      - "traefik.docker.network=proxy"
+
+  jellyseerr:
+    networks: [ arrs, proxy ]
+    restart: unless-stopped
+    image: ghcr.io/fallenbagel/jellyseerr:2.7.3@sha256:9cc9e9ee6cd5cf5a23feb45c37742ba34cfd6314d81d259cddb373a97ac92cdd
+    container_name: jellyseerr
+    environment:
+      - LOG_LEVEL=debug
+      - TZ=Europe/Berlin
+      - PUID=1000
+      - PGID=1000
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=proxy"
+      - "traefik.http.routers.jellyseerr.entryPoints=websecure"
+      - "traefik.http.routers.jellyseerr.tls.certResolver=production"
+      - "traefik.http.routers.jellyseerr.rule=Host(`request.$DOMAIN`)"
+      - "traefik.http.routers.jellyseerr.tls.domains[0].main=$DOMAIN"
+      - "traefik.http.routers.jellyseerr.tls.domains[0].sans=*.$DOMAIN"
+      - "traefik.http.routers.jellyseerr.tls=true"
+    volumes:
+      - jellyseerr:/app/config
+
+  sonarr:
+    networks: [ arrs, proxy ]
+    restart: unless-stopped
+    image: ghcr.io/linuxserver/sonarr:4.0.16@sha256:60e5edcac39172294ad22d55d1b08c2c0a9fe658cad2f2c4d742ae017d7874de
+    container_name: sonarr
+    environment:
+      - DOCKER_MODS=ghcr.io/gilbn/theme.park:sonarr
+      - TP_THEME=organizr
+      - TZ=Europe/Berlin
+      - PUID=1000
+      - PGID=1000
+    volumes:
+      - sonarr:/config
+      - media_tv:/tv
+      - downloads_completed:/downloads
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=proxy"
+      - "traefik.http.routers.sonarr.entryPoints=websecure"
+      - "traefik.http.routers.sonarr.tls.certResolver=production"
+      - "traefik.http.routers.sonarr.rule=Host(`sonarr.$DOMAIN`)"
+      - "traefik.http.routers.sonarr.tls.domains[0].main=$DOMAIN"
+      - "traefik.http.routers.sonarr.tls.domains[0].sans=*.$DOMAIN"
+      - "traefik.http.services.sonarr.loadbalancer.server.port=8989"
+      - "traefik.port=8989"
+
+  bazarr:
+    networks: [ arrs, proxy ]
+    restart: unless-stopped
+    image: ghcr.io/linuxserver/bazarr:1.5.3@sha256:648f694532a3a53d8cf78bc888919ef538659bad41af4c680b0427ad1047d171
+    container_name: bazarr
+    environment:
+      - TZ=Europe/Berlin
+      - PUID=1000
+      - PGID=1000
+    volumes:
+      - bazarr:/config
+      - media_tv:/media/tv
+      - media_movies:/media/movies
+      - media_books:/media/books
+      - media_music:/media/music
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=proxy"
+      - "traefik.http.routers.bazarr.entryPoints=websecure"
+      - "traefik.http.routers.bazarr.tls.certResolver=production"
+      - "traefik.http.routers.bazarr.rule=Host(`bazarr.$DOMAIN`)"
+      - "traefik.http.routers.bazarr.tls.domains[0].main=$DOMAIN"
+      - "traefik.http.routers.bazarr.tls.domains[0].sans=*.$DOMAIN"
+      - "traefik.http.services.bazarr.loadbalancer.server.port=6767"
+      - "traefik.port=6767"
+  
+  readarr:
+    networks: [ arrs, proxy ]
+    restart: unless-stopped
+    image: ghcr.io/linuxserver/readarr:0.4.19-nightly@sha256:4f291128d1a5538be73c2a30473d7cdd0820e223dc8b8533b0cbc5659000dcbe
+    container_name: readarr
+    environment:
+      - TZ=Europe/Berlin
+      - PUID=1000
+      - PGID=1000
+    volumes:
+      - readarr:/config
+      - media_books:/books
+      - downloads_completed:/downloads
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=proxy"
+      - "traefik.http.routers.readarr.entryPoints=websecure"
+      - "traefik.http.routers.readarr.tls.certResolver=production"
+      - "traefik.http.routers.readarr.rule=Host(`readarr.$DOMAIN`)"
+      - "traefik.http.routers.readarr.tls.domains[0].main=$DOMAIN"
+      - "traefik.http.routers.readarr.tls.domains[0].sans=*.$DOMAIN"
+      - "traefik.http.services.readarr.loadbalancer.server.port=8787"
+      - "traefik.port=8787"
+  
+  lidarr:
+    networks: [ arrs, proxy ]
+    restart: unless-stopped
+    image: blampe/lidarr:latest@sha256:64082fc1e7e90a27d2c0354955c00faccf4d58f3667a9829822a5f47dea80a2a
+    container_name: lidarr
+    environment:
+      - TZ=Europe/Berlin
+      - PUID=1000
+      - PGID=1000
+    volumes:
+      - lidarr:/config
+      - media_music:/music
+      - downloads_completed:/downloads
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=proxy"
+      - "traefik.http.routers.lidarr.entryPoints=websecure"
+      - "traefik.http.routers.lidarr.tls.certResolver=production"
+      - "traefik.http.routers.lidarr.rule=Host(`lidarr.$DOMAIN`)"
+      - "traefik.http.routers.lidarr.tls.domains[0].main=$DOMAIN"
+      - "traefik.http.routers.lidarr.tls.domains[0].sans=*.$DOMAIN"
+      - "traefik.http.services.lidarr.loadbalancer.server.port=8686"
+      - "traefik.port=8686"
+  
+  radarr:
+    networks: [ arrs, proxy ]
+    restart: unless-stopped
+    image: ghcr.io/linuxserver/radarr:6.0.4@sha256:6c0948b42c149e36bb3dbc0b64d36c77b2d3c9dccf1b424c4f72af1e57ba0c21
+    container_name: radarr
+    environment:
+      - TZ=Europe/Berlin
+      - PUID=1000
+      - PGID=1000
+    volumes:
+      - radarr:/config
+      - media_movies:/movies
+      - downloads_completed:/downloads
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=proxy"
+      - "traefik.http.routers.radarr.entryPoints=websecure"
+      - "traefik.http.routers.radarr.tls.certResolver=production"
+      - "traefik.http.routers.radarr.rule=Host(`radarr.$DOMAIN`)"
+      - "traefik.http.routers.radarr.tls.domains[0].main=$DOMAIN"
+      - "traefik.http.routers.radarr.tls.domains[0].sans=*.$DOMAIN"
+      - "traefik.http.services.radarr.loadbalancer.server.port=7878"
+  
+  prowlarr:
+    networks: [ arrs, proxy ]
+    restart: unless-stopped
+    image: ghcr.io/linuxserver/prowlarr:2.3.0@sha256:67a8aaedcfd6989f3030b937a6a07007310b1dfc7ee8df16d2cbfa48d1c1158c
+    container_name: prowlarr
+    environment:
+      - TZ=Europe/Berlin
+      - PUID=1000
+      - PGID=1000
+    volumes:
+      - prowlarr:/config
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=proxy"
+      - "traefik.http.routers.prowlarr.entryPoints=websecure"
+      - "traefik.http.routers.prowlarr.tls.certResolver=production"
+      - "traefik.http.routers.prowlarr.rule=Host(`prowlarr.$DOMAIN`)"
+      - "traefik.http.routers.prowlarr.tls.domains[0].main=$DOMAIN"
+      - "traefik.http.routers.prowlarr.tls.domains[0].sans=*.$DOMAIN"
+      - "traefik.http.services.prowlarr.loadbalancer.server.port=9696"
+
+  umlautadaptarr:
+    networks: [ arrs, proxy ]
+    restart: unless-stopped
+    container_name: umlautadaptarr
+    ports:
+      - "5006:5006"
+    image: pcjones/umlautadaptarr:0.7.5@sha256:2c6689d49afe51fcaa5e8a27e139855e0c8782e1e42ec595d8694b74094f991f
+    environment:
+      - TZ=Europe/Berlin
+      - PUID=1000
+      - PGID=1000
+      - SONARR__ENABLED=true
+      - SONARR__HOST=https://sonarr.$DOMAIN
+      - SONARR__APIKEY=$SONARR_APIKEY
+      - RADARR__ENABLED=true
+      - RADARR__HOST=https://radarr.$DOMAIN
+      - RADARR__APIKEY=$RADARR_APIKEY
+      - READARR__ENABLED=true
+      - READARR__HOST=https://readarr.$DOMAIN
+      - READARR__APIKEY=$READARR_APIKEY
+      - LIDARR__ENABLED=true
+      - LIDARR__HOST=https://lidarr.$DOMAIN
+      - LIDARR__APIKEY=$LIDARR_APIKEY
+
+  mediathekarr:
+    networks: [ arrs, proxy ]
+    restart: unless-stopped
+    image: pcjones/mediathekarr:beta@sha256:7a3ad22f504134d694a41c2e8f81376377253c0e37bdbedd6f9315c47870d8b7
+    container_name: mediathekarr
+    environment:
+      - TZ=Europe/Berlin
+      - PUID=1000
+      - PGID=1000
+      - DOWNLOAD_INCOMPLETE_PATH=/incomplete-downloads
+      - DOWNLOAD_COMPLETE_PATH=/downloads
+      - MEDIATHEKARR_API_BASE_URL=https://mediathekarr.pcjones.de/api/v1
+    volumes:
+      - mediathekarr:/app/config
+      - downloads_completed:/downloads
+      - downloads_incompleted:/incomplete-downloads
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=proxy"
+      - "traefik.http.routers.mediathekarr.entryPoints=websecure"
+      - "traefik.http.routers.mediathekarr.tls.certResolver=production"
+      - "traefik.http.routers.mediathekarr.rule=Host(`mediathekarr.$DOMAIN`)"
+      - "traefik.http.routers.mediathekarr.tls.domains[0].main=$DOMAIN"
+      - "traefik.http.routers.mediathekarr.tls.domains[0].sans=*.$DOMAIN"
+      - "traefik.http.services.mediathekarr.loadbalancer.server.port=5007"
+
+  huntarr:
+    networks: [ arrs, proxy ]
+    image: ghcr.io/plexguide/huntarr:8.2.10@sha256:b5a47c2b43806165f433d308d69a21e74a687ce59f4fcccb612d6a7acb3af6d7
+    container_name: huntarr
+    restart: unless-stopped
+    volumes:
+      - huntarr:/config
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=proxy"
+      - "traefik.http.routers.huntarr.entryPoints=websecure"
+      - "traefik.http.routers.huntarr.tls.certResolver=production"
+      - "traefik.http.routers.huntarr.rule=Host(`huntarr.$DOMAIN`)"
+      - "traefik.http.routers.huntarr.tls.domains[0].main=$DOMAIN"
+      - "traefik.http.routers.huntarr.tls.domains[0].sans=*.$DOMAIN"
+      - "traefik.http.services.huntarr.loadbalancer.server.port=9705"
+    environment:
+      - TZ=Europe/Berlin
+
+  configarr:
+    networks: [ arrs, proxy ]
+    restart: unless-stopped
+    image: ghcr.io/raydak-labs/configarr:1.18.0@sha256:98d1fb3e87e01c9f56a0dd085d54e2910b77210eb3178a996648578e55b3015b
+    container_name: configarr
+    user: 1000:1000
+    volumes:
+      - configarr:/app
+    environment:
+      - TZ=Europe/Berlin
+      - PUID=1000
+      - PGID=1000

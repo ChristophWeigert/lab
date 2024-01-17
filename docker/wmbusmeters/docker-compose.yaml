@@ -1,0 +1,20 @@
+---
+volumes:
+  wmbusmeters:
+
+services:
+  wmbusmeters:
+    image: wmbusmeters/wmbusmeters:latest@sha256:ff22aab6b252e232252a4f02ae8cc9e65bf751cc3025cf66e5a0fa7e85b3c874
+    container_name: wmbusmeters
+    privileged: true
+    restart: always
+    volumes:
+      - wmbusmeters:/wmbusmeters_data
+      - /etc/localtime:/etc/localtime:ro
+      - /dev/:/dev/
+    environment:
+      - TZ=Europe/Berlin
+      - MQTT_PORT=$MQTT_PORT
+      - MQTT_PASSWORD=$MQTT_PASSWORD
+      - MQTT_USER=$MQTT_USER
+      - MQTT_HOST=$MQTT_HOST

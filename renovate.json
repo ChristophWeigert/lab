@@ -1,20 +1,38 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
-    "config:base"
+    "config:best-practices",
+    ":dependencyDashboard",
+    ":enableVulnerabilityAlertsWithLabel('security')",
+    ":preserveSemverRanges",
+    ":rebaseStalePrs",
+    "group:recommended",
+    ":timezone(Europe/Paris)",
+    ":label(renovate)",
+    ":semanticPrefixFix",
+    ":separateMultipleMajorReleases"
+    //":automergeBranch",
+    //":automergeStableNonMajor",
+    //":automergeDigest",
+    //":skipStatusChecks"
   ],
+  "dependencyDashboardTitle": "🤖 Renovate Dashboard",
+  "commitMessageTopic": "{{depName}}",
+  "commitMessageExtra": "to {{newVersion}}",
+  "commitMessageSuffix": "",
+  "ignorePaths": [],
   "packageRules": [
     {
-      "matchUpdateTypes": ["minor", "patch", "pin", "digest"],
-      "matchCurrentVersion": "!/^0/",
-      "automergeType": "branch",
-      "automerge": true
+      "matchDatasources": ["helm"],
+      "commitMessageTopic": "chart {{depName}}"
     },
     {
-      "matchDepTypes": ["devDependencies"],
-      "automergeType": "branch",
-      "automerge": true
+      "matchDatasources": ["docker"],
+      "commitMessageTopic": "image {{depName}}"
+    },
+    {
+      "matchPackageNames": ["/longhorn/", "/crocodilestick\\/calibre-web-automated/"],
+      "enabled": false
     }
-  ],
-  "platformAutomerge": true
+  ]
 }

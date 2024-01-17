@@ -1,0 +1,33 @@
+---
+networks:
+  proxy:
+    external: true
+
+volumes:
+  homepage:
+    driver_opts:
+      type: "nfs"
+      o: "nfsvers=4,addr=192.168.1.14,rw"
+      device: ":/mnt/pool-main/docker_volumes/gethomepage"
+
+services:
+  homepage:
+    image: ghcr.io/gethomepage/homepage:v1.8.0@sha256:7dc099d5c6ec7fc945d858218565925b01ff8a60bcbfda990fc680a8b5cd0b6e
+    container_name: homepage
+    volumes:
+      - homepage:/app/config
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    restart: unless-stopped
+    networks:
+      - proxy
+    environment:
+      HOMEPAGE_ALLOWED_HOSTS: $HOMEPAGE_ALLOWED_HOSTS
+    labels:
+      traefik.enable: "true"
+      traefik.http.routers.homepage.entrypoints: "websecure"
+      traefik.http.routers.homepage.rule: "Host(`home.$DOMAIN`)"
+      traefik.http.routers.homepage.tls.domains[0].main: "$DOMAIN"
+      traefik.http.routers.homepage.tls.domains[0].sans: "*.$DOMAIN"
+      traefik.http.routers.homepage.tls: "true"
+      traefik.http.routers.homepage.tls.certresolver: "production"
+      traefik.docker.network: "proxy"

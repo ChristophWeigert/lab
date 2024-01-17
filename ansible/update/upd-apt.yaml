@@ -1,0 +1,15 @@
+---
+- name: Update and upgrade apt packages
+  hosts: all
+
+  tasks:
+    - name: Upgrade packages with apt
+      when: ansible_pkg_mgr == 'apt'
+      ansible.builtin.apt:
+        upgrade: dist
+        autoclean: true
+        autoremove: true
+        clean: true
+        purge: true
+        allow_change_held_packages: true
+        update_cache: true
