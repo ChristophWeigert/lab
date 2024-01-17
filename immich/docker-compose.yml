@@ -8,10 +8,10 @@ networks:
 services:
   immich-server:
     container_name: immich_server
-    image: ghcr.io/immich-app/immich-server:v1.92.1
+    image: ghcr.io/immich-app/immich-server:v1.95.1
     command: [ "start.sh", "immich" ]
     volumes:
-      - ${UPLOAD_LOCATION}:/usr/src/app/upload
+      - immich_appdata:/usr/src/app/upload
       - /etc/localtime:/etc/localtime:ro
     networks:
       - immich
@@ -42,10 +42,10 @@ services:
 
   immich-microservices:
     container_name: immich_microservices
-    image: ghcr.io/immich-app/immich-server:v1.92.1
+    image: ghcr.io/immich-app/immich-server:v1.95.1
     command: [ "start.sh", "microservices" ]
     volumes:
-      - ${UPLOAD_LOCATION}:/usr/src/app/upload
+      - immich_appdata:/usr/src/app/upload
       - /etc/localtime:/etc/localtime:ro
     networks:
       - immich 
@@ -58,9 +58,19 @@ services:
 
   immich-machine-learning:
     container_name: immich_machine_learning
-    image: ghcr.io/immich-app/immich-machine-learning:v1.92.1
+    image: ghcr.io/immich-app/immich-machine-learning:v1.95.1-cuda
     volumes:
       - model-cache:/cache
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities:
+                - gpu
+                - compute
+                - video
     networks:
       - immich
     restart: always
@@ -69,7 +79,7 @@ services:
 
   redis:
     container_name: immich_redis
-    image: redis:7.2-alpine@sha256:995e6eaab954e92cadf1a0bb1eab71ae3baae8e02ea4354fd8aa136a61e42247
+    image: redis:7.2-alpine@sha256:1b503bb77079ba644371969e06e1a6a1670bb34c2251107c0fc3a21ef9fdaeca
     networks:
       - immich
     restart: always
@@ -78,7 +88,7 @@ services:
 
   database:
     container_name: immich_postgres
-    image: tensorchord/pgvecto-rs:pg14-v0.1.11
+    image: tensorchord/pgvecto-rs:pg14-v0.2.0@sha256:90724186f0a3517cf6914295b5ab410db9ce23190a2d9d0b9dd6463e3fa298f0
     networks:
       - immich
     environment:
@@ -92,3 +102,5 @@ services:
 volumes:
   pgdata:
   model-cache:
+  immich_appdata:
+    external: true
