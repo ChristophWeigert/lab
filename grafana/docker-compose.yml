@@ -51,7 +51,7 @@ services:
       - INFLUXDB_ADMIN_PASSWORD=$INFLUXDB_ADMIN_PASSWORD
 
   telegraf:
-    image: telegraf:1.29.3
+    image: telegraf:1.29.4
     restart: unless-stopped
     user: telegraf:999 # see: https://www.influxdata.com/blog/docker-run-telegraf-as-non-root/
     container_name: telegraf

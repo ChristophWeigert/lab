@@ -68,7 +68,7 @@ services:
       - "--chromium-allow-list=file:///tmp/.*"
 
   tika:
-    image: ghcr.io/paperless-ngx/tika:2.9.0-full
+    image: ghcr.io/paperless-ngx/tika:2.9.1-full
     restart: unless-stopped
 
 volumes:

@@ -8,10 +8,10 @@ networks:
 services:
   immich-server:
     container_name: immich_server
-    image: ghcr.io/immich-app/immich-server:v1.93.3
+    image: ghcr.io/immich-app/immich-server:v1.94.1
     command: [ "start.sh", "immich" ]
     volumes:
-      - ${UPLOAD_LOCATION}:/usr/src/app/upload
+      - immich_appdata:/usr/src/app/upload
       - /etc/localtime:/etc/localtime:ro
     networks:
       - immich
@@ -42,10 +42,10 @@ services:
 
   immich-microservices:
     container_name: immich_microservices
-    image: ghcr.io/immich-app/immich-server:v1.93.3
+    image: ghcr.io/immich-app/immich-server:v1.94.1
     command: [ "start.sh", "microservices" ]
     volumes:
-      - ${UPLOAD_LOCATION}:/usr/src/app/upload
+      - immich_appdata:/usr/src/app/upload
       - /etc/localtime:/etc/localtime:ro
     networks:
       - immich 
@@ -58,9 +58,19 @@ services:
 
   immich-machine-learning:
     container_name: immich_machine_learning
-    image: ghcr.io/immich-app/immich-machine-learning:v1.93.3
+    image: ghcr.io/immich-app/immich-machine-learning:v1.94.1-cuda
     volumes:
       - model-cache:/cache
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities:
+                - gpu
+                - compute
+                - video
     networks:
       - immich
     restart: always
@@ -92,3 +102,5 @@ services:
 volumes:
   pgdata:
   model-cache:
+  immich_appdata:
+    external: true
