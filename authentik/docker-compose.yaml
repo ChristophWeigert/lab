@@ -1,0 +1,127 @@
+---
+services:
+  postgresql:
+    image: docker.io/library/postgres:16.3
+    container_name: "authentik_postgresql"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}"]
+      start_period: 20s
+      interval: 30s
+      retries: 5
+      timeout: 5s
+    volumes:
+      - database:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?error}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_DB: ${POSTGRES_DB}
+      TZ: ${TZ:-UTC}
+    networks:
+      - internal
+  redis:
+    image: docker.io/library/redis:7.2.5
+    command: --save 60 1 --loglevel warning
+    restart: unless-stopped
+    container_name: "authentik_redis"
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli ping | grep PONG"]
+      start_period: 20s
+      interval: 30s
+      retries: 5
+      timeout: 3s
+    networks:
+      - internal
+    volumes:
+      - redis:/data
+  server:
+    image: ghcr.io/goauthentik/server:2024.6.1
+    restart: unless-stopped
+    command: server
+    container_name: "authentik_server"
+    environment:
+      AUTHENTIK_REDIS__HOST: redis
+      AUTHENTIK_POSTGRESQL__HOST: authentik_postgresql
+      AUTHENTIK_POSTGRESQL__USER: ${POSTGRES_USER}
+      AUTHENTIK_POSTGRESQL__NAME: ${POSTGRES_DB}
+      AUTHENTIK_POSTGRESQL__PASSWORD: ${POSTGRES_PASSWORD:?error}
+      AUTHENTIK_ERROR_REPORTING__ENABLED: ${AUTHENTIK_ERROR_REPORTING:-false}
+      AUTHENTIK_SECRET_KEY: ${AUTHENTIK_SECRET_KEY?error}
+      # AUTHENTIK_EMAIL__HOST: ${EMAIL_HOST:?error}
+      # AUTHENTIK_EMAIL__USERNAME: ${EMAIL_USERNAME:?error}
+      # AUTHENTIK_EMAIL__PASSWORD: ${EMAIL_PASSWORD:?error}
+      # AUTHENTIK_EMAIL__FROM: ${EMAIL_FROM:?error}
+      AUTHENTIK_EMAIL__PORT: ${EMAIL_PORT:-25}
+      AUTHENTIK_EMAIL__USE_TLS: ${EMAIL_USE_TLS:-false}
+      AUTHENTIK_EMAIL__USE_SSL: ${EMAIL_USE_SSL:-false}
+      AUTHENTIK_EMAIL__TIMEOUT: ${EMAIL_TIMEOUT:-10}
+    labels:
+      traefik.enable: "true"
+      traefik.http.routers.authentik.entrypoints: "websecure"
+      traefik.http.routers.authentik.rule: "Host(`$DOMAIN`) || Host(`$EXTERNAL_DOMAIN`)"
+      traefik.http.routers.authentik.tls: "true"
+      traefik.http.routers.authentik.tls.certresolver: "production"
+      traefik.http.services.authentik.loadbalancer.server.port: "9000"
+      traefik.docker.network: "proxy"
+      #      homepage.name: immich
+      #      homepage.group: Services
+      #      homepage.icon: immich
+      #      homepage.href: https://$DOMAIN
+      #      homepage.description: immich
+      #      homepage.widget.type: immich
+      #      homepage.widget.url: https://$DOMAIN
+      #      homepage.widget.key: $HOMEPAGE_KEY
+    volumes:
+      - /mnt/authentik/media:/media
+      - /mnt/authentik/custom-templates:/templates
+      - /mnt/authentik/custom.css:/web/dist/custom.css:ro
+      - /etc/timezone:/etc/timezone:ro
+    networks:
+      - internal
+      - proxy
+    depends_on:
+      - postgresql
+      - redis
+  worker:
+    image: ghcr.io/goauthentik/server:2024.6.1
+    restart: unless-stopped
+    command: worker
+    container_name: "authentik_worker"
+    environment:
+      AUTHENTIK_REDIS__HOST: redis
+      AUTHENTIK_POSTGRESQL__HOST: authentik_postgresql
+      AUTHENTIK_POSTGRESQL__USER: ${POSTGRES_USER}
+      AUTHENTIK_POSTGRESQL__NAME: ${POSTGRES_DB}
+      AUTHENTIK_POSTGRESQL__PASSWORD: ${POSTGRES_PASSWORD:?error}
+      AUTHENTIK_ERROR_REPORTING__ENABLED: ${AUTHENTIK_ERROR_REPORTING:-false}
+      AUTHENTIK_SECRET_KEY: ${AUTHENTIK_SECRET_KEY?error}
+      #AUTHENTIK_EMAIL__HOST: ${EMAIL_HOST:?error}
+      #AUTHENTIK_EMAIL__USERNAME: ${EMAIL_USERNAME:?error}
+      #AUTHENTIK_EMAIL__PASSWORD: ${EMAIL_PASSWORD:?error}
+      #AUTHENTIK_EMAIL__FROM: ${EMAIL_FROM:?error}
+      AUTHENTIK_EMAIL__PORT: ${EMAIL_PORT:-25}
+      AUTHENTIK_EMAIL__USE_TLS: ${EMAIL_USE_TLS:-false}
+      AUTHENTIK_EMAIL__USE_SSL: ${EMAIL_USE_SSL:-false}
+      AUTHENTIK_EMAIL__TIMEOUT: ${EMAIL_TIMEOUT:-10}
+    volumes:
+      - /mnt/authentik/media:/media
+      - /mnt/authentik/certs:/certs
+      - /mnt/authentik/custom-templates:/templates
+      - /mnt/authentik/custom.css:/web/dist/custom.css:ro
+      - /etc/timezone:/etc/timezone:ro
+    networks:
+      - internal
+    depends_on:
+      - postgresql
+      - redis
+
+volumes:
+  database:
+    driver: local
+  redis:
+    driver: local
+
+networks:
+  proxy:
+    external: true
+  internal:

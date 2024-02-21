@@ -1,4 +1,5 @@
-version: "3.8"
+---
+# yamllint disable rule:line-length
 
 networks:
   proxy:
@@ -8,8 +9,7 @@ networks:
 services:
   immich-server:
     container_name: immich_server
-    image: ghcr.io/immich-app/immich-server:v1.95.1
-    command: [ "start.sh", "immich" ]
+    image: ghcr.io/immich-app/immich-server:v1.110.0
     volumes:
       - immich_appdata:/usr/src/app/upload
       - /etc/localtime:/etc/localtime:ro
@@ -27,7 +27,7 @@ services:
     labels:
       traefik.enable: "true"
       traefik.http.routers.immich.entrypoints: "websecure"
-      traefik.http.routers.immich.rule: "Host(`$DOMAIN`)"
+      traefik.http.routers.immich.rule: "Host(`$DOMAIN`) || Host(`$EXTERNAL_DOMAIN`)"
       traefik.http.routers.immich.tls: "true"
       traefik.http.routers.immich.tls.certresolver: "production"
       traefik.docker.network: "proxy"
@@ -40,37 +40,11 @@ services:
       homepage.widget.url: https://$DOMAIN
       homepage.widget.key: $HOMEPAGE_KEY
 
-  immich-microservices:
-    container_name: immich_microservices
-    image: ghcr.io/immich-app/immich-server:v1.95.1
-    command: [ "start.sh", "microservices" ]
-    volumes:
-      - immich_appdata:/usr/src/app/upload
-      - /etc/localtime:/etc/localtime:ro
-    networks:
-      - immich 
-    depends_on:
-      - redis
-      - database
-    env_file:
-      - stack.env
-    restart: always
-
   immich-machine-learning:
     container_name: immich_machine_learning
-    image: ghcr.io/immich-app/immich-machine-learning:v1.95.1-cuda
+    image: ghcr.io/immich-app/immich-machine-learning:v1.110.0
     volumes:
       - model-cache:/cache
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - driver: nvidia
-              count: 1
-              capabilities:
-                - gpu
-                - compute
-                - video
     networks:
       - immich
     restart: always
@@ -79,7 +53,7 @@ services:
 
   redis:
     container_name: immich_redis
-    image: redis:7.2-alpine@sha256:1b503bb77079ba644371969e06e1a6a1670bb34c2251107c0fc3a21ef9fdaeca
+    image: redis:7.2-alpine@sha256:0bc09d9f486508aa42ecc2f18012bb1e3a1b2744ef3a6ad30942fa12579f0b03
     networks:
       - immich
     restart: always

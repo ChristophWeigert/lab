@@ -1,5 +1,4 @@
-version: "3.8"
-
+---
 volumes:
   teamspeak_data:
     external: true
@@ -11,7 +10,7 @@ services:
     environment:
       - "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
       - "TIME_ZONE=America/Los_Angeles"
-      - "DIST_UPDATE=0"
+      - "DIST_UPDATE=1"
       - "TS_UPDATE=1"
       - "TS_UPDATE_BACKUP=1"
       - "UID=1000"
@@ -24,6 +23,7 @@ services:
       - "EMULATOR=qemu"
       - "TS3SERVER_LICENSE=accept"
       - "LANG=en_US.UTF-8"
+      - "serveradmin_password=$serveradmin_password"
     image: "ertagh/teamspeak3-server:latest-predownloaded"
     ports:
       - "10011:10011/tcp"

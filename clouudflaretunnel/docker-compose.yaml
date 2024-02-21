@@ -1,0 +1,15 @@
+---
+networks:
+  proxy:
+    external: true
+
+services:
+  clouudflaretunnel:
+    container_name: clouudflaretunnel
+    image: cloudflare/cloudflared:2024.6.1
+    restart: unless-stopped
+    environment:
+      - TUNNEL_TOKEN=$TUNNEL_TOKEN
+    command: tunnel --no-autoupdate run
+    networks:
+      - proxy

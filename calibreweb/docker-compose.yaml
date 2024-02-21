@@ -1,5 +1,4 @@
-version: "3.8"
-
+---
 volumes:
   calibre-web_data:
     external: true
@@ -12,7 +11,7 @@ services:
   calibre-web:
     container_name: "calibre-web"
     hostname: "calibreweb"
-    image: "linuxserver/calibre-web:0.6.21"
+    image: "linuxserver/calibre-web:0.6.22"
     labels:
       traefik.enable: "true"
       traefik.http.routers.calibre-web.entrypoints: "websecure"

@@ -1,4 +1,4 @@
-﻿version: "3.8"
+---
 services:
   broker:
     image: docker.io/library/redis:7.2
@@ -9,8 +9,9 @@ services:
       - redisdata:/data
 
   webserver:
-    image: ghcr.io/paperless-ngx/paperless-ngx:2.5.3
+    image: ghcr.io/paperless-ngx/paperless-ngx:2.11.2
     restart: unless-stopped
+    container_name: "paperless-ngx_webserver"
     depends_on:
       - broker
       - gotenberg
@@ -38,10 +39,18 @@ services:
       PAPERLESS_SECRET_KEY: $PAPERLESS_SECRET_KEY
       PAPERLESS_TIME_ZONE: Europe/Berlin
       PAPERLESS_OCR_LANGUAGE: deu
+      PAPERLESS_OCR_ROTATE_PAGES: 2
+      PAPERLESS_CONSUMER_ENABLE_ASN_BARCODE: true
+      PAPERLESS_APPS: allauth.socialaccount.providers.openid_connect
+      PAPERLESS_SOCIALACCOUNT_PROVIDERS: $PAPERLESS_SOCIALACCOUNT_PROVIDERS
+      PAPERLESS_ALLOWED_HOSTS: $PAPERLESS_ALLOWED_HOSTS
+      PAPERLESS_CSRF_TRUSTED_ORIGINS: $PAPERLESS_CSRF_TRUSTED_ORIGINS
+      PAPERLESS_FILENAME_FORMAT_REMOVE_NONE: $PAPERLESS_FILENAME_FORMAT_REMOVE_NONE
+      PAPERLESS_ENABLE_FLOWER: true
     labels:
       traefik.enable: "true"
       traefik.http.routers.paperless-ngx.entrypoints: "websecure"
-      traefik.http.routers.paperless-ngx.rule: "Host(`$DOMAIN`)"
+      traefik.http.routers.paperless-ngx.rule: "Host(`$DOMAIN`) || Host(`$EXTERNAL_DOMAIN`)"
       traefik.http.routers.paperless-ngx.tls: "true"
       traefik.http.routers.paperless-ngx.tls.certresolver: "production"
       traefik.docker.network: "proxy"
