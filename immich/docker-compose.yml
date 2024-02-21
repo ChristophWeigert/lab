@@ -8,7 +8,7 @@ networks:
 services:
   immich-server:
     container_name: immich_server
-    image: ghcr.io/immich-app/immich-server:v1.95.1
+    image: ghcr.io/immich-app/immich-server:v1.99.0
     command: [ "start.sh", "immich" ]
     volumes:
       - immich_appdata:/usr/src/app/upload
@@ -27,7 +27,7 @@ services:
     labels:
       traefik.enable: "true"
       traefik.http.routers.immich.entrypoints: "websecure"
-      traefik.http.routers.immich.rule: "Host(`$DOMAIN`)"
+      traefik.http.routers.immich.rule: "Host(`$DOMAIN`) || Host(`$EXTERNAL_DOMAIN`)"
       traefik.http.routers.immich.tls: "true"
       traefik.http.routers.immich.tls.certresolver: "production"
       traefik.docker.network: "proxy"
@@ -42,7 +42,7 @@ services:
 
   immich-microservices:
     container_name: immich_microservices
-    image: ghcr.io/immich-app/immich-server:v1.95.1
+    image: ghcr.io/immich-app/immich-server:v1.99.0
     command: [ "start.sh", "microservices" ]
     volumes:
       - immich_appdata:/usr/src/app/upload
@@ -58,19 +58,9 @@ services:
 
   immich-machine-learning:
     container_name: immich_machine_learning
-    image: ghcr.io/immich-app/immich-machine-learning:v1.95.1-cuda
+    image: ghcr.io/immich-app/immich-machine-learning:v1.99.0
     volumes:
       - model-cache:/cache
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - driver: nvidia
-              count: 1
-              capabilities:
-                - gpu
-                - compute
-                - video
     networks:
       - immich
     restart: always
@@ -79,7 +69,7 @@ services:
 
   redis:
     container_name: immich_redis
-    image: redis:7.2-alpine@sha256:1b503bb77079ba644371969e06e1a6a1670bb34c2251107c0fc3a21ef9fdaeca
+    image: redis:7.2-alpine@sha256:7635b0bfdd7dd8552b4b31d6541fef07b734614045b45a52fd5cc27c9dada9e2
     networks:
       - immich
     restart: always

@@ -9,7 +9,7 @@ services:
       - redisdata:/data
 
   webserver:
-    image: ghcr.io/paperless-ngx/paperless-ngx:2.5.3
+    image: ghcr.io/paperless-ngx/paperless-ngx:2.6.3
     restart: unless-stopped
     depends_on:
       - broker
@@ -41,7 +41,7 @@ services:
     labels:
       traefik.enable: "true"
       traefik.http.routers.paperless-ngx.entrypoints: "websecure"
-      traefik.http.routers.paperless-ngx.rule: "Host(`$DOMAIN`)"
+      traefik.http.routers.paperless-ngx.rule: "Host(`$DOMAIN`) || Host(`$EXTERNAL_DOMAIN`)"
       traefik.http.routers.paperless-ngx.tls: "true"
       traefik.http.routers.paperless-ngx.tls.certresolver: "production"
       traefik.docker.network: "proxy"
