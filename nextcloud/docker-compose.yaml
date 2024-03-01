@@ -20,7 +20,7 @@ services:
     labels:
       traefik.enable: "true"
       traefik.http.routers.nextcloud.entrypoints: "websecure"
-      traefik.http.routers.nextcloud.rule: "Host(`$DOMAIN`)"
+      traefik.http.routers.nextcloud.rule: "Host(`$DOMAIN`) || Host(`$EXTERNAL_DOMAIN`)"
       traefik.http.routers.nextcloud.tls: "true"
       traefik.http.routers.nextcloud.tls.certresolver: "production"
       traefik.docker.network: "proxy"
