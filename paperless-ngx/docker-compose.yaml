@@ -1,4 +1,4 @@
-﻿version: "3.8"
+version: "3.8"
 services:
   broker:
     image: docker.io/library/redis:7.2
@@ -34,7 +34,7 @@ services:
       PAPERLESS_TIKA_GOTENBERG_ENDPOINT: http://gotenberg:3000
       PAPERLESS_TIKA_ENDPOINT: http://tika:9998
       PAPERLESS_OCR_LANGUAGES: deu
-      PAPERLESS_URL: https://$DOMAIN
+      PAPERLESS_URL: https://$EXTERNAL_DOMAIN
       PAPERLESS_SECRET_KEY: $PAPERLESS_SECRET_KEY
       PAPERLESS_TIME_ZONE: Europe/Berlin
       PAPERLESS_OCR_LANGUAGE: deu
