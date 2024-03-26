@@ -38,6 +38,7 @@ services:
       PAPERLESS_SECRET_KEY: $PAPERLESS_SECRET_KEY
       PAPERLESS_TIME_ZONE: Europe/Berlin
       PAPERLESS_OCR_LANGUAGE: deu
+      PAPERLESS_OCR_ROTATE_PAGES: 2
     labels:
       traefik.enable: "true"
       traefik.http.routers.paperless-ngx.entrypoints: "websecure"
