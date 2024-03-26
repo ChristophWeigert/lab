@@ -1,4 +1,3 @@
-﻿version: "3.8"
 services:
   broker:
     image: docker.io/library/redis:7.2
@@ -9,7 +8,7 @@ services:
       - redisdata:/data
 
   webserver:
-    image: ghcr.io/paperless-ngx/paperless-ngx:2.6.3
+    image: ghcr.io/paperless-ngx/paperless-ngx:2.7.2
     restart: unless-stopped
     depends_on:
       - broker
@@ -34,10 +33,12 @@ services:
       PAPERLESS_TIKA_GOTENBERG_ENDPOINT: http://gotenberg:3000
       PAPERLESS_TIKA_ENDPOINT: http://tika:9998
       PAPERLESS_OCR_LANGUAGES: deu
-      PAPERLESS_URL: https://$DOMAIN
+      PAPERLESS_URL: https://$EXTERNAL_DOMAIN
       PAPERLESS_SECRET_KEY: $PAPERLESS_SECRET_KEY
       PAPERLESS_TIME_ZONE: Europe/Berlin
       PAPERLESS_OCR_LANGUAGE: deu
+      PAPERLESS_OCR_ROTATE_PAGES: 2
+      PAPERLESS_CONSUMER_ENABLE_ASN_BARCODE: true
     labels:
       traefik.enable: "true"
       traefik.http.routers.paperless-ngx.entrypoints: "websecure"

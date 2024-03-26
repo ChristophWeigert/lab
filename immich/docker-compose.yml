@@ -1,5 +1,3 @@
-version: "3.8"
-
 networks:
   proxy:
     external: true
@@ -8,7 +6,7 @@ networks:
 services:
   immich-server:
     container_name: immich_server
-    image: ghcr.io/immich-app/immich-server:v1.99.0
+    image: ghcr.io/immich-app/immich-server:v1.101.0
     command: [ "start.sh", "immich" ]
     volumes:
       - immich_appdata:/usr/src/app/upload
@@ -42,7 +40,7 @@ services:
 
   immich-microservices:
     container_name: immich_microservices
-    image: ghcr.io/immich-app/immich-server:v1.99.0
+    image: ghcr.io/immich-app/immich-server:v1.101.0
     command: [ "start.sh", "microservices" ]
     volumes:
       - immich_appdata:/usr/src/app/upload
@@ -58,7 +56,7 @@ services:
 
   immich-machine-learning:
     container_name: immich_machine_learning
-    image: ghcr.io/immich-app/immich-machine-learning:v1.99.0
+    image: ghcr.io/immich-app/immich-machine-learning:v1.101.0
     volumes:
       - model-cache:/cache
     networks:
