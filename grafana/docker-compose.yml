@@ -1,109 +1,76 @@
+---
 networks:
   proxy:
     external: true
+  internal:
+
+volumes:
+  grafana:
+  prometheus:
 
 services:
-
-  loki:
-    image: grafana/loki:2.9.6
-    hostname: loki
-    container_name: loki
-    volumes:
-      - /var/lib/docker/volumes/monitoring-data/_data/loki:/etc/loki # place loki-config.yml
-    ports:
-      - "127.0.0.1:3100:3100"
-    restart: unless-stopped
-    user: 1000:1000
-    networks:
-      - proxy
-    command: -config.file=/etc/loki/loki-config.yml
-
-  promtail:
-    image: grafana/promtail:2.9.6
-    container_name: promtail
-    depends_on:
-      - loki
-    hostname: promtail
-    networks:
-      - proxy
-    volumes:
-      - /var/log:/var/log:ro # let promtail access the docker host's log files
-      - /var/lib/docker/volumes/monitoring-data/_data/promtail:/etc/promtail # place promtail-config.yml
-      #- ${DOCKER_VOLUME_STORAGE:-/mnt/docker-volumes}/traefik/logs:/var/log/traefik # let promtail access your traefik reverse logs
-    restart: unless-stopped
-    command: -config.file=/etc/promtail/promtail-config.yml
-
-  influxdb:
-    image: influxdb:2.7.5
-    container_name: influxdb
-    hostname: influxdb
-    restart: unless-stopped
-    networks:
-      - proxy
-    volumes:
-      - /var/lib/docker/volumes/monitoring-data/_data/influxdb/data:/var/lib/influxdb
-      - /var/lib/docker/volumes/monitoring-data/_data/influxdb/influxdb.conf:/etc/influxdb/influxdb.conf:ro # place infuxdb.conf
-      - /var/lib/docker/volumes/monitoring-data/_data/influxdb/init:/docker-entrypoint-initdb.d # place create-database.iql for database init
-    environment:
-      - INFLUXDB_ADMIN_USER=$INFLUXDBB_ADMIN_USER
-      - INFLUXDB_ADMIN_PASSWORD=$INFLUXDB_ADMIN_PASSWORD
-
-  telegraf:
-    image: telegraf:1.30.1
-    restart: unless-stopped
-    user: telegraf:999 # see: https://www.influxdata.com/blog/docker-run-telegraf-as-non-root/
-    container_name: telegraf
-    hostname: telegraf
-    networks:
-      - proxy
-    dns:
-      - 1.1.1.1
-      - 8.8.8.8
-    depends_on:
-      - influxdb
-    volumes:
-      - /var/lib/docker/volumes/monitoring-data/_data/telegraf/telegraf.conf:/etc/telegraf/telegraf.conf:ro
-      - /:/hostfs:ro
-      - /etc:/hostfs/etc:ro
-      - /proc:/hostfs/proc:ro
-      - /sys:/hostfs/sys:ro
-      - /var/run/utmp:/var/run/utmp:ro
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-    environment:
-      - HOST_ETC=/hostfs/etc
-      - HOST_PROC=/hostfs/proc
-      - HOST_SYS=/hostfs/sys
-      - HOST_MOUNT_PREFIX=/hostfs
-
   grafana:
-    container_name: grafana
-    hostname: grafana
-    user: 1000:1000
-    depends_on:
-      - influxdb
-      - loki
-      - promtail
-    image: grafana/grafana:10.4.1
-    restart: unless-stopped
-    networks:
-      - proxy
+    image: grafana/grafana-oss:10.4.5
+    container_name: grafana-prod-1
+    command: [ './run.sh', '-disable-reporting' ] # this is to disable Grafana's telemetry
     environment:
-      - GF_SERVER_ROOT_URL=https://$DOMAIN
+      GF_AUTH_GENERIC_OAUTH_ENABLED: "true"
+      GF_AUTH_GENERIC_OAUTH_NAME: "authentik"
+      GF_AUTH_GENERIC_OAUTH_CLIENT_ID: "$CLIENTID"
+      GF_AUTH_GENERIC_OAUTH_CLIENT_SECRET: "$CLIENTSESCRET"
+      GF_AUTH_GENERIC_OAUTH_SCOPES: "openid profile email"
+      GF_AUTH_GENERIC_OAUTH_AUTH_URL: "$GF_AUTH_GENERIC_OAUTH_AUTH_URL"
+      GF_AUTH_GENERIC_OAUTH_TOKEN_URL: "$GF_AUTH_GENERIC_OAUTH_TOKEN_URL"
+      GF_AUTH_GENERIC_OAUTH_API_URL: "$GF_AUTH_GENERIC_OAUTH_API_URL"
+      GF_AUTH_SIGNOUT_REDIRECT_URL: "$GF_AUTH_SIGNOUT_REDIRECT_URL"
+      GF_SERVER_ROOT_URL: "https://grafana.$DOMAIN/"
+      # Optionally enable auto-login (bypasses Grafana login screen)
+      GF_AUTH_OAUTH_AUTO_LOGIN: "true"
+      GF_AUTH_GENERIC_OAUTH_ROLE_ATTRIBUTE_PATH: "contains(groups, 'Grafana Admins') && 'Admin' || contains(groups, 'Grafana Editors') && 'Editor' || 'Viewer'"
+      # Optionally map user groups to Grafana roles
+      #GF_AUTH_GENERIC_OAUTH_ROLE_ATTRIBUTE_PATH: "contains(groups, 'Grafana Admins') && 'Admin' || contains(groups, 'Grafana Editors') && 'Editor' || 'Viewer'"
     volumes:
-      - /var/lib/docker/volumes/monitoring-data/_data/grafana:/var/lib/grafana
+      - grafana:/var/lib/grafana
     labels:
       traefik.enable: "true"
       traefik.http.routers.grafana.entrypoints: "websecure"
-      traefik.http.routers.grafana.rule: "Host(`$DOMAIN`)"
+      traefik.http.routers.grafana.rule: "Host(`grafana.$DOMAIN`) || Host(`grafana.$EXTERNAL_DOMAIN`)"
       traefik.http.routers.grafana.tls: "true"
       traefik.http.routers.grafana.tls.certresolver: "production"
       traefik.docker.network: "proxy"
-      homepage.name: Grafana
-      homepage.group: Services
-      homepage.icon: grafana.png
-      homepage.href: https://$DOMAIN
-      homepage.description: Grafana
-      homepage.widget.type: grafana
-      homepage.widget.url: https://$DOMAIN
-      homepage.widget.username: $HOMEPAGE_USER
-      homepage.widget.password: $HOMEPAGE_PASSWORD
+    networks:
+      - proxy
+      - internal
+    restart: unless-stopped
+
+
+  prometheus:
+    image: prom/prometheus:v2.53.1
+    container_name: prometheus-prod-1
+    command: "--config.file=/etc/prometheus/prometheus.yaml"
+    volumes:
+      - /opt/configs/prometheus/prometheus.yaml:/etc/prometheus/prometheus.yaml:ro
+      - prometheus:/prometheus
+    labels:
+      traefik.enable: "true"
+      traefik.http.routers.prometheus.entrypoints: "websecure"
+      traefik.http.routers.prometheus.rule: "Host(`prometheus.$DOMAIN`)"
+      traefik.http.routers.prometheus.tls: "true"
+      traefik.http.routers.prometheus.tls.certresolver: "production"
+      traefik.docker.network: "proxy"
+    networks:
+      - proxy
+      - internal
+    restart: unless-stopped
+  
+  
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:v0.49.1
+    container_name: cadvisor
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:rw
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+    networks:
+      - internal
