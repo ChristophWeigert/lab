@@ -6,7 +6,7 @@ networks:
 services:
   immich-server:
     container_name: immich_server
-    image: ghcr.io/immich-app/immich-server:v1.101.0
+    image: ghcr.io/immich-app/immich-server:v1.102.3
     command: [ "start.sh", "immich" ]
     volumes:
       - immich_appdata:/usr/src/app/upload
@@ -40,13 +40,14 @@ services:
 
   immich-microservices:
     container_name: immich_microservices
-    image: ghcr.io/immich-app/immich-server:v1.101.0
+    image: ghcr.io/immich-app/immich-server:v1.102.3
     command: [ "start.sh", "microservices" ]
     volumes:
       - immich_appdata:/usr/src/app/upload
       - /etc/localtime:/etc/localtime:ro
     networks:
       - immich 
+      - proxy
     depends_on:
       - redis
       - database
@@ -56,7 +57,7 @@ services:
 
   immich-machine-learning:
     container_name: immich_machine_learning
-    image: ghcr.io/immich-app/immich-machine-learning:v1.101.0
+    image: ghcr.io/immich-app/immich-machine-learning:v1.102.3
     volumes:
       - model-cache:/cache
     networks:
@@ -67,7 +68,7 @@ services:
 
   redis:
     container_name: immich_redis
-    image: redis:7.2-alpine@sha256:7635b0bfdd7dd8552b4b31d6541fef07b734614045b45a52fd5cc27c9dada9e2
+    image: redis:7.2-alpine@sha256:a40e29800d387e3cf9431902e1e7a362e4d819233d68ae39380532c3310091ac
     networks:
       - immich
     restart: always
