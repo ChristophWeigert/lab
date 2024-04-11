@@ -39,6 +39,8 @@ services:
       PAPERLESS_OCR_LANGUAGE: deu
       PAPERLESS_OCR_ROTATE_PAGES: 2
       PAPERLESS_CONSUMER_ENABLE_ASN_BARCODE: true
+      PAPERLESS_APPS: allauth.socialaccount.providers.openid_connect
+      PAPERLESS_SOCIALACCOUNT_PROVIDERS: $PAPERLESS_SOCIALACCOUNT_PROVIDERS
     labels:
       traefik.enable: "true"
       traefik.http.routers.paperless-ngx.entrypoints: "websecure"
