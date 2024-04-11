@@ -83,7 +83,7 @@ services:
       - influxdb
       - loki
       - promtail
-    image: grafana/grafana:10.4.1
+    image: grafana/grafana:10.4.2
     restart: unless-stopped
     networks:
       - proxy
