@@ -34,7 +34,7 @@ services:
     command: -config.file=/etc/promtail/promtail-config.yml
 
   influxdb:
-    image: influxdb:2.7.5
+    image: influxdb:2.7.6
     container_name: influxdb
     hostname: influxdb
     restart: unless-stopped
