@@ -2,6 +2,7 @@
 services:
   postgresql:
     image: docker.io/library/postgres:16.2
+    container_name: "authentik_postgresql"
     restart: unless-stopped
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}"]
@@ -22,6 +23,7 @@ services:
     image: docker.io/library/redis:7.2.4
     command: --save 60 1 --loglevel warning
     restart: unless-stopped
+    container_name: "authentik_redis"
     healthcheck:
       test: ["CMD-SHELL", "redis-cli ping | grep PONG"]
       start_period: 20s
@@ -36,6 +38,7 @@ services:
     image: ghcr.io/goauthentik/server:2024.4.0
     restart: unless-stopped
     command: server
+    container_name: "authentik_server"
     environment:
       AUTHENTIK_REDIS__HOST: redis
       AUTHENTIK_POSTGRESQL__HOST: postgresql
@@ -81,6 +84,7 @@ services:
     image: ghcr.io/goauthentik/server:2024.4.0
     restart: unless-stopped
     command: worker
+    container_name: "authentik_worker"
     environment:
       AUTHENTIK_REDIS__HOST: redis
       AUTHENTIK_POSTGRESQL__HOST: postgresql
