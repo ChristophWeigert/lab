@@ -6,7 +6,7 @@ networks:
 services:
   immich-server:
     container_name: immich_server
-    image: ghcr.io/immich-app/immich-server:v1.102.3
+    image: ghcr.io/immich-app/immich-server:v1.103.1
     command: [ "start.sh", "immich" ]
     volumes:
       - immich_appdata:/usr/src/app/upload
@@ -40,7 +40,7 @@ services:
 
   immich-microservices:
     container_name: immich_microservices
-    image: ghcr.io/immich-app/immich-server:v1.102.3
+    image: ghcr.io/immich-app/immich-server:v1.103.1
     command: [ "start.sh", "microservices" ]
     volumes:
       - immich_appdata:/usr/src/app/upload
