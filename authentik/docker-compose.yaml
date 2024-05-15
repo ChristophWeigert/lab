@@ -74,7 +74,8 @@ services:
     volumes:
       - /mnt/authentik/media:/media
       - /mnt/authentik/custom-templates:/templates
-      - /mnt/authentik/custom.css:/web/dist/custom.css
+      - /mnt/authentik/custom.css:/web/dist/custom.css:ro
+      - /etc/timezone:/etc/timezone:ro
     networks:
       - internal
       - proxy
@@ -106,7 +107,8 @@ services:
       - /mnt/authentik/media:/media
       - /mnt/authentik/certs:/certs
       - /mnt/authentik/custom-templates:/templates
-      - /mnt/authentik/custom.css:/web/dist/custom.css
+      - /mnt/authentik/custom.css:/web/dist/custom.css:ro
+      - /etc/timezone:/etc/timezone:ro
     networks:
       - internal
     depends_on:
