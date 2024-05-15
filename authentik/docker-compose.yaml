@@ -41,7 +41,7 @@ services:
     container_name: "authentik_server"
     environment:
       AUTHENTIK_REDIS__HOST: redis
-      AUTHENTIK_POSTGRESQL__HOST: postgresql
+      AUTHENTIK_POSTGRESQL__HOST: authentik_postgresql
       AUTHENTIK_POSTGRESQL__USER: ${POSTGRES_USER}
       AUTHENTIK_POSTGRESQL__NAME: ${POSTGRES_DB}
       AUTHENTIK_POSTGRESQL__PASSWORD: ${POSTGRES_PASSWORD:?error}
@@ -88,7 +88,7 @@ services:
     container_name: "authentik_worker"
     environment:
       AUTHENTIK_REDIS__HOST: redis
-      AUTHENTIK_POSTGRESQL__HOST: postgresql
+      AUTHENTIK_POSTGRESQL__HOST: authentik_postgresql
       AUTHENTIK_POSTGRESQL__USER: ${POSTGRES_USER}
       AUTHENTIK_POSTGRESQL__NAME: ${POSTGRES_DB}
       AUTHENTIK_POSTGRESQL__PASSWORD: ${POSTGRES_PASSWORD:?error}
