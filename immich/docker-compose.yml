@@ -68,7 +68,7 @@ services:
 
   redis:
     container_name: immich_redis
-    image: redis:7.2-alpine@sha256:c8bb255c3559b3e458766db810aa7b3c7af1235b204cfdb304e79ff388fe1a5a
+    image: redis:7.2-alpine@sha256:0389bb8416d7c6ed065c25745179bf5d358e5d9472dd30a687ab36ffbb650262
     networks:
       - immich
     restart: always
