@@ -198,7 +198,7 @@ services:
       - "traefik.docker.network=proxy"
 
   flaresolverr:
-    image: flaresolverr/flaresolverr:v3.3.17
+    image: flaresolverr/flaresolverr:v3.3.19
     container_name: flaresolverr
     environment:
       - LOG_LEVEL=${LOG_LEVEL:-info}
