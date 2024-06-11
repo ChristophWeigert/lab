@@ -7,7 +7,6 @@ services:
   immich-server:
     container_name: immich_server
     image: ghcr.io/immich-app/immich-server:v1.106.1
-    command: [ "start.sh", "immich" ]
     volumes:
       - immich_appdata:/usr/src/app/upload
       - /etc/localtime:/etc/localtime:ro
@@ -37,23 +36,6 @@ services:
       homepage.widget.type: immich
       homepage.widget.url: https://$DOMAIN
       homepage.widget.key: $HOMEPAGE_KEY
-
-  immich-microservices:
-    container_name: immich_microservices
-    image: ghcr.io/immich-app/immich-server:v1.106.1
-    command: [ "start.sh", "microservices" ]
-    volumes:
-      - immich_appdata:/usr/src/app/upload
-      - /etc/localtime:/etc/localtime:ro
-    networks:
-      - immich 
-      - proxy
-    depends_on:
-      - redis
-      - database
-    env_file:
-      - stack.env
-    restart: always
 
   immich-machine-learning:
     container_name: immich_machine_learning
