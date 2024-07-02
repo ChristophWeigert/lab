@@ -39,7 +39,7 @@ services:
 
   immich-machine-learning:
     container_name: immich_machine_learning
-    image: ghcr.io/immich-app/immich-machine-learning:v1.106.4
+    image: ghcr.io/immich-app/immich-machine-learning:v1.107.0
     volumes:
       - model-cache:/cache
     networks:
