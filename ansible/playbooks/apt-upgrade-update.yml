@@ -1,5 +1,0 @@
----
-- hosts: all
-  sudo: yes
-  tasks:
-    - shell: apt-get upgrade -y; apt-get update
