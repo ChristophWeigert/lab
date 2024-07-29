@@ -65,7 +65,7 @@ services:
       homepage.widget.password: $HOMEPAGE_PASSWORD
 
   gotenberg:
-    image: docker.io/gotenberg/gotenberg:7.10
+    image: docker.io/gotenberg/gotenberg:8.9
     restart: unless-stopped
     networks:
       - internal
