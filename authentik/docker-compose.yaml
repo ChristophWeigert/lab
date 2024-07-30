@@ -20,7 +20,7 @@ services:
     networks:
       - internal
   redis:
-    image: docker.io/library/redis:7.2.5
+    image: docker.io/library/redis:7.4.0
     command: --save 60 1 --loglevel warning
     restart: unless-stopped
     container_name: "authentik_redis"

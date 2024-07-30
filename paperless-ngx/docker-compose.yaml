@@ -1,7 +1,7 @@
 ---
 services:
   broker:
-    image: docker.io/library/redis:7.2
+    image: docker.io/library/redis:7.4
     restart: unless-stopped
     networks:
       - internal
