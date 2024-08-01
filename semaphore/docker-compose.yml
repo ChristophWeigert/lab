@@ -13,7 +13,7 @@ networks:
 services:
   semaphore:
     container_name: semaphore
-    image: semaphoreui/semaphore:v2.10.22
+    image: semaphoreui/semaphore:v2.8.67
     ports:
       - 3000:3000
     environment:
@@ -22,7 +22,7 @@ services:
       - SEMAPHORE_ADMIN_PASSWORD=$ADMINPASSWORD
       - SEMAPHORE_ADMIN_NAME=$SEMAPHORE_ADMIN_NAME
       - SEMAPHORE_ADMIN_EMAIL=$SEMAPHORE_ADMIN_EMAIL
-      - SEMAPHORE_ADMIN=$SEMAPHORE_ADMIN
+      - SEMAPHORE_ADMIN=$SEMAPHORE_ADMIN_NAME
       - SEMAPHORE_ACCESS_KEY_ENCRYPTION=$KEY  # add to your access key encryption !
       - ANSIBLE_HOST_KEY_CHECKING=false  # (optional) change to true if you want to enable host key checking
       - TZ=Europe/Berlin
