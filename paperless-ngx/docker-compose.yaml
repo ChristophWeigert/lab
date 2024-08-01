@@ -77,7 +77,7 @@ services:
       - "--chromium-allow-list=file:///tmp/.*"
 
   tika:
-    image: apache/tika:2.9.2.0-full
+    image: apache/tika:2.9.2.1-full
     restart: unless-stopped
 
 volumes:
