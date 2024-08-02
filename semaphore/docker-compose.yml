@@ -2,10 +2,8 @@
 # yamllint disable rule:line-length
 
 volumes:
-  inventory:
-  authorized-keys:
   config:
-  database:
+  data:
 
 networks:
   proxy:
@@ -19,20 +17,15 @@ services:
       - 3000:3000
     environment:
       - SEMAPHORE_DB_DIALECT=bolt
-      - SEMAPHORE_DB_PATH=bolt_database/
-      - SEMAPHORE_PLAYBOOK_PATH=/tmp/semaphore/
       - SEMAPHORE_ADMIN_PASSWORD=$ADMINPASSWORD
       - SEMAPHORE_ADMIN_NAME=$SEMAPHORE_ADMIN_NAME
       - SEMAPHORE_ADMIN_EMAIL=$SEMAPHORE_ADMIN_EMAIL
       - SEMAPHORE_ADMIN=$SEMAPHORE_ADMIN_NAME
       - SEMAPHORE_ACCESS_KEY_ENCRYPTION=$KEY  # add to your access key encryption !
-      - ANSIBLE_HOST_KEY_CHECKING=false  # (optional) change to true if you want to enable host key checking
       - TZ=Europe/Berlin
     volumes:
-      - inventory:/inventory:ro
-      - authorized-keys:/authorized-keys:ro
       - config:/etc/semaphore:rw
-      - database:/bolt_database
+      - data:/var/lib/semaphore:rw
     restart: unless-stopped
     networks:
       - proxy
