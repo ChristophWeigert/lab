@@ -5,6 +5,7 @@ volumes:
   inventory:
   authorized-keys:
   config:
+  database:
 
 networks:
   proxy:
@@ -18,6 +19,7 @@ services:
       - 3000:3000
     environment:
       - SEMAPHORE_DB_DIALECT=bolt
+      - SEMAPHORE_DB_PATH=bolt_database/
       - SEMAPHORE_PLAYBOOK_PATH=/tmp/semaphore/
       - SEMAPHORE_ADMIN_PASSWORD=$ADMINPASSWORD
       - SEMAPHORE_ADMIN_NAME=$SEMAPHORE_ADMIN_NAME
@@ -30,6 +32,7 @@ services:
       - inventory:/inventory:ro
       - authorized-keys:/authorized-keys:ro
       - config:/etc/semaphore:rw
+      - database:/bolt_database
     restart: unless-stopped
     networks:
       - proxy
