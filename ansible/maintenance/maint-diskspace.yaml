@@ -6,7 +6,7 @@
   tasks:
     - name: 'Ensure that free space on X is grater than 30%'
       assert:
-        that: item.size_available - item.size_total|float * 0.30
+        that: item.size_available > item.size_total|float * 0.30
         msg: 'disk space has reached 70% threshold ({{item.size_available - item.size_total|float * 0.30}})'
       with_items: '{{ ansible_mounts | list }}'
 
