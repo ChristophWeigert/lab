@@ -14,3 +14,7 @@
       ansible.builtin.debug:
         msg: "Reboot is required"
       when: reboot_required.stat.exists
+
+    - name: Reboot
+      ansible.builtin.reboot:
+      when: reboot_required.stat.exists
