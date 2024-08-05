@@ -4,10 +4,10 @@
   gather_facts: true
 
   tasks:
-    - name: 'Ensure that free space on X is grater than 25%'
+    - name: 'Ensure that free space on X is grater than 30%'
       assert:
-        that: item.size_available - item.size_total|float * 0.25
-        msg: 'disk space has reached 85% threshold ({{item.size_available - item.size_total|float * 0.50}})'
+        that: item.size_available - item.size_total|float * 0.30
+        msg: 'disk space has reached 70% threshold ({{item.size_available - item.size_total|float * 0.30}})'
       with_items: '{{ ansible_mounts | list }}'
 
     # - name: Send discord message when disk space is over 80%
