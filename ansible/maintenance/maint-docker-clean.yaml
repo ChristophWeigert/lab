@@ -1,6 +1,6 @@
 ---
 - name: Clean docker
-  hosts: all
+  hosts: docker
   become: true
 
   tasks:
