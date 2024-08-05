@@ -8,7 +8,7 @@
       assert:
         that: item.size_available > item.size_total|float * 0.20
         msg: 'disk space has reached 70% threshold ({{item.size_available - item.size_total|float * 0.20}})'
-      with_items: '{{ ansible_mounts | rejectattr("fstype", "equalto in", "squashfs") | list }}'
+      with_items: '{{ ansible_mounts | rejectattr("fstype", "equalto", "squashfs") | list }}'
 
     # - name: Send discord message when disk space is over 80%
     #   uri:
