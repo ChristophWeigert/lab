@@ -12,7 +12,7 @@ networks:
 services:
   semaphore:
     container_name: semaphore
-    image: semaphoreui/semaphore:v2.19.10
+    image: semaphoreui/semaphore:v2.10.22
     ports:
       - 3000:3000
     environment:
