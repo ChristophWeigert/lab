@@ -6,7 +6,7 @@ networks:
 services:
   clouudflaretunnel:
     container_name: clouudflaretunnel
-    image: cloudflare/cloudflared:2024.6.1
+    image: cloudflare/cloudflared:2024.8.2
     restart: unless-stopped
     environment:
       - TUNNEL_TOKEN=$TUNNEL_TOKEN
