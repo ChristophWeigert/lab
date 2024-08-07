@@ -17,28 +17,21 @@
       args:
         chdir: "{{ mailcow__install_path }}"
       register: update_check_output
-      changed_when: false
-
-    - name: Check if updated code is available
-      ansible.builtin.shell: |
-        set -o pipefail
-        echo "{{ update_check_output.stdout }}" | grep -q 'Updated code is available'
-      register: updated_code_available
-      changed_when: updated_code_available.stdout
+      changed_when: update_check_output.rc == 0
 
     - name: Upgrade Mailcow
       ansible.builtin.command: printf "%s\n" "y" "y" | ./update.sh
       args:
         chdir: "{{ mailcow__install_path }}"
-      when: updated_code_available.stdout
+      when: update_check_output.rc == 0
 
     - name: Collect garbage
       ansible.builtin.command: echo 'y' | ./update.sh --gc
       args:
         chdir: "{{ mailcow__install_path }}"
-      when: updated_code_available.stdout
+      when: update_check_output.rc == 0
 
     - name: Print message if no updates available
       ansible.builtin.debug:
         msg: "No updates are available"
-      when: not updated_code_available.stdout
+      when: update_check_output.rc == 3
