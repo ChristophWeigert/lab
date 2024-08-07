@@ -4,11 +4,11 @@
   gather_facts: false
   tasks:
     - name: Update updater
-      ansible.builtin.git.git:
+      ansible.builtin.git:
         repo: https://github.com/mailcow/mailcow-dockerized.git
         dest: "{{ mailcow__install_path }}"
         version: master
-        update: yes
+        update: true
       register: git_result
       changed_when: git_result.changed
 
@@ -20,7 +20,7 @@
       changed_when: false
 
     - name: Check if updated code is available
-      shell: echo "{{ update_check_output.stdout }}" | grep -q 'Updated code is available'
+      ansible.builtin.shell: echo "{{ update_check_output.stdout }}" | grep -q 'Updated code is available'
       register: updated_code_available
       changed_when: false
 
@@ -37,6 +37,6 @@
       when: updated_code_available.stdout
 
     - name: Print message if no updates available
-      debug:
+      ansible.builtin.debug:
         msg: "No updates are available"
       when: not updated_code_available.stdout
