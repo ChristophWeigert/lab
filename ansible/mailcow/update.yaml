@@ -1,16 +1,10 @@
 ---
 - name: Update mailcow if needed
   hosts: mailcow
-  gather_facts: no
+  gather_facts: false
   tasks:
-    - name: Change directory to Mailcow install path
-      command: cd {{ mailcow__install_path }}
-      args:
-        warn: false
-      ignore_errors: yes
-
     - name: Update updater
-      git:
+      ansible.builtin.git.git:
         repo: https://github.com/mailcow/mailcow-dockerized.git
         dest: "{{ mailcow__install_path }}"
         version: master
@@ -19,7 +13,7 @@
       changed_when: git_result.changed
 
     - name: Execute update.sh -c
-      command: ./update.sh -c
+      ansible.builtin.command: ./update.sh -c
       args:
         chdir: "{{ mailcow__install_path }}"
       register: update_check_output
@@ -31,13 +25,13 @@
       changed_when: false
 
     - name: Upgrade Mailcow
-      command: printf "%s\n" "y" "y" | ./update.sh
+      ansible.builtin.command: printf "%s\n" "y" "y" | ./update.sh
       args:
         chdir: "{{ mailcow__install_path }}"
       when: updated_code_available.stdout
 
     - name: Collect garbage
-      command: echo 'y' | ./update.sh --gc
+      ansible.builtin.command: echo 'y' | ./update.sh --gc
       args:
         chdir: "{{ mailcow__install_path }}"
       when: updated_code_available.stdout
