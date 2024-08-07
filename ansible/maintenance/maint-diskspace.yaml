@@ -5,7 +5,7 @@
 
   tasks:
     - name: 'Ensure that free space on X is grater than 20%'
-      assert:
+      ansible.builtin.assert:
         that: item.size_available > item.size_total|float * 0.20
         msg: 'disk space has reached 80% threshold'
       with_items: '{{ ansible_mounts | rejectattr("fstype", "equalto", "squashfs") | list }}'
