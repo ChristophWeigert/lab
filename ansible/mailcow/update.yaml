@@ -20,9 +20,11 @@
       changed_when: false
 
     - name: Check if updated code is available
-      ansible.builtin.shell: echo "{{ update_check_output.stdout }}" | grep -q 'Updated code is available'
+      ansible.builtin.shell: |
+        set -o pipefail
+        echo "{{ update_check_output.stdout }}" | grep -q 'Updated code is available'
       register: updated_code_available
-      changed_when: false
+      changed_when: updated_code_available.stdout
 
     - name: Upgrade Mailcow
       ansible.builtin.command: printf "%s\n" "y" "y" | ./update.sh
