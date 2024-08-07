@@ -16,6 +16,7 @@
       args:
         chdir: "{{ mailcow__install_path }}"
       register: update_check_output
+      changed_when: update_check_output.rc == 0
       failed_when: update_check_output.rc > 3
 
     - name: Upgrade Mailcow
