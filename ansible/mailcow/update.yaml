@@ -3,14 +3,6 @@
   hosts: mailcow
   gather_facts: false
   tasks:
-    - name: Update updater
-      ansible.builtin.git:
-        repo: https://github.com/mailcow/mailcow-dockerized.git
-        dest: "{{ mailcow__install_path }}"
-        version: master
-        update: true
-      register: git_result
-
     - name: Execute update.sh -c
       ansible.builtin.command: ./update.sh -c
       args:
