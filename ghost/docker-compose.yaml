@@ -17,11 +17,6 @@ services:
       - "GHOST_INSTALL=/var/lib/ghost"
       - "GHOST_CONTENT=/var/lib/ghost/content"
     image: "ghost:5.91.0"
-    healthcheck:
-      test: "wget -q -s http://localhost:2368 || exit 1"
-      interval: 30s
-      timeout: 10s
-      retries: 5
     networks:
       - proxy
     labels:
