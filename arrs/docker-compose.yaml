@@ -30,7 +30,7 @@ services:
     ports:
       - '9091:9091'
       - '8888:8888'
-    image: haugene/transmission-openvpn:5.3.1
+    image: haugene/transmission-openvpn:5.3.1@sha256:a128b49e29379895c5815e8bea3c1b5eb42ccbef4ab9e5109a72b97d8fd7c0b0
     networks: [ arrs ]
     restart: unless-stopped
     labels:
@@ -45,7 +45,7 @@ services:
       - "traefik.http.services.transmission.loadbalancer.server.scheme=http"
   
   overseerr:
-    image: sctx/overseerr:1.33.2
+    image: sctx/overseerr:1.33.2@sha256:714ea6db2bc007a2262d112bef7eec74972eb33d9c72bddb9cbd98b8742de950
     container_name: overseerr
     environment:
       - LOG_LEVEL=info
@@ -65,7 +65,7 @@ services:
     restart: unless-stopped
   
   sonarr:
-    image: ghcr.io/linuxserver/sonarr:4.0.9
+    image: ghcr.io/linuxserver/sonarr:4.0.9@sha256:879f5f35b05566f71296bad0f3704709103568a6b4f42f5959543f5322728723
     container_name: sonarr
     environment:
       - PUID=1000
@@ -92,7 +92,7 @@ services:
     restart: unless-stopped
 
   bazarr:
-    image: lscr.io/linuxserver/bazarr
+    image: lscr.io/linuxserver/bazarr@sha256:aa904c142512b64e98b0abd038bf8b07e1b0e8cf3a14a805cb9ae4df9415b933
     container_name: bazarr
     environment:
       - PUID=1000
@@ -115,7 +115,7 @@ services:
     restart: unless-stopped
   
   readarr:
-    image:  ghcr.io/linuxserver/readarr:nightly
+    image:  ghcr.io/linuxserver/readarr:nightly@sha256:c6b3e3eb820cd50fe4918bbeb1cd6e76b24a0f8d90b7827293e5ab88e34198ec
     container_name: readarr
     environment:
       - PUID=1000
@@ -137,7 +137,7 @@ services:
     restart: unless-stopped
   
   lidarr:
-    image: lscr.io/linuxserver/lidarr
+    image: lscr.io/linuxserver/lidarr@sha256:d30f42dc071f77ae833d094083263d38be2dd0ddfff3c234ede29a36673a8603
     container_name: lidarr
     environment:
       - PUID=1000
@@ -159,7 +159,7 @@ services:
     restart: unless-stopped
   
   radarr:
-    image: linuxserver/radarr
+    image: linuxserver/radarr@sha256:47acec85a0d92d107096088aebe83d1d0a434def34e5bac317fff18ca28741ae
     container_name: radarr
     environment:
       - PUID=1000
@@ -180,7 +180,7 @@ services:
       - "traefik.docker.network=proxy"
   
   prowlarr:
-    image: ghcr.io/linuxserver/prowlarr
+    image: ghcr.io/linuxserver/prowlarr@sha256:9dd32e2270d174b07bd33a1f54e2b79e03ad944df62ed93efa08f4a381adc9a1
     container_name: prowlarr
     environment:
       - PUID=1000
@@ -199,7 +199,7 @@ services:
       - "traefik.docker.network=proxy"
 
   flaresolverr:
-    image: flaresolverr/flaresolverr:v3.3.21
+    image: flaresolverr/flaresolverr:v3.3.21@sha256:f104ee51e5124d83cf3be9b37480649355d223f7d8f9e453d0d5ef06c6e3b31b
     container_name: flaresolverr
     environment:
       - LOG_LEVEL=${LOG_LEVEL:-info}

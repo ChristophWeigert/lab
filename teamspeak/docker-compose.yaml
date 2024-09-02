@@ -24,7 +24,7 @@ services:
       - "TS3SERVER_LICENSE=accept"
       - "LANG=en_US.UTF-8"
       - "serveradmin_password=$serveradmin_password"
-    image: "ertagh/teamspeak3-server:latest-predownloaded"
+    image: "ertagh/teamspeak3-server:latest-predownloaded@sha256:c690a7d5d304467ee8b67bc88a00fc4b589ee281f8fe8a4e1b4b32f096c2afe7"
     ports:
       - "10011:10011/tcp"
       - "1337:1337/udp"

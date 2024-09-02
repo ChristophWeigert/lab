@@ -12,7 +12,7 @@ volumes:
 
 services:
   grafana:
-    image: grafana/grafana-oss:10.4.8
+    image: grafana/grafana-oss:10.4.8@sha256:c88e62a727bbb54b1ce1a420fb81b8b116c10a60d666de92ae74f3481aef1499
     container_name: grafana-prod-1
     command: ['./run.sh', '-disable-reporting']
     environment:
@@ -43,7 +43,7 @@ services:
     restart: unless-stopped
 
   prometheus:
-    image: prom/prometheus:v2.54.1
+    image: prom/prometheus:v2.54.1@sha256:f6639335d34a77d9d9db382b92eeb7fc00934be8eae81dbc03b31cfe90411a94
     container_name: prometheus-prod-1
     command: "--config.file=/etc/prometheus/prometheus.yaml"
     volumes:
@@ -62,7 +62,7 @@ services:
     restart: unless-stopped
 
   cadvisor:
-    image: gcr.io/cadvisor/cadvisor:v0.50.0
+    image: gcr.io/cadvisor/cadvisor:v0.50.0@sha256:2f3ea45c7ee3d7a0ce9f9d55a5053bd12285b02aca307ce9657af8e3ea7f6761
     container_name: cadvisor
     volumes:
       - /:/rootfs:ro

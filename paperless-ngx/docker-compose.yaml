@@ -1,7 +1,7 @@
 ---
 services:
   broker:
-    image: docker.io/library/redis:7.4
+    image: docker.io/library/redis:7.4@sha256:878983f8f5045b28384fc300268cec62bca3b14d5e1a448bec21f28cfcc7bf78
     restart: unless-stopped
     networks:
       - internal
@@ -9,7 +9,7 @@ services:
       - redisdata:/data
 
   webserver:
-    image: ghcr.io/paperless-ngx/paperless-ngx:2.11.6
+    image: ghcr.io/paperless-ngx/paperless-ngx:2.11.6@sha256:fca12ddea5509819dd0702cf128944aa23d01dd850a2536a96c2b46fb982b9bb
     restart: unless-stopped
     container_name: "paperless-ngx_webserver"
     depends_on:
@@ -65,7 +65,7 @@ services:
       homepage.widget.password: $HOMEPAGE_PASSWORD
 
   gotenberg:
-    image: docker.io/gotenberg/gotenberg:8.9.1
+    image: docker.io/gotenberg/gotenberg:8.9.1@sha256:d3a1592fbefce5b5004299a420b0afc86b9fa6351009fe6805a8a3739a5c8cd2
     restart: unless-stopped
     networks:
       - internal
@@ -77,7 +77,7 @@ services:
       - "--chromium-allow-list=file:///tmp/.*"
 
   tika:
-    image: apache/tika:2.9.2.1-full
+    image: apache/tika:2.9.2.1-full@sha256:ae0b86d3c4d06d8997407fcb08f31a7259fff91c43e0c1d7fffdad1e9ade3fe8
     restart: unless-stopped
     networks:
       - internal
