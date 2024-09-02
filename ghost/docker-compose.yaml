@@ -17,6 +17,11 @@ services:
       - "GHOST_INSTALL=/var/lib/ghost"
       - "GHOST_CONTENT=/var/lib/ghost/content"
     image: "ghost:5.91.0"
+    healthcheck:
+      test: "curl -H 'X-Forwarded-Proto: https' -If http://localhost:2368/ghost/api/admin/site || exit 1"
+      interval: 30s
+      timeout: 10s
+      retries: 5
     networks:
       - proxy
     labels:
