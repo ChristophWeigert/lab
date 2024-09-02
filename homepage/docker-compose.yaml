@@ -8,7 +8,7 @@ volumes:
 
 services:
   homepage:
-    image: ghcr.io/gethomepage/homepage:v0.9.6
+    image: ghcr.io/gethomepage/homepage:v0.9.6@sha256:e5b2616d17db8961a53c0b7d389d812d31c265d35696d475732f53278c9276f7
     container_name: homepage
     volumes:
       - homepage:/app/config

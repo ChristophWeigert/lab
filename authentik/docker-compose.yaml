@@ -1,7 +1,7 @@
 ---
 services:
   postgresql:
-    image: docker.io/library/postgres:16.4
+    image: docker.io/library/postgres:16.4@sha256:c62fdb7fd6f519ef425c54760894c74e8d0cb04fbf4f7d3d79aafd86bae24edd
     container_name: "authentik_postgresql"
     restart: unless-stopped
     healthcheck:
@@ -20,7 +20,7 @@ services:
     networks:
       - internal
   redis:
-    image: docker.io/library/redis:7.4.0
+    image: docker.io/library/redis:7.4.0@sha256:878983f8f5045b28384fc300268cec62bca3b14d5e1a448bec21f28cfcc7bf78
     command: --save 60 1 --loglevel warning
     restart: unless-stopped
     container_name: "authentik_redis"
@@ -35,7 +35,7 @@ services:
     volumes:
       - redis:/data
   server:
-    image: ghcr.io/goauthentik/server:2024.6.4
+    image: ghcr.io/goauthentik/server:2024.6.4@sha256:ec5683345b6283214e01112dd4ba4ac7af1fc638a6e2301e6c18b7f3036f27bc
     restart: unless-stopped
     command: server
     container_name: "authentik_server"
@@ -83,7 +83,7 @@ services:
       - postgresql
       - redis
   worker:
-    image: ghcr.io/goauthentik/server:2024.6.4
+    image: ghcr.io/goauthentik/server:2024.6.4@sha256:ec5683345b6283214e01112dd4ba4ac7af1fc638a6e2301e6c18b7f3036f27bc
     restart: unless-stopped
     command: worker
     container_name: "authentik_worker"
