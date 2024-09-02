@@ -79,6 +79,8 @@ services:
   tika:
     image: apache/tika:2.9.2.1-full
     restart: unless-stopped
+    networks:
+      - internal
 
 volumes:
   data:
