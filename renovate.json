@@ -14,12 +14,6 @@
       "matchDepTypes": ["devDependencies"],
       "automergeType": "branch",
       "automerge": true
-    },
-    {
-      "matchPackageNames": [
-        "semaphoreui/semaphore"
-      ],
-      "allowedVersions": "<2.19.0"
     }
   ],
   "platformAutomerge": true
