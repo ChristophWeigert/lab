@@ -1,7 +1,7 @@
 ---
 services:
   postgresql:
-    image: docker.io/library/postgres:16.4@sha256:eaacb93233a75db84e23584ededdfb3e416a4b68a1815aa3b7cbb0e5d0fa3744
+    image: docker.io/library/postgres:16.4@sha256:1afc3d4aebd5d667796acb3b7bc7fe8d041d1936248a12a75ee36a60fcb115fa
     container_name: "authentik_postgresql"
     restart: unless-stopped
     healthcheck:
