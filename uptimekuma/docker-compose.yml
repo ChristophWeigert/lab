@@ -9,7 +9,7 @@ networks:
 services:
   uptime-kuma:
     container_name: uptime-kuma
-    image: louislam/uptime-kuma:1.23.13-alpine
+    image: louislam/uptime-kuma:1.23.13-alpine@sha256:cc2cf3480a1925f04bd1fc11ea3c50882646b011dd5be96441b82b7c0ee13ebb
     environment:
       - TZ=Europe/Berlin
     volumes:
