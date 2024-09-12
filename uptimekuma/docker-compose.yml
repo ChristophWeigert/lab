@@ -1,0 +1,26 @@
+---
+volumes:
+  data:
+
+networks:
+  proxy:
+    external: true
+
+services:
+  uptime-kuma:
+    container_name: uptime-kuma
+    image: louislam/uptime-kuma:1.23.13-alpine
+    environment:
+      - TZ=Europe/Berlin
+    volumes:
+      - data:/app/data
+    restart: unless-stopped
+    networks:
+      - proxy
+    labels:
+      traefik.enable: "true"
+      traefik.http.routers.uptime-kuma.entrypoints: "websecure"
+      traefik.http.routers.uptime-kuma.rule: "Host(`$DOMAIN`) || Host(`$EXTERNAL_DOMAIN`)"
+      traefik.http.routers.uptime-kuma.tls: "true"
+      traefik.http.routers.uptime-kuma.tls.certresolver: "production"
+      traefik.docker.network: "proxy"

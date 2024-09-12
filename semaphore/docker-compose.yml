@@ -31,8 +31,8 @@ services:
       - proxy
     labels:
       traefik.enable: "true"
-      traefik.http.routers.ansiblesemaphore.entrypoints: "websecure"
-      traefik.http.routers.ansiblesemaphore.rule: "Host(`$DOMAIN`) || Host(`$EXTERNAL_DOMAIN`)"
-      traefik.http.routers.ansiblesemaphore.tls: "true"
-      traefik.http.routers.ansiblesemaphore.tls.certresolver: "production"
+      traefik.http.routers.semaphore.entrypoints: "websecure"
+      traefik.http.routers.semaphore.rule: "Host(`$DOMAIN`) || Host(`$EXTERNAL_DOMAIN`)"
+      traefik.http.routers.semaphore.tls: "true"
+      traefik.http.routers.semaphore.tls.certresolver: "production"
       traefik.docker.network: "proxy"
