@@ -53,14 +53,6 @@ services:
       traefik.http.routers.traefik_https.tls.domains[0].sans: "*.$DOMAIN"
       traefik.http.routers.traefik_https.service: api@internal
       traefik.http.routers.traefik_https.middlewares: basic-auth-global
-      traefik.http.routers.traefik_https_external.rule: Host(`traefik.$EXTERNAL_DOMAIN`)
-      traefik.http.routers.traefik_https_external.entrypoints: websecure
-      traefik.http.routers.traefik_https_external.tls: true
-      traefik.http.routers.traefik_https_external.tls.certResolver: production
-      traefik.http.routers.traefik_https_external.tls.domains[0].main: $EXTERNAL_DOMAIN
-      traefik.http.routers.traefik_https_external.tls.domains[0].sans: "*.$EXTERNAL_DOMAIN"
-      traefik.http.routers.traefik_https_external.service: api@internal
-      traefik.http.routers.traefik_https_external.middlewares: basic-auth-global
       traefik.http.middlewares.basic-auth-global.basicauth.users: $BASIC_AUTH
       homepage.name: Traefik
       homepage.group: Hosting
