@@ -15,7 +15,7 @@ services:
     environment:
       - "NEXTCLOUD_PATH=/config/www/nextcloud"
     hostname: "nextcloud"
-    image: "linuxserver/nextcloud:29.0.7@sha256:e10a8fa37ad7ed8c4625b4d264bab5714b8184d19826d7f940254e91cef10cd3"
+    image: "linuxserver/nextcloud:29.0.7@sha256:fb99b6df06eee4879c570dd1870ff7851bb52ecc6a022e53df3398a017634304"
     labels:
       traefik.enable: "true"
       traefik.http.routers.nextcloud.entrypoints: "websecure"
