@@ -16,7 +16,7 @@ services:
       - "NODE_ENV=production"
       - "GHOST_INSTALL=/var/lib/ghost"
       - "GHOST_CONTENT=/var/lib/ghost/content"
-    image: "ghost:5.95.0@sha256:f7778177e78012922e95838b771adfedb07762fef43be5078e343191d5669322"
+    image: "ghost:5.96.0@sha256:a8dbbc0bfe9b57148b97ad4fa58064dd58b3bfcd019fe90fa60e5d5cd9b77750"
     networks:
       - proxy
     labels:
