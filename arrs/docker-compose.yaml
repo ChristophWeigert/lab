@@ -92,7 +92,7 @@ services:
     restart: unless-stopped
 
   bazarr:
-    image: lscr.io/linuxserver/bazarr@sha256:71f545e4a6cfda02798fd531bfc27b14cbf7345bb28fe503467fb1ab13c3bfbc
+    image: lscr.io/linuxserver/bazarr:1.4.5
     container_name: bazarr
     environment:
       - PUID=1000
@@ -115,7 +115,7 @@ services:
     restart: unless-stopped
   
   readarr:
-    image:  ghcr.io/linuxserver/readarr:nightly@sha256:460c7775dcc85ec2f653f527b192affb5519aebdca463baddc94c1ee04bfb1f2
+    image:  ghcr.io/linuxserver/readarr:0.4.1-nightly
     container_name: readarr
     environment:
       - PUID=1000
@@ -137,7 +137,7 @@ services:
     restart: unless-stopped
   
   lidarr:
-    image: lscr.io/linuxserver/lidarr@sha256:6ca1a1d68fe9042599f05a81b7696272c2c3870e515c8ae086836a3de10166f3
+    image: lscr.io/linuxserver/lidarr:2.5.3
     container_name: lidarr
     environment:
       - PUID=1000
@@ -159,7 +159,7 @@ services:
     restart: unless-stopped
   
   radarr:
-    image: linuxserver/radarr@sha256:3bee8fb8eb4bb93b77eb4e0c5d755f25649223965af59f5f0363ddda03c6d10c
+    image: linuxserver/radarr:5.11.0
     container_name: radarr
     environment:
       - PUID=1000
@@ -180,7 +180,7 @@ services:
       - "traefik.docker.network=proxy"
   
   prowlarr:
-    image: ghcr.io/linuxserver/prowlarr@sha256:bddc64a17aa38972f4c032f67efc3bf0a498883257e615a2d807ca44550cebf0
+    image: ghcr.io/linuxserver/prowlarr:1.24.3
     container_name: prowlarr
     environment:
       - PUID=1000
