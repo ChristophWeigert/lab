@@ -159,7 +159,7 @@ services:
     restart: unless-stopped
   
   radarr:
-    image: linuxserver/radarr:5.14.0@sha256:a5a1fdf02aa14abc33a507eafa125ff57cb83f251a519536bce331ce9e008ef7
+    image: linuxserver/radarr:5.14.0@sha256:3329fbf778701cf53703b342b3a84da31caafec970ef9310be5723dd057666dc
     container_name: radarr
     environment:
       - PUID=1000
