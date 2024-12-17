@@ -92,7 +92,7 @@ services:
     restart: unless-stopped
 
   bazarr:
-    image: lscr.io/linuxserver/bazarr:1.4.5@sha256:954b303893a33b84075857534ad863dc349b8a9e7e838f134e037558ea84823f
+    image: lscr.io/linuxserver/bazarr:1.4.5@sha256:a602332403fcac11717c37ba14fb1852eb0b752d95db67915914fc9dd9e653a8
     container_name: bazarr
     environment:
       - PUID=1000
