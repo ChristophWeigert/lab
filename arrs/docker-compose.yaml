@@ -115,7 +115,7 @@ services:
     restart: unless-stopped
   
   readarr:
-    image:  ghcr.io/linuxserver/readarr:0.4.6-nightly@sha256:4e98200615aee0cbb962fb906f8a2005cde238ebb91e01401cc1f29d87babe86
+    image:  ghcr.io/linuxserver/readarr:0.4.7-nightly@sha256:6c68538745e732824b8efbd659d1653d38674df3814f38e6c4c85a0acf0ba0c4
     container_name: readarr
     environment:
       - PUID=1000
