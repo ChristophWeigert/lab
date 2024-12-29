@@ -11,7 +11,7 @@ services:
   calibre-web:
     container_name: "calibre-web"
     hostname: "calibreweb"
-    image: "linuxserver/calibre-web:0.6.24@sha256:b3b973ba48121b6a1e0f4b68170abeb4907551ccca48df253293d9c6231281c8"
+    image: "linuxserver/calibre-web:0.6.24@sha256:297926bf729a6603d8ec654e167559a7c75e2eb1a6980d90d4ec2ffc44979f98"
     labels:
       traefik.enable: "true"
       traefik.http.routers.calibre-web.entrypoints: "websecure"
