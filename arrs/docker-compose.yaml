@@ -180,7 +180,7 @@ services:
       - "traefik.docker.network=proxy"
   
   prowlarr:
-    image: ghcr.io/linuxserver/prowlarr:1.29.2@sha256:1f235ff7a178444398a9a431a4e65704d22f83a348192dececf75811212c9217
+    image: ghcr.io/linuxserver/prowlarr:1.29.2@sha256:ec80f415336c11d1e1cb0f749c3f1296ca018205c1acf6140618e98894e1498f
     container_name: prowlarr
     environment:
       - PUID=1000
