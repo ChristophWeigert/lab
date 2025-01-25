@@ -7,7 +7,7 @@ networks:
 services:
   sabnzbd:
     container_name: sabnzbd
-    image: linuxserver/sabnzbd:4.4.1
+    image: linuxserver/sabnzbd:4.4.1@sha256:9f68851d8fbb4feb09b0cd8aa840c7f140fb3279edfd957f92d78c60591af39f
     ports: 
       - 8180:8080 # optional - if SABnzbd should be reachable without Traefik 
     volumes:
@@ -28,7 +28,7 @@ services:
       - PGID=1000
 
   jellyseerr:
-    image: fallenbagel/jellyseerr:2.3.0
+    image: fallenbagel/jellyseerr:2.3.0@sha256:df53a7b06006e9da117a7072a55cf5d8b2071a6272f6bb329d8ca62b6f5c08a6
     container_name: jellyseerr
     environment:
       - LOG_LEVEL=debug
@@ -119,7 +119,7 @@ services:
     restart: unless-stopped
   
   lidarr:
-    image: lscr.io/linuxserver/lidarr:2.8.2.4493-ls27
+    image: lscr.io/linuxserver/lidarr:2.8.2.4493-ls27@sha256:d59485eb738df16ba7000fe214c50758eecb405613cfa7a63339b10855373b77
     container_name: lidarr
     environment:
       - PUID=1000
@@ -195,7 +195,7 @@ services:
 
   umlautadaptarr:
     container_name: umlautadaptarr
-    image: pcjones/umlautadaptarr:0.7.2
+    image: pcjones/umlautadaptarr:0.7.2@sha256:f3e62cc34fecfb93875d3dd490051d2a214edc790b74b85c9ba5e195f8ef2723
     restart: unless-stopped
     networks: [ arrs ]
     environment:
@@ -214,7 +214,7 @@ services:
       - LIDARR__APIKEY=$LIDARR_APIKEY
 
   jellyfin:
-    image: linuxserver/jellyfin:10.10.4
+    image: linuxserver/jellyfin:10.10.4@sha256:5e7ec58beb7c1fba93ae082cf4f5c043c9349724fcdba43cd03ce035208632dd
     container_name: jellyfin
 #    group_add:
 #      - "109"
@@ -254,7 +254,7 @@ services:
   notifiarr:
     container_name: notifiarr
     hostname: notifiarr
-    image: golift/notifiarr:0.8.3
+    image: golift/notifiarr:0.8.3@sha256:7922f7d0e0336ca0e91182820c5d4b2ddc2d86083fa847c5a1088b41d5b20903
     restart: unless-stopped
     volumes:
       - /mnt/notifiarr:/config
