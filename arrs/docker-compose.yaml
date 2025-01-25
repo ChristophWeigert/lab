@@ -8,8 +8,6 @@ services:
   sabnzbd:
     container_name: sabnzbd
     image: linuxserver/sabnzbd:4.4.1@sha256:9f68851d8fbb4feb09b0cd8aa840c7f140fb3279edfd957f92d78c60591af39f
-    ports: 
-      - 8180:8080 # optional - if SABnzbd should be reachable without Traefik 
     volumes:
       - /mnt/sabnzbd/app/config:/config
       - /mnt/media/downloads/completed:/downloads # completed directory for downloads. this contains the category directories
@@ -282,7 +280,7 @@ services:
     volumes:
       - /mnt/arrs/appdata/mediathekarr:/app/config
       - /mnt/media/downloads/completed:/data/mediathek/complete
-      - /mnt/media/downloads/incomplete:/data/mediathek/incomplete
+      - /mnt/media/downloads/incompleted:/data/mediathek/incomplete
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.mediathekarr.entryPoints=websecure"
