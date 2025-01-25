@@ -8,13 +8,13 @@
       "matchUpdateTypes": ["minor", "patch", "pin", "digest", "pinDigest"],
       "matchCurrentVersion": "!/^0/",
       "automergeType": "branch",
-      "versioning": "semver"
+      "versioning": "semver",
       "automerge": true
     },
     {
       "matchDepTypes": ["devDependencies"],
       "automergeType": "branch",
-      "versioning": "semver"
+      "versioning": "semver",
       "automerge": true
     }
   ],
