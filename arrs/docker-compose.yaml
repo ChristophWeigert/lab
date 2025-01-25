@@ -268,6 +268,29 @@ services:
       - "traefik.http.services.notifiarr.loadbalancer.server.port=5454"
       - "traefik.docker.network=proxy"
 
+  mediathekarr:
+    image: pcjones/mediathekarr:beta
+    restart: unless-stopped
+    container_name: mediathekarr
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Berlin
+      - DOWNLOAD_INCOMPLETE_PATH=/data/mediathek/incomplete # Path to incomplete downloads
+      - DOWNLOAD_COMPLETE_PATH=/data/mediathek/complete # Path to complete downloads"
+      - MEDIATHEKARR_API_BASE_URL=https://mediathekarr.pcjones.de/api/v1
+    volumes:
+      - /mnt/arrs/appdata/mediathekarr:/app/config
+      - /mnt/media/downloads/completed:/data/mediathek/complete
+      - /mnt/media/downloads/incomplete:/data/mediathek/incomplete
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.mediathekarr.entryPoints=websecure"
+      - "traefik.http.routers.mediathekarr.tls.certResolver=production"
+      - "traefik.http.routers.mediathekarr.rule=Host(`mediathekarr.$DOMAIN`)" # Edit here to change the domain name
+      - "traefik.http.services.mediathekarr.loadbalancer.server.port=5007"
+      - "traefik.docker.network=proxy"
+
 #  recyclarr:
 #    image: ghcr.io/recyclarr/recyclarr:5.4.3
 #    container_name: recyclarr
