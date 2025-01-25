@@ -7,7 +7,7 @@ networks:
 services:
   sabnzbd:
     container_name: sabnzbd
-    image: linuxserver/sabnzbd
+    image: linuxserver/sabnzbd:4.4.1
     ports: 
       - 8180:8080 # optional - if SABnzbd should be reachable without Traefik 
     volumes:
@@ -28,7 +28,7 @@ services:
       - PGID=1000
 
   jellyseerr:
-    image: fallenbagel/jellyseerr:latest
+    image: fallenbagel/jellyseerr:2.3.0
     container_name: jellyseerr
     environment:
       - LOG_LEVEL=debug
@@ -195,7 +195,7 @@ services:
 
   umlautadaptarr:
     container_name: umlautadaptarr
-    image: pcjones/umlautadaptarr:latest
+    image: pcjones/umlautadaptarr:0.7.2
     restart: unless-stopped
     networks: [ arrs ]
     environment:
@@ -214,7 +214,7 @@ services:
       - LIDARR__APIKEY=$LIDARR_APIKEY
 
   jellyfin:
-    image: lscr.io/linuxserver/jellyfin:latest
+    image: linuxserver/jellyfin:10.10.4
     container_name: jellyfin
 #    group_add:
 #      - "109"
@@ -254,7 +254,7 @@ services:
   notifiarr:
     container_name: notifiarr
     hostname: notifiarr
-    image: golift/notifiarr
+    image: golift/notifiarr:0.8.3
     restart: unless-stopped
     volumes:
       - /mnt/notifiarr:/config
