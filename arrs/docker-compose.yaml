@@ -1,59 +1,38 @@
-﻿---
+---
 networks:
   proxy:
     external: true
   arrs:
 
 services:
-  transmission:
-    container_name: transmission
-    cap_add:
-      - NET_ADMIN
+  sabnzbd:
+    container_name: sabnzbd
+    image: linuxserver/sabnzbd
+    ports: 
+      - 8180:8080 # optional - if SABnzbd should be reachable without Traefik 
     volumes:
-      - /mnt/transmission/data:/data
-      - /mnt/transmission/config:/config
-    environment:
-      - TRANSMISSION_WEB_UI=flood-for-transmission
-      - OPENVPN_PROVIDER=$OPENVPN_PROVIDER
-      - OPENVPN_USERNAME=$OPENVPN_USERNAME # Edit here to change the username
-      - OPENVPN_PASSWORD=$OPENVPN_PASSWORD # Edit here to change the password
-      - OPENVPN_CONFIG=de_all
-      - LOCAL_NETWORK=$LOCAL_NETWORK # Edit here to match your network
-      - WEBPROXY_ENABLED=true
-      - TZ=Europe/Berlin
-    sysctls:
-      - "net.ipv6.conf.all.disable_ipv6=0"
-    logging:
-      driver: json-file
-      options:
-        max-size: 10m
-    ports:
-      - '9091:9091'
-      - '8888:8888'
-    image: haugene/transmission-openvpn:5.3.1@sha256:a128b49e29379895c5815e8bea3c1b5eb42ccbef4ab9e5109a72b97d8fd7c0b0
-    networks: [ arrs ]
-    restart: unless-stopped
+      - /mnt/sabnzbd/app/config:/config
+      - /mnt/media/downloads/completed:/downloads # completed directory for downloads. this contains the category directories
+      - /mnt/media/downloads/incompleted:/incomplete-downloads # "temp" directory for downloads
+    networks: [ arrs, proxy ]
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.transmission.entrypoints=websecure"
-      - "traefik.http.routers.transmission.tls.certresolver=production"
-      - "traefik.http.routers.transmission.rule=Host(`transmission.$DOMAIN`)"
-      - "traefik.http.routers.transmission.tls=true"
-      - "traefik.http.routers.transmission.middlewares=user-auth@file"
-      - "traefik.http.routers.transmission.service=transmission"
-      - "traefik.http.services.transmission.loadbalancer.server.port=8888"
-      - "traefik.http.services.transmission.loadbalancer.server.scheme=http"
-  
-  overseerr:
-    image: sctx/overseerr:1.33.2@sha256:714ea6db2bc007a2262d112bef7eec74972eb33d9c72bddb9cbd98b8742de950
-    container_name: overseerr
+      - "traefik.http.routers.sabnzbd.entryPoints=websecure"
+      - "traefik.http.routers.sabnzbd.tls.certResolver=production"
+      - "traefik.http.routers.sabnzbd.rule=Host(`sabnzbd.$DOMAIN`)"
+      - "traefik.http.routers.sabnzbd.tls=true"
+      - "traefik.docker.network=proxy"
     environment:
-      - LOG_LEVEL=info
       - TZ=Europe/Berlin
-    ports:
-      - "5055:5055"
-    volumes:
-      - /mnt/overseerr/app/config:/app/config
+      - PUID=1000
+      - PGID=1000
+
+  jellyseerr:
+    image: fallenbagel/jellyseerr:latest
+    container_name: jellyseerr
+    environment:
+      - LOG_LEVEL=debug
+      - TZ=Europe/Berlin
     networks: [ arrs, proxy ]
     labels:
       - "traefik.enable=true"
@@ -62,10 +41,13 @@ services:
       - "traefik.http.routers.overseerr.rule=Host(`request.$DOMAIN`)"
       - "traefik.http.routers.overseerr.tls=true"
       - "traefik.docker.network=proxy"
+    volumes:
+      - /mnt/jellyseerr-data:/app/config
     restart: unless-stopped
-  
+
+
   sonarr:
-    image: ghcr.io/linuxserver/sonarr:4.0.12@sha256:7f593f902c27aeb269cd92d3667049e62038540058b086bb32ec1711918f4503
+    image: ghcr.io/linuxserver/sonarr:4.0.12@sha256:ca71add37a9cdbb914c7bd5b06f98bf5d2062848c8de6ac3ee09e69a4c170b27
     container_name: sonarr
     environment:
       - PUID=1000
@@ -75,8 +57,8 @@ services:
       - TP_THEME=organizr
     volumes:
       - /mnt/sonarr/data:/config
-      - /mnt/tv:/tv
-      - /mnt/transmission/data/completed:/downloads
+      - /mnt/media/tv:/tv
+      - /mnt/media/downloads/completed:/downloads
     ports:
       - "7878:7878"
       - "8989:8989"
@@ -100,7 +82,7 @@ services:
       - TZ=Europe/London
     volumes:
       - /mnt/bazarr/data/config:/config
-      - /mnt:/media
+      - /mnt/media:/media
     ports:
       - "6767:6767"
     networks: [ arrs, proxy ]
@@ -123,8 +105,8 @@ services:
       - TZ=Europe/Berlin
     volumes:
       - /mnt/readarr/data:/config
-      - /mnt/books:/books
-      - /mnt/completed:/data/completed
+      - /mnt/media/books:/books
+      - /mnt/media/downloads/completed:/downloads
     networks: [ arrs, proxy ]
     labels:
       - "traefik.enable=true"
@@ -137,7 +119,7 @@ services:
     restart: unless-stopped
   
   lidarr:
-    image: lscr.io/linuxserver/lidarr:8.1.2135@sha256:8455e2c2f3a7e0fb56ab4de6be924d81aa441bfe9a740cf110d46b25a39b42ba
+    image: lscr.io/linuxserver/lidarr:2.8.2.4493-ls27
     container_name: lidarr
     environment:
       - PUID=1000
@@ -145,8 +127,8 @@ services:
       - TZ=Europe/Berlin
     volumes:
       - /mnt/lidarr/data:/config
-      - /mnt/music:/music
-      - /mnt/transmission/data/completed:/downloads
+      - /mnt/media/music:/music
+      - /mnt/media/downloads/completed:/downloads
     networks: [ arrs, proxy ]
     labels:
       - "traefik.enable=true"
@@ -159,7 +141,7 @@ services:
     restart: unless-stopped
   
   radarr:
-    image: linuxserver/radarr:5.17.2@sha256:6edb323c959c4e664a46de4b6ff612cc05e190e42aba08b8d61831a371d46a93
+    image: linuxserver/radarr:5.17.2@sha256:7a25facfb3e08c9f57cee1ffd995141de80587be1b038bba5fa8611c2355225a
     container_name: radarr
     environment:
       - PUID=1000
@@ -167,8 +149,8 @@ services:
       - TZ=Europe/Berlin
     volumes:
       - /mnt/radarr/data:/config
-      - /mnt/movies:/movies
-      - /mnt/transmission/data/completed:/downloads
+      - /mnt/media/movies:/movies
+      - /mnt/media/downloads/completed:/downloads
     networks: [ arrs, proxy ]
     restart: unless-stopped
     labels:
@@ -180,7 +162,7 @@ services:
       - "traefik.docker.network=proxy"
   
   prowlarr:
-    image: ghcr.io/linuxserver/prowlarr:1.29.2@sha256:ae3abf37d442c6aed1125f7ce9d9cb7f56e64db576071f54b259da58487627a5
+    image: ghcr.io/linuxserver/prowlarr:1.29.2@sha256:eff1cf5cf51e8375802d6c00d37d2a948bdce91dd17c879f5fd90bc9d5c16303
     container_name: prowlarr
     environment:
       - PUID=1000
@@ -210,6 +192,81 @@ services:
     ports:
       - "8191:8191"
     restart: unless-stopped
+
+  umlautadaptarr:
+    container_name: umlautadaptarr
+    image: pcjones/umlautadaptarr:latest
+    restart: unless-stopped
+    networks: [ arrs ]
+    environment:
+      - TZ=Europe/Berlin
+      - SONARR__ENABLED=true
+      - SONARR__HOST=https://sonarr.$DOMAIN
+      - SONARR__APIKEY=$SONARR_APIKEY
+      - RADARR__ENABLED=true
+      - RADARR__HOST=https://radarr.$DOMAIN
+      - RADARR__APIKEY=$RADARR_APIKEY
+      - READARR__ENABLED=true
+      - READARR__HOST=https://readarr.$DOMAIN
+      - READARR__APIKEY=$READARR_APIKEY
+      - LIDARR__ENABLED=true
+      - LIDARR__HOST=https://lidarr.$DOMAIN
+      - LIDARR__APIKEY=$LIDARR_APIKEY
+
+  jellyfin:
+    image: lscr.io/linuxserver/jellyfin:latest
+    container_name: jellyfin
+#    group_add:
+#      - "109"
+#    devices:
+#      - /dev/dri/renderD128:/dev/dri/renderD128
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Berlin
+      - JELLYFIN_PublishedServerUrl=https://jellyfin.$DOMAIN
+    volumes:
+      - /mnt/jellyfin:/config
+      - /mnt/media/tv:/data/tv
+      - /mnt/media/movies:/data/movies
+      - /mnt/media/books:/data/books
+      - /mnt/media/music:/data/music
+      - /etc/localtime:/etc/localtime:ro
+      - /var/data/runtime/jellyfin:/cache
+    ports:
+      - "7359:7359/udp"
+      - "1900:1900/udp"
+      - "8096:8096"
+    restart: always
+    networks: [ arrs, proxy ]
+    #healthcheck:
+     # test: [ "CMD", "curl", "--fail", "http://127.0.0.1:8096/jellyfin/health" ]
+      #interval: 30s
+      #retries: 10
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.jellyfin.entryPoints=websecure"
+      - "traefik.http.routers.jellyfin.tls.certResolver=production"
+      - "traefik.http.routers.jellyfin.rule=Host(`jellyfin.$DOMAIN`)" # Edit here to change the domain name
+      - "traefik.http.services.jellyfin.loadbalancer.server.port=8096"
+      - "traefik.docker.network=proxy"
+
+  notifiarr:
+    container_name: notifiarr
+    hostname: notifiarr
+    image: golift/notifiarr
+    restart: unless-stopped
+    volumes:
+      - /mnt/notifiarr:/config
+      - /var/run/utmp:/var/run/utmp
+      - /etc/machine-id:/etc/machine-id
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.notifiarr.entryPoints=websecure"
+      - "traefik.http.routers.notifiarr.tls.certResolver=production"
+      - "traefik.http.routers.notifiarr.rule=Host(`notifiarr.$DOMAIN`)" # Edit here to change the domain name
+      - "traefik.http.services.notifiarr.loadbalancer.server.port=5454"
+      - "traefik.docker.network=proxy"
 
 #  recyclarr:
 #    image: ghcr.io/recyclarr/recyclarr:5.4.3
