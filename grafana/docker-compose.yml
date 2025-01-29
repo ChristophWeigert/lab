@@ -12,7 +12,7 @@ volumes:
 
 services:
   grafana:
-    image: grafana/grafana-oss:10.4.14@sha256:85bbea1e4ef41e76b59cbc4591621b05417159f4e492d343a65b3252354c610a
+    image: grafana/grafana-oss:10.4.15@sha256:78f0dba59327d4ab3019c893e8ec542fb8ae27539cdca5b85c0000e94e076fe6
     container_name: grafana-prod-1
     command: ['./run.sh', '-disable-reporting']
     environment:
