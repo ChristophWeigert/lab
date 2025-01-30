@@ -7,7 +7,7 @@ networks:
 services:
   sabnzbd:
     container_name: sabnzbd
-    image: linuxserver/sabnzbd:4.4.1@sha256:9f68851d8fbb4feb09b0cd8aa840c7f140fb3279edfd957f92d78c60591af39f
+    image: linuxserver/sabnzbd:4.4.1@sha256:7afe3af1cff19c2a7a5d4bacb2202fcb21a0ee15b7e23e4114ab3f7070213662
     volumes:
       - /mnt/sabnzbd/app/config:/config
       - /mnt/media/downloads/completed:/downloads # completed directory for downloads. this contains the category directories
