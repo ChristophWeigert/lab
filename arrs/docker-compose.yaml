@@ -267,7 +267,7 @@ services:
       - "traefik.docker.network=proxy"
 
   mediathekarr:
-    image: pcjones/mediathekarr:beta@sha256:d0b7b7af1f729b253ceee4c43786b302622ad96c26dbf6ee1e9d0d109b254430
+    image: pcjones/mediathekarr:beta@sha256:cc231d04dee25b86fb7ae4b4432d9b5afda845fd2b2cb193201728db92854eae
     restart: unless-stopped
     container_name: mediathekarr
     environment:
