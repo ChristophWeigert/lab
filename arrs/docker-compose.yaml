@@ -261,7 +261,7 @@
         - "traefik.docker.network=proxy"
   
     configarr:
-      image: ghcr.io/raydak-labs/configarr:1.10.1
+      image: ghcr.io/raydak-labs/configarr:1.10.1@sha256:6d525fa4aa08b57f8f3568b83d73904d1661ea71b737b5e8db834f85b130b1f4
       container_name: configarr
       user: 1000:1000
       environment:
