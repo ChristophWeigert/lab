@@ -200,10 +200,10 @@
     jellyfin:
       image: linuxserver/jellyfin:10.10.5@sha256:54c240ab539acaa7f183625ae464158e8ffe3255029480344882aaa4ee334669
       container_name: jellyfin
-  #    group_add:
-  #      - "109"
-  #    devices:
-  #      - /dev/dri/renderD128:/dev/dri/renderD128
+      group_add:
+        - "109"
+      devices:
+        - /dev/dri/renderD128:/dev/dri/renderD128
       environment:
         - PUID=1000
         - PGID=1000
