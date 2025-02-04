@@ -56,9 +56,7 @@
         - /mnt/sonarr/data:/config
         - /mnt/media/tv:/tv
         - /mnt/media/downloads/completed:/downloads
-      ports:
-        - "7878:7878"
-        - "8989:8989"
+
       networks: [ arrs, proxy ]
       labels:
         - "traefik.enable=true"
@@ -80,8 +78,6 @@
       volumes:
         - /mnt/bazarr/data/config:/config
         - /mnt/media:/media
-      ports:
-        - "6767:6767"
       networks: [ arrs, proxy ]
       labels:
         - "traefik.enable=true"
@@ -220,7 +216,6 @@
       ports:
         - "7359:7359/udp"
         - "1900:1900/udp"
-        - "8096:8096"
       restart: always
       networks: [ arrs, proxy ]
       #healthcheck:
