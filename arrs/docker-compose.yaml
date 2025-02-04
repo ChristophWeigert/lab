@@ -71,7 +71,7 @@
       restart: unless-stopped
   
     bazarr:
-      image: linuxserver/bazarr:1.5.1
+      image: linuxserver/bazarr:1.5.1@sha256:8415caab20c3642adb281ea066e82a58b8011b6e12bec5339db66599b700f805
       container_name: bazarr
       environment:
         - PUID=1000
@@ -116,7 +116,7 @@
       restart: unless-stopped
     
     lidarr:
-      image: linuxserver/lidarr:2.9.6
+      image: linuxserver/lidarr:2.9.6@sha256:1a52f7aedd7f7587f2d4cd03ff50f8f18f68f09ae3de9c1d9c4638e3d53ce702
       container_name: lidarr
       environment:
         - PUID=1000
@@ -159,7 +159,7 @@
         - "traefik.docker.network=proxy"
     
     prowlarr:
-      image: linuxserver/prowlarr:1.30.2
+      image: linuxserver/prowlarr:1.30.2@sha256:b242bc98897d8fa65db7b72f5dbde04b161a092d3cce2321b8c7e62c9321820d
       container_name: prowlarr
       environment:
         - PUID=1000
