@@ -44,7 +44,7 @@
       restart: unless-stopped
   
     sonarr:
-      image: ghcr.io/linuxserver/sonarr:4.0.12@sha256:47ce6f3b2afb17c12b393da2fefb11718f15cd1308baeba1cb61cbbbb9c5aedc
+      image: ghcr.io/linuxserver/sonarr:4.0.12@sha256:20b81f5054d31f0151be3c5e282a85361cc24b7ffaab67a997bb4379caa8485b
       container_name: sonarr
       environment:
         - PUID=1000
