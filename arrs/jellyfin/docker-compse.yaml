@@ -1,0 +1,41 @@
+networks:
+  proxy:
+    external: true
+
+services:
+  jellyfin:
+    image: linuxserver/jellyfin:10.10.5@sha256:54c240ab539acaa7f183625ae464158e8ffe3255029480344882aaa4ee334669
+    container_name: jellyfin
+    group_add:
+      - "109"
+    devices:
+      - /dev/dri/renderD128:/dev/dri/renderD128
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Berlin
+      - JELLYFIN_PublishedServerUrl=https://jellyfin.$DOMAIN
+    volumes:
+      - /mnt/jellyfin:/config
+      - /mnt/media/tv:/data/tv
+      - /mnt/media/movies:/data/movies
+      - /mnt/media/books:/data/books
+      - /mnt/media/music:/data/music
+      - /etc/localtime:/etc/localtime:ro
+      - /var/data/runtime/jellyfin:/cache
+    ports:
+      - "7359:7359/udp"
+      - "1900:1900/udp"
+    restart: always
+    networks: [ proxy ]
+    healthcheck:
+      test: [ "CMD", "curl", "--fail", "http://localhost:8096/health" ]
+      interval: 30s
+      retries: 10
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.jellyfin.entryPoints=websecure"
+      - "traefik.http.routers.jellyfin.tls.certResolver=production"
+      - "traefik.http.routers.jellyfin.rule=Host(`jellyfin.$DOMAIN`)"
+      - "traefik.http.services.jellyfin.loadbalancer.server.port=8096"
+      - "traefik.docker.network=proxy"
