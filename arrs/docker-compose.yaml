@@ -128,7 +128,7 @@
     lidarr:
       networks: [ arrs, proxy ]
       restart: unless-stopped
-      image: linuxserver/lidarr:2.9.6@sha256:c3aae1e32f7e2b76c6aa0e546a16f3feb570455882a5c9d51c8aec9e53328d66
+      image: linuxserver/lidarr:2.9.6@sha256:f6cfa621faf759bd7936473a28a05671f23ab3246ca932341ee5a20a887143ca
       container_name: lidarr
       environment:
         - TZ=Europe/Berlin
