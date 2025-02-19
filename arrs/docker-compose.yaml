@@ -171,7 +171,7 @@
     prowlarr:
       networks: [ arrs, proxy ]
       restart: unless-stopped
-      image: linuxserver/prowlarr:1.30.2@sha256:8883bf1c8afdd45dfb8146041d944656efac01208ef44b7bbdd2aa8b0fbc1782
+      image: linuxserver/prowlarr:1.30.2@sha256:33a605960120eff07b4713f094a4588ce048e8e3aa7a1599f41224cb67122ba5
       container_name: prowlarr
       environment:
         - TZ=Europe/Berlin
