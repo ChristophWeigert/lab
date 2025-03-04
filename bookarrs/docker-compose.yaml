@@ -1,0 +1,39 @@
+networks:
+  proxy:
+    external: true
+
+# If you change the FLASK_PORT, do not forget to change it in ports and healthcheck as well.
+services:
+  calibre-web-automated-book-downloader:
+    image: ghcr.io/calibrain/calibre-web-automated-book-downloader:latest
+    networks: 
+      - proxy
+    environment:
+      FLASK_PORT: 8084
+      FLASK_DEBUG: false
+      CLOUDFLARE_PROXY_URL: http://cloudflarebypassforscraping:8000
+      INGEST_DIR: /cwa-book-ingest
+      BOOK_LANGUAGE: de
+    ports:
+      - 8084:8084
+    # Uncomment the following lines if you want to enable healthcheck
+    #healthcheck:
+    #  test: ["CMD", "curl", "-f", "http://localhost:8084/request/api/status"]
+    #  interval: 30s
+    #  timeout: 30s
+    #  retries: 3
+    #  start_period: 5s
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=proxy"
+      - "traefik.http.routers.evcc.entryPoints=websecure"
+      - "traefik.http.routers.evcc.tls.certResolver=production"
+      - "traefik.http.routers.evcc.rule=Host(`calibre-dl.$DOMAIN`)"
+      - "traefik.http.services.evcc.loadbalancer.server.port=8084"
+    volumes:
+      - /mnt/media/books-ingest:${INGEST_DIR:-/cwa-book-ingest}
+
+  cloudflarebypassforscraping:
+    image: ghcr.io/sarperavci/cloudflarebypassforscraping:latest
+    restart: unless-stopped
