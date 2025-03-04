@@ -5,7 +5,7 @@ networks:
 # If you change the FLASK_PORT, do not forget to change it in ports and healthcheck as well.
 services:
   calibre-web-automated-book-downloader:
-    image: ghcr.io/calibrain/calibre-web-automated-book-downloader:latest
+    image: ghcr.io/calibrain/calibre-web-automated-book-downloader:latest@sha256:90d16b6d27c054f607a17ad47d99944e474b5957be5a43400e9341af52c5c3f7
     networks: 
       - proxy
     environment:
@@ -35,5 +35,5 @@ services:
       - /mnt/media/books-ingest:${INGEST_DIR:-/cwa-book-ingest}
 
   cloudflarebypassforscraping:
-    image: ghcr.io/sarperavci/cloudflarebypassforscraping:latest
+    image: ghcr.io/sarperavci/cloudflarebypassforscraping:latest@sha256:8e99847ae05bce24fe8a400bb9b30990a4cec32853f3975905eab95e05febefa
     restart: unless-stopped
