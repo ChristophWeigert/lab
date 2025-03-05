@@ -18,7 +18,7 @@ services:
       OIDC_CLIENT_SECRET: $OIDC_CLIENT_SECRET
       OIDC_X_FORWARDED_HEADERS: X-Forwarded-Port X-Forwarded-Proto X-Forwarded-Host
       OIDC_SCOPES: openid email profile
-    image: ghcr.io/freshrss/freshrss:1.26.0@sha256:d18055cc1c2fa807f118accb4ba74f435d381daf96130f87b17d9d9d1d169341
+    image: freshrss/freshrss:1.26.0@sha256:d18055cc1c2fa807f118accb4ba74f435d381daf96130f87b17d9d9d1d169341
     labels:
       traefik.enable: "true"
       traefik.http.routers.freshrss.entrypoints: "websecure"
