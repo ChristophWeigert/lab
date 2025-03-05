@@ -25,7 +25,7 @@
         - PUID=1000
         - PGID=1000
       container_name: sabnzbd
-      image: linuxserver/sabnzbd:4.4.1@sha256:d5f659a45ba38b109b92bec00c080c192813b74a3bf66ed55dec51d8d95997cc
+      image: ghcr.io/linuxserver/sabnzbd:4.4.1@sha256:d5f659a45ba38b109b92bec00c080c192813b74a3bf66ed55dec51d8d95997cc
       volumes:
         - sabnzbd:/config
         - /mnt/media/downloads/completed:/downloads # completed directory for downloads. this contains the category directories
@@ -41,7 +41,7 @@
     jellyseerr:
       networks: [ arrs, proxy ]
       restart: unless-stopped
-      image: fallenbagel/jellyseerr:2.3.0@sha256:df53a7b06006e9da117a7072a55cf5d8b2071a6272f6bb329d8ca62b6f5c08a6
+      image: ghcr.io/fallenbagel/jellyseerr:2.3.0@sha256:df53a7b06006e9da117a7072a55cf5d8b2071a6272f6bb329d8ca62b6f5c08a6
       container_name: jellyseerr
       environment:
         - LOG_LEVEL=debug
@@ -85,7 +85,7 @@
     bazarr:
       networks: [ arrs, proxy ]
       restart: unless-stopped
-      image: linuxserver/bazarr:1.5.1@sha256:36f4ba69ab5bfb32c384ea84cf0036b8b6e07fb9a7ab65885f3619de2a8318f8
+      image: ghcr.io/linuxserver/bazarr:1.5.1@sha256:6e901cc2a12f9ec96fab0162a7d8a4dcbf9353f2357470ef59ebb48bc005ce82
       container_name: bazarr
       environment:
         - TZ=Europe/Berlin
@@ -106,7 +106,7 @@
     readarr:
       networks: [ arrs, proxy ]
       restart: unless-stopped
-      image:  ghcr.io/linuxserver/readarr:0.4.12-nightly@sha256:5c76df82477f1ec04e8bc153a1bbc9a80051bbc42b8a0cf7c76655215a855d81
+      image: ghcr.io/linuxserver/readarr:0.4.11-nightly@sha256:14563c1cfec7c1cfd1e97c6c5c75e04c6a1fdce56ed6047a3353a4d75a01f19d
       container_name: readarr
       environment:
         - TZ=Europe/Berlin
@@ -128,7 +128,7 @@
     lidarr:
       networks: [ arrs, proxy ]
       restart: unless-stopped
-      image: linuxserver/lidarr:2.9.6@sha256:66514ac37d5c4a21a3b62dd3c91f228ee6be259b972efbb9365736db78f75872
+      image: ghcr.io/linuxserver/lidarr:2.9.6@sha256:f6cfa621faf759bd7936473a28a05671f23ab3246ca932341ee5a20a887143ca
       container_name: lidarr
       environment:
         - TZ=Europe/Berlin
@@ -150,7 +150,7 @@
     radarr:
       networks: [ arrs, proxy ]
       restart: unless-stopped
-      image: linuxserver/radarr:5.19.3@sha256:0a8020afc5e3dcad1413ba125a980729a2b16ff0d88d108b3e1779111ef1c896
+      image: ghcr.io/linuxserver/radarr:5.19.3@sha256:0a8020afc5e3dcad1413ba125a980729a2b16ff0d88d108b3e1779111ef1c896
       container_name: radarr
       environment:
         - TZ=Europe/Berlin
@@ -171,7 +171,7 @@
     prowlarr:
       networks: [ arrs, proxy ]
       restart: unless-stopped
-      image: linuxserver/prowlarr:1.31.2@sha256:761f73534a01aec4bf72a1396e9b9fda3f01632948b3fa31985982d26120a330
+      image: ghcr.io/linuxserver/prowlarr:1.31.2@sha256:761f73534a01aec4bf72a1396e9b9fda3f01632948b3fa31985982d26120a330
       container_name: prowlarr
       environment:
         - TZ=Europe/Berlin
