@@ -27,10 +27,10 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.docker.network=proxy"
-      - "traefik.http.routers.evcc.entryPoints=websecure"
-      - "traefik.http.routers.evcc.tls.certResolver=production"
-      - "traefik.http.routers.evcc.rule=Host(`calibre-dl.$DOMAIN`)"
-      - "traefik.http.services.evcc.loadbalancer.server.port=8084"
+      - "traefik.http.routers.calibre-dl.entryPoints=websecure"
+      - "traefik.http.routers.calibre-dl.tls.certResolver=production"
+      - "traefik.http.routers.calibre-dl.rule=Host(`calibre-dl.$DOMAIN`)"
+      - "traefik.http.services.calibre-dl.loadbalancer.server.port=8084"
     volumes:
       - /mnt/media/books-ingest:${INGEST_DIR:-/cwa-book-ingest}
 

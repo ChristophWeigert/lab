@@ -24,10 +24,11 @@ services:
       - /etc/machine-id:/etc/machine-id:ro
       - /var/lib/dbus/machine-id:/var/lib/dbus/machine-id:ro
     labels:
-      - "traefik.enable=true"
-      - "traefik.docker.network=proxy"
-      - "traefik.http.routers.evcc.entryPoints=websecure"
-      - "traefik.http.routers.evcc.tls.certResolver=production"
-      - "traefik.http.routers.evcc.rule=Host(`evcc.$DOMAIN`)"
-      - "traefik.http.services.evcc.loadbalancer.server.port=7070"
+        - "traefik.enable=true"
+        - "traefik.docker.network=proxy"
+        - "traefik.http.routers.evcc.entryPoints=websecure"
+        - "traefik.http.routers.evcc.tls.certResolver=production"
+        - "traefik.http.routers.evcc.rule=Host(`evcc.$DOMAIN`)"        
+        - "traefik.http.services.evcc.loadbalancer.server.port=7070"
+        - "traefik.http.routers.evcc.tls=true"
     restart: unless-stopped
