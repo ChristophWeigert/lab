@@ -10,6 +10,7 @@ networks:
 services:
   uptime-kuma:
     container_name: uptime-kuma
+    # Once V2 is out switch to ghcr.io
     image: louislam/uptime-kuma:1.23.16-alpine@sha256:f111cca721507faa0a57e1ffc75210d64c9a9ca0f8375e0336a2a9a88ae2987c
     environment:
       - TZ=Europe/Berlin
