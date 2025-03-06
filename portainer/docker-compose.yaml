@@ -5,6 +5,7 @@ networks:
 
 services:
   portainer:
+    container_name: "portainer"
     image: portainer/portainer-ee:lts
     volumes:
         - portainer_data:/data
