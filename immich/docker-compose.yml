@@ -21,8 +21,6 @@ services:
       - database
     env_file:
       - stack.env
-    ports:
-      - 2283:2283
     restart: always
     labels:
       traefik.enable: "true"
@@ -39,6 +37,8 @@ services:
       homepage.widget.type: immich
       homepage.widget.url: https://$DOMAIN
       homepage.widget.key: $HOMEPAGE_KEY
+    healthcheck:
+      disable: false
 
   immich-machine-learning:
     container_name: immich_machine_learning
@@ -50,6 +50,8 @@ services:
     restart: always
     env_file:
       - stack.env
+    healthcheck:
+      disable: false
 
   redis:
     container_name: immich_redis

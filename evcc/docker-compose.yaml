@@ -15,7 +15,6 @@ services:
     image: evcc/evcc:0.200.6@sha256:7dbe400c94e23aab24b061421a093d2b0c9112edca4d7d4565f82492aac11a8e
     ports:
       - 8887:8887/tcp
-      - 7070:7070/tcp
       - 9522:9522/udp
       - 4712:4712/tcp
     volumes:

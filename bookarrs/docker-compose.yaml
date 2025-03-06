@@ -14,8 +14,6 @@ services:
       CLOUDFLARE_PROXY_URL: http://cloudflarebypassforscraping:8000
       INGEST_DIR: /cwa-book-ingest
       BOOK_LANGUAGE: de
-    ports:
-      - 8084:8084
     # Uncomment the following lines if you want to enable healthcheck
     #healthcheck:
     #  test: ["CMD", "curl", "-f", "http://localhost:8084/request/api/status"]

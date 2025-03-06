@@ -37,7 +37,6 @@ services:
     ports:
       - "443:443/tcp"
       - "80:80/tcp"
-      - "8080:8080/tcp"
     restart: "unless-stopped"
     volumes:
       - "traefik:/etc/traefik"
@@ -54,6 +53,10 @@ services:
       traefik.http.routers.traefik_https.service: api@internal
       traefik.http.routers.traefik_https.middlewares: basic-auth-global
       traefik.http.middlewares.basic-auth-global.basicauth.users: $BASIC_AUTH
+      traefik.http.routers.http-catchall.rule: hostregexp(`{host:.+}`)
+      traefik.http.routers.http-catchall.entrypoints: web
+      traefik.http.routers.http-catchall.middlewares: redirect-to-https
+      traefik.http.middlewares.redirect-to-https.redirectscheme.scheme: https
       homepage.name: Traefik
       homepage.group: Hosting
       homepage.icon: traefik
