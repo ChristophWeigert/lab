@@ -89,12 +89,12 @@ volumes:
   export:
     driver_opts:
       type: "nfs"
-      o: "addr=192.168.1.14,nfsvers=4"
+      o: "nfsvers=4,addr=192.168.1.14,rw"
       device: ":/mnt/pool-main/docker_volumes/paperless_export"
   consume:
     driver_opts:
       type: "nfs"
-      o: "addr=192.168.1.14,nfsvers=4"
+      o: "nfsvers=4,addr=192.168.1.14,rw"
       device: ":/mnt/pool-main/docker_volumes/paperless_consume"      
 
 networks:
