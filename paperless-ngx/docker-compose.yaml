@@ -47,6 +47,8 @@ services:
       PAPERLESS_CSRF_TRUSTED_ORIGINS: $PAPERLESS_CSRF_TRUSTED_ORIGINS
       PAPERLESS_FILENAME_FORMAT_REMOVE_NONE: $PAPERLESS_FILENAME_FORMAT_REMOVE_NONE
       PAPERLESS_ENABLE_FLOWER: true
+      PAPERLESS_CONSUMER_DELETE_DUPLICATES: true
+      PAPERLESS_CONSUMER_POLLING: 15
     labels:
       traefik.enable: "true"
       traefik.http.routers.paperless-ngx.entrypoints: "websecure"
