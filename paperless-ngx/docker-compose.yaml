@@ -49,6 +49,7 @@ services:
       PAPERLESS_ENABLE_FLOWER: true
       PAPERLESS_CONSUMER_DELETE_DUPLICATES: true
       PAPERLESS_CONSUMER_POLLING: 15
+      PAPERLESS_CONSUMER_BARCODE_UPSCALE: 1.75
     labels:
       traefik.enable: "true"
       traefik.http.routers.paperless-ngx.entrypoints: "websecure"
