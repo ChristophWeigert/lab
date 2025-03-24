@@ -33,5 +33,5 @@ services:
       - /mnt/media/books-ingest:${INGEST_DIR:-/cwa-book-ingest}
 
   cloudflarebypassforscraping:
-    image: ghcr.io/sarperavci/cloudflarebypassforscraping:latest@sha256:8e99847ae05bce24fe8a400bb9b30990a4cec32853f3975905eab95e05febefa
+    image: ghcr.io/sarperavci/cloudflarebypassforscraping:latest@sha256:b6aa9426a60e19db720486d549e0d8e9f38869a959c75c53f480ae830ba6dedb
     restart: unless-stopped
