@@ -9,7 +9,7 @@ networks:
 services:
   immich-server:
     container_name: immich_server
-    image: ghcr.io/immich-app/immich-server:v1.129.0@sha256:7122354defac839a7ecf541395907c21805f6a2b60b67ee476e66b162f1a355d
+    image: ghcr.io/immich-app/immich-server:v1.130.2@sha256:a906a1daf4e82e9fa3e307cda55c46618fa9a639f7b417d13392795c7a1c3176
     volumes:
       - immich_appdata:/usr/src/app/upload
       - /etc/localtime:/etc/localtime:ro
