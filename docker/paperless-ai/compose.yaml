@@ -1,0 +1,30 @@
+services:
+  paperless-ai:
+    image: clusterzx/paperless-ai:2.7.6
+    container_name: paperless-ai
+    network_mode: bridge
+    restart: unless-stopped
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges=true
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - PAPERLESS_AI_PORT=3000
+    volumes:
+      - data:/app/data
+    labels:
+      traefik.enable: "true"
+      traefik.http.routers.paperless-ai.entrypoints: "websecure"
+      traefik.http.routers.paperless-ai.rule: "Host(`paperless-ai.$DOMAIN`)"
+      traefik.http.routers.paperless-ai.tls: "true"
+      traefik.http.routers.paperless-ai.tls.certresolver: "production"
+      traefik.docker.network: "proxy"
+volumes:
+  data:
+
+networks:
+  proxy:
+    external: true
+    
