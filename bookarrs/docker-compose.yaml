@@ -5,7 +5,7 @@ networks:
 # If you change the FLASK_PORT, do not forget to change it in ports and healthcheck as well.
 services:
   calibre-web-automated-book-downloader:
-    image: ghcr.io/calibrain/calibre-web-automated-book-downloader:latest@sha256:40adc6ad63a900a6ffa24904dbf9606d45667ec3c28d4e1475251af53ba04145
+    image: ghcr.io/calibrain/calibre-web-automated-book-downloader:latest@sha256:4a59b7740e3660a76b9d8df53fdd7de3e9e5aaad80fa29ecc7cdad43ab1da6e5
     networks: 
       - proxy
     environment:
