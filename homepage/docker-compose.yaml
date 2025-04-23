@@ -16,6 +16,8 @@ services:
     restart: unless-stopped
     networks:
       - proxy
+    environment:
+      HOMEPAGE_ALLOWED_HOSTS: $HOMEPAGE_ALLOWED_HOSTS
     labels:
       traefik.enable: "true"
       traefik.http.routers.homepage.entrypoints: "websecure"

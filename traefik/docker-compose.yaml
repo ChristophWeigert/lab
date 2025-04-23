@@ -11,7 +11,11 @@ services:
     command:
       - "--global.checkNewVersion=false"
       - "--global.sendAnonymousUsage=false"
+      - '--accesslog.format=json'
+      - '--accesslog.filepath=etc/traefik/access.log'
+      - '--log.format=json'
       - "--log.filePath=/etc/traefik/traefik.log"
+      - '--metrics.prometheus'
       - "--api.dashboard=true"
       - "--api.insecure=false"
       - "--entrypoints.web.address=:80"
@@ -26,6 +30,7 @@ services:
       - "--serversTransport.insecureSkipVerify=true"
       - "--providers.docker=true"
       - "--providers.docker.exposedbydefault=false"
+      - "--ping"
     container_name: "traefik"
     environment:
       CF_DNS_API_TOKEN: $CF_DNS_API_TOKEN
@@ -42,6 +47,11 @@ services:
       - "traefik:/etc/traefik"
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
       - "/etc/localtime:/etc/localtime:ro"
+    healthcheck:
+      test: ['CMD', 'traefik', 'healthcheck', '--ping']
+      interval: 10s
+      timeout: 10s
+      retries: 5
     labels:
       traefik.enable: true
       traefik.http.routers.traefik_https.rule: Host(`traefik.$DOMAIN`)
