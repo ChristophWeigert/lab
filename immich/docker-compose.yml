@@ -35,6 +35,7 @@ services:
       homepage.href: https://$DOMAIN
       homepage.description: immich
       homepage.widget.type: immich
+      homepage.widget.version: 2
       homepage.widget.url: https://$DOMAIN
       homepage.widget.key: $HOMEPAGE_KEY
     healthcheck:
