@@ -128,7 +128,7 @@
     lidarr:
       networks: [ arrs, proxy ]
       restart: unless-stopped
-      image: ghcr.io/linuxserver/lidarr:2.10.3@sha256:a6a7991f217f3c8b2bfffce1eb962e84b7ecd3cf7869f1456af54d0551bac9b7
+      image: ghcr.io/linuxserver/lidarr:2.11.2@sha256:d44312a0849e84970a5f13db183eda993861078e5b9d1fdec31a0daa53226a24
       container_name: lidarr
       environment:
         - TZ=Europe/Berlin
