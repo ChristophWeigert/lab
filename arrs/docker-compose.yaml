@@ -240,6 +240,8 @@
       restart: unless-stopped
       volumes:
         - huntarr:/config
+      ports:
+      - "9705:9705"
       labels:
         - "traefik.enable=true"
         - "traefik.docker.network=proxy"
