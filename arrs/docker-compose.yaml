@@ -150,7 +150,7 @@
     radarr:
       networks: [ arrs, proxy ]
       restart: unless-stopped
-      image: ghcr.io/linuxserver/radarr:5.22.4@sha256:01233b9ea9435fd00eab51891f133d86c9b6293f5adb8c3bf44e7a314c9c3423
+      image: ghcr.io/linuxserver/radarr:5.22.4@sha256:3a220dd02a24cb3610441ec6811bf70846e851e05f3219ec4801a06bd0646912
       container_name: radarr
       environment:
         - TZ=Europe/Berlin
