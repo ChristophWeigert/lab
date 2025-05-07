@@ -29,6 +29,7 @@ services:
       - "--entrypoints.websecure.http.tls.domains[1].main=$EXTERRNAL_DOMAIN"
       - "--entrypoints.websecure.http.tls.domains[1].sans=*.$EXTERRNAL_DOMAIN"      
       - "--certificatesresolvers.production.acme.dnschallenge=true"
+      - "--certificatesresolvers.production.acme.dnschallenge.delayBeforeCheck=15"
       - "--certificatesresolvers.production.acme.dnschallenge.provider=cloudflare"
       - "--certificatesresolvers.production.acme.dnsChallenge.resolvers[0]=1.1.1.1:53"
       - "--certificatesresolvers.production.acme.dnsChallenge.resolvers[1]=1.0.0.18:53"
