@@ -36,6 +36,7 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.jellyfin.entryPoints=websecure"
       - "traefik.http.routers.jellyfin.tls.certResolver=production"
-      - "traefik.http.routers.jellyfin.rule=Host(`jellyfin.$DOMAIN`)"
+      - "traefik.http.routers.jellyfin.rule=Host(`jellyfin.$DOMAIN`) || Host(`$EXTERNAL_DOMAIN`)"
+      #- "traefik.http.routers.jellyfin.rule=Host(`jellyfin.$DOMAIN`)"
       - "traefik.http.services.jellyfin.loadbalancer.server.port=8096"
       - "traefik.docker.network=proxy"
