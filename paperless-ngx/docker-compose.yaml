@@ -100,7 +100,7 @@ volumes:
     driver_opts:
       type: "nfs"
       o: "nfsvers=4,addr=192.168.1.14,rw"
-      device: ":/mnt/pool-main/docker_volumes/paperless_consume"      
+      device: ":/mnt/pool-main/docker_volumes/paperless_consume"
 
 networks:
   internal:

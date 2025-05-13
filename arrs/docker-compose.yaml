@@ -3,6 +3,8 @@
     proxy:
       external: true
     arrs:
+    
+
 
   volumes:
     sabnzbd: {}
@@ -16,6 +18,41 @@
     mediathekarr: {}
     configarr: {}
     huntarr: {}
+    downloads_completed:
+      driver_opts:
+        type: "nfs"
+        o: "nfsvers=4,addr=192.168.1.14,rw"
+        device: ":/mnt/pool-main/media/downloads/completed"
+    downloads_incompleted:
+      driver_opts:
+        type: "nfs"
+        o: "nfsvers=4,addr=192.168.1.14,rw"
+        device: ":/mnt/pool-main/media/downloads/incompleted"
+    media_tv:
+      driver_opts:
+        type: "nfs"
+        o: "nfsvers=4,addr=192.168.1.14,rw"
+        device: ":/mnt/pool-main/media/tv"
+    media_books:
+      driver_opts:
+        type: "nfs"
+        o: "nfsvers=4,addr=192.168.1.14,rw"
+        device: ":/mnt/pool-main/media/books"
+    media_books_ingest:
+      driver_opts:
+        type: "nfs"
+        o: "nfsvers=4,addr=192.168.1.14,rw"
+        device: ":/mnt/pool-main/media/books-ingest"
+    media_music:
+      driver_opts:
+        type: "nfs"
+        o: "nfsvers=4,addr=192.168.1.14,rw"
+        device: ":/mnt/pool-main/media/music"
+    media_movies:
+      driver_opts:
+        type: "nfs"
+        o: "nfsvers=4,addr=192.168.1.14,rw"
+        device: ":/mnt/pool-main/media/movies"
 
   services:
     sabnzbd:
@@ -29,8 +66,8 @@
       image: ghcr.io/linuxserver/sabnzbd:4.5.1@sha256:580cc1e4af14500d07d9a0c7abab86ef333e28a2c8124725072075116e8227d1
       volumes:
         - sabnzbd:/config
-        - /mnt/media/downloads/completed:/downloads # completed directory for downloads. this contains the category directories
-        - /mnt/media/downloads/incompleted:/incomplete-downloads # "temp" directory for downloads
+        - downloads_completed:/downloads # completed directory for downloads. this contains the category directories
+        - downloads_incompleted:/incomplete-downloads # "temp" directory for downloads
       labels:
         - "traefik.enable=true"
         - "traefik.http.routers.sabnzbd.entryPoints=websecure"
@@ -72,8 +109,8 @@
         - PGID=1000
       volumes:
         - sonarr:/config
-        - /mnt/media/tv:/tv
-        - /mnt/media/downloads/completed:/downloads
+        - media_tv:/tv
+        - downloads_completed:/downloads
       labels:
         - "traefik.enable=true"
         - "traefik.docker.network=proxy"
@@ -94,7 +131,10 @@
         - PGID=1000
       volumes:
         - bazarr:/config
-        - /mnt/media:/media
+        - media_tv:/media/tv
+        - media_movies:/media/movies
+        - media_books:/media/books
+        - media_music:/media/music
       labels:
         - "traefik.enable=true"
         - "traefik.docker.network=proxy"
@@ -115,8 +155,8 @@
         - PGID=1000
       volumes:
         - readarr:/config
-        - /mnt/media/books:/books
-        - /mnt/media/downloads/completed:/downloads
+        - media_books:/books
+        - downloads_completed:/downloads
       labels:
         - "traefik.enable=true"
         - "traefik.docker.network=proxy"
@@ -137,8 +177,8 @@
         - PGID=1000
       volumes:
         - lidarr:/config
-        - /mnt/media/music:/music
-        - /mnt/media/downloads/completed:/downloads
+        - media_music:/music
+        - downloads_completed:/downloads
       labels:
         - "traefik.enable=true"
         - "traefik.docker.network=proxy"
@@ -159,8 +199,8 @@
         - PGID=1000
       volumes:
         - radarr:/config
-        - /mnt/media/movies:/movies
-        - /mnt/media/downloads/completed:/downloads
+        - media_movies:/movies
+        - downloads_completed:/downloads
       labels:
         - "traefik.enable=true"
         - "traefik.docker.network=proxy"
@@ -224,8 +264,8 @@
         - MEDIATHEKARR_API_BASE_URL=https://mediathekarr.pcjones.de/api/v1
       volumes:
         - mediathekarr:/app/config
-        - /mnt/media/downloads/completed:/downloads
-        - /mnt/media/downloads/incompleted:/incomplete-downloads
+        - downloads_completed:/downloads
+        - downloads_incompleted:/incomplete-downloads
       labels:
         - "traefik.enable=true"
         - "traefik.docker.network=proxy"
@@ -263,3 +303,29 @@
         - TZ=Europe/Berlin
         - PUID=1000
         - PGID=1000
+
+    calibre-web-automated-book-downloader:
+      image: ghcr.io/calibrain/calibre-web-automated-book-downloader:latest@sha256:97a636efe3b78e1306ff521aa09256125aacdb1a04e628df294d7b6da3fe7b4a
+      networks: 
+        - proxy
+      environment:
+        FLASK_PORT: 8084
+        FLASK_DEBUG: false
+        INGEST_DIR: /cwa-book-ingest
+        BOOK_LANGUAGE: de,en
+        TZ: Europe/Berlin
+        APP_ENV: prod
+        UID: 1000
+        GID: 1000
+        CUSTOM_DNS: cloudflare
+        USE_DOH: true
+      restart: unless-stopped
+      labels:
+        - "traefik.enable=true"
+        - "traefik.docker.network=proxy"
+        - "traefik.http.routers.calibre-dl.entryPoints=websecure"
+        - "traefik.http.routers.calibre-dl.tls.certResolver=production"
+        - "traefik.http.routers.calibre-dl.rule=Host(`calibre-dl.$DOMAIN`)"
+        - "traefik.http.services.calibre-dl.loadbalancer.server.port=8084"
+      volumes:
+        - media_books_ingest:/cwa-book-ingest
