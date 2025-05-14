@@ -212,7 +212,7 @@
     prowlarr:
       networks: [ arrs, proxy ]
       restart: unless-stopped
-      image: ghcr.io/linuxserver/prowlarr:1.35.1@sha256:dec1e580aad36bccaeb1aba283f01a5263761905c304875a603c9a952ecfda79
+      image: ghcr.io/linuxserver/prowlarr:1.35.1@sha256:85718606c75bc0924921cb2df05b0f81c8a691952d44a5bc9f9946254493d1b4
       container_name: prowlarr
       environment:
         - TZ=Europe/Berlin
