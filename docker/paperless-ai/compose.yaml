@@ -1,6 +1,6 @@
 services:
   paperless-ai:
-    image: clusterzx/paperless-ai:3.0.1@sha256:ed1fe2e53434c90a124b9f8bf6987bf3adc9ae0c97a5fdceb0ef4c999585081e
+    image: clusterzx/paperless-ai:3.0.3@sha256:ff646db64e0844c34cb38c8c4c2f935fe42ffe5c683bccc4249ca6b9d1e9ac39
     container_name: paperless-ai
     network_mode: bridge
     restart: unless-stopped
