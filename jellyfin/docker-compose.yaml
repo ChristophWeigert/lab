@@ -2,6 +2,29 @@ networks:
   proxy:
     external: true
 
+volumes:
+  jellyfin: {}
+  media_tv:
+    driver_opts:
+      type: "nfs"
+      o: "nfsvers=4,addr=192.168.1.14,rw"
+      device: ":/mnt/pool-main/media/tv"
+  media_books:
+    driver_opts:
+      type: "nfs"
+      o: "nfsvers=4,addr=192.168.1.14,rw"
+      device: ":/mnt/pool-main/media/books"
+  media_music:
+    driver_opts:
+      type: "nfs"
+      o: "nfsvers=4,addr=192.168.1.14,rw"
+      device: ":/mnt/pool-main/media/music"
+  media_movies:
+    driver_opts:
+      type: "nfs"
+      o: "nfsvers=4,addr=192.168.1.14,rw"
+      device: ":/mnt/pool-main/media/movies"
+
 services:
   jellyfin:
     image: ghcr.io/linuxserver/jellyfin:10.10.7@sha256:a5fb220ce06edb8ef056a8e2a88bc04a6608d1cb7d49b7002ff4c858945566ad
@@ -17,10 +40,10 @@ services:
       - JELLYFIN_PublishedServerUrl=https://jellyfin.$DOMAIN
     volumes:
       - /mnt/jellyfin:/config
-      - /mnt/media/tv:/data/tv
-      - /mnt/media/movies:/data/movies
-      - /mnt/media/books:/data/books
-      - /mnt/media/music:/data/music
+      - media_tv:/data/tv
+      - media_movies:/data/movies
+      - media_books:/data/books
+      - media_music:/data/music
       - /etc/localtime:/etc/localtime:ro
       - /var/data/runtime/jellyfin:/cache
     ports:
