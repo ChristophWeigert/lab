@@ -9,7 +9,7 @@ networks:
 services:
   immich-server:
     container_name: immich_server
-    image: ghcr.io/immich-app/immich-server:v1.133.1
+    image: ghcr.io/immich-app/immich-server:v1.133.1@sha256:1daaf09ba61066184aad6e4f524b13e20f8884cb2030c314438e34cce9358b2c
     volumes:
       - immich_appdata:/usr/src/app/upload
       - /etc/localtime:/etc/localtime:ro
@@ -43,7 +43,7 @@ services:
 
   immich-machine-learning:
     container_name: immich_machine_learning
-    image: ghcr.io/immich-app/immich-machine-learning:v1.133.1
+    image: ghcr.io/immich-app/immich-machine-learning:v1.133.1@sha256:c1e9b4997deaefac6c2e30208410b882390a36c72b897749974594f6a9450bdb
     volumes:
       - model-cache:/cache
     networks:
@@ -65,7 +65,7 @@ services:
 
   database:
     container_name: immich_postgres
-    image: ghcr.io/immich-app/postgres:14-vectorchord0.3.0-pgvectors0.2.0
+    image: ghcr.io/immich-app/postgres:14-vectorchord0.3.0-pgvectors0.2.0@sha256:34da466322609f184a4f870f704317f1fc1eb71be1f119437f02e5d29d47f346
     networks:
       - immich
     environment:
