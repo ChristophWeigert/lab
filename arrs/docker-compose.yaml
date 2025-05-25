@@ -276,7 +276,7 @@
 
     huntarr:
       networks: [ arrs, proxy ]
-      image: ghcr.io/plexguide/huntarr:7.3.1@sha256:0827d7a1423346de4ea50fa2203cc067ebc1e73345fe9e55476ba7ee49d59141
+      image: ghcr.io/plexguide/huntarr:7.3.8@sha256:abe9e79296298f055a5d5dcfb966a1a77d417ba5b9efc5fbec95f968d25424c5
       container_name: huntarr
       restart: unless-stopped
       volumes:
