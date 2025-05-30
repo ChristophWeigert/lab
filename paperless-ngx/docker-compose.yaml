@@ -1,7 +1,7 @@
 ---
 services:
   broker:
-    image: docker.io/library/redis:7.4.4-alpine@sha256:ad2799b0535817d483ddf64c7d889dc6a08a002b4af51822ab68fc46657dae01
+    image: docker.io/library/redis:7.4.4-alpine@sha256:ee9e8748ace004102a267f7b8265dab2c618317df22507b89d16a8add7154273
     restart: unless-stopped
     networks:
       - internal
