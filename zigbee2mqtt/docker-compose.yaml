@@ -1,0 +1,28 @@
+networks:
+  proxy:
+    external: true
+
+volumes:
+  zigbee2mqtt:
+  grafana:
+
+services:
+  zigbee2mqtt:
+    container_name: zigbee2mqtt
+    image: ghcr.io/koenkk/zigbee2mqtt:2.3.0
+    restart: unless-stopped
+    networks:
+      - proxy
+    volumes:
+        - zigbee2mqtt:/app/data
+        - /run/udev:/run/udev:ro
+    environment:
+        - TZ=Europe/Berlin
+    labels:
+      traefik.enable: "true"
+      traefik.http.routers.zigbee2mqtt.entrypoints: "websecure"
+      traefik.http.routers.zigbee2mqtt.rule: "Host(`zigbee2mqtt.$DOMAIN`)"
+      traefik.http.routers.zigbee2mqtt.tls: "true"
+      traefik.http.routers.zigbee2mqtt.tls.certresolver: "production"
+      traefik.http.services.zigbee2mqtt.loadbalancer.server.port: 8080
+      traefik.docker.network: "proxy"
