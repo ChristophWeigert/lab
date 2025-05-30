@@ -9,7 +9,7 @@ volumes:
 services:
   zigbee2mqtt:
     container_name: zigbee2mqtt
-    image: ghcr.io/koenkk/zigbee2mqtt:2.3.0
+    image: ghcr.io/koenkk/zigbee2mqtt:2.3.0@sha256:42de8c55dc578a8404a18c43aeb2b7c75be7988179abe9a8195d99a9e7ebb917
     restart: unless-stopped
     networks:
       - proxy
