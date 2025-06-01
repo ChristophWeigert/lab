@@ -65,10 +65,9 @@ services:
 
   app:
     image: fredrikburmester/streamyfin-optimized-versions-server:master
-    env_file:
-      - .env
     environment:
       - NODE_ENV=development
+      - JELLYFIN_URL=https://jellyfin.$DOMAIN
     restart: unless-stopped
     labels:
       - "traefik.enable=true"
