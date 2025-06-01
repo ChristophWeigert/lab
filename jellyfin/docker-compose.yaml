@@ -64,7 +64,7 @@ services:
       - "traefik.docker.network=proxy"
 
   app:
-    image: fredrikburmester/streamyfin-optimized-versions-server:master
+    image: fredrikburmester/streamyfin-optimized-versions-server:master@sha256:7c8a2cf483e09e64c7cffb767bf96de7829749af1d522fc967aec4326ec4c104
     ports:
       - '3000:3000'
     depends_on:
