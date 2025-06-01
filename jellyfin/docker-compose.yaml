@@ -69,6 +69,7 @@ services:
       - '3000:3000'
     depends_on:
       - jellyfin
+    networks: [ proxy ]
     environment:
       - NODE_ENV=development
       - JELLYFIN_URL=http://jellyfin:8096
