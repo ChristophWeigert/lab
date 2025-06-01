@@ -65,9 +65,13 @@ services:
 
   app:
     image: fredrikburmester/streamyfin-optimized-versions-server:master
+    ports:
+      - '3000:3000'
+    depends_on:
+      - jellyfin
     environment:
       - NODE_ENV=development
-      - JELLYFIN_URL=https://jellyfin.$DOMAIN
+      - JELLYFIN_URL=http://jellyfin:8096
     restart: unless-stopped
     labels:
       - "traefik.enable=true"
