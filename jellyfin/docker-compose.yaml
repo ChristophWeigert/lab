@@ -62,3 +62,18 @@ services:
       - "traefik.http.routers.jellyfin.rule=Host(`jellyfin.$DOMAIN`)"
       - "traefik.http.services.jellyfin.loadbalancer.server.port=8096"
       - "traefik.docker.network=proxy"
+
+  app:
+    image: fredrikburmester/streamyfin-optimized-versions-server:master
+    env_file:
+      - .env
+    environment:
+      - NODE_ENV=development
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.streamyfin.entryPoints=websecure"
+      - "traefik.http.routers.streamyfin.tls.certResolver=production"
+      - "traefik.http.routers.streamyfin.rule=Host(`streamyfin.$DOMAIN`)"
+      - "traefik.http.services.streamyfin.loadbalancer.server.port=3000"
+      - "traefik.docker.network=proxy"
