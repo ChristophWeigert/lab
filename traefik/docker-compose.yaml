@@ -21,7 +21,10 @@ services:
       - "--entrypoints.web.address=:80"
       - "--entrypoints.web.http.redirections.entrypoint.to=websecure"
       - "--entrypoints.web.http.redirections.entrypoint.scheme=https"
-      - "--entrypoints.websecure.address=:443"      
+      - "--entrypoints.websecure.address=:443"
+      - "--entrypoints.websecure.transport.respondingTimeouts.readTimeout=600s" # for immich large files
+      - "--entrypoints.websecure.transport.respondingTimeouts.idleTimeout=600s" # for immich large files
+      - "--entrypoints.websecure.transport.respondingTimeouts.writeTimeout=600s" # for immich large files
       - "--entrypoints.websecure.http.tls=true"
       - "--entrypoints.websecure.http.tls.certResolver=letsencrypt"
       - "--entrypoints.websecure.http.tls.domains[0].main=$DOMAIN"
