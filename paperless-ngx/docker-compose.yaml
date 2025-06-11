@@ -50,17 +50,17 @@ services:
     labels:
       traefik.enable: "true"
       traefik.http.routers.paperless-ngx.entrypoints: "websecure"
-      traefik.http.routers.paperless-ngx.rule: "Host(`$DOMAIN`)"
+      traefik.http.routers.paperless-ngx.rule: "Host(`paperless-ngx.$DOMAIN`)"
       traefik.http.routers.paperless-ngx.tls: "true"
       traefik.http.routers.paperless-ngx.tls.certresolver: "production"
       traefik.docker.network: "proxy"
       homepage.name: paperless-ngx
       homepage.group: Services
       homepage.icon: paperless-ngx
-      homepage.href: https://$DOMAIN
+      homepage.href: https://paperless-ngx.$DOMAIN
       homepage.description: paperless-ngx
       homepage.widget.type: paperlessngx
-      homepage.widget.url: https://$DOMAIN
+      homepage.widget.url: https://paperless-ngx.$DOMAIN
       homepage.widget.username: $HOMEPAGE_USERNAME
       homepage.widget.password: $HOMEPAGE_PASSWORD
 
