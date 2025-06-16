@@ -147,7 +147,7 @@
     readarr:
       networks: [ arrs, proxy ]
       restart: unless-stopped
-      image: ghcr.io/linuxserver/readarr:0.4.18-nightly@sha256:181002c01aa07e7630b4c95c1b0184f07106c36bddce17a27663b238aa49d63e
+      image: ghcr.io/linuxserver/readarr:0.4.19-nightly@sha256:c4b8abe27fdc9cd052b8fbb1ddce5d25839460f1b70d3a5d361419559d25185e
       container_name: readarr
       environment:
         - TZ=Europe/Berlin
