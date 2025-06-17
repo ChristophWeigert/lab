@@ -253,7 +253,7 @@
     mediathekarr:
       networks: [ arrs, proxy ]
       restart: unless-stopped
-      image: pcjones/mediathekarr:beta@sha256:901ef3d48e185aff539a8132b482744c7be9262a954c8e20f55cb3927388a8bf
+      image: pcjones/mediathekarr:beta@sha256:e1d00d5435e14a36d452d273a7fdf7bf137d397015104a5f99bbd9fce97195a4
       container_name: mediathekarr
       environment:
         - TZ=Europe/Berlin
