@@ -12,6 +12,8 @@ services:
     image: ghcr.io/immich-app/immich-server:v1.134.0@sha256:073fc04c7e3d18ace466c20763809cf17aa55765ed610f12971b392a6a80b50c
     volumes:
       - immich_appdata:/usr/src/app/upload
+      - immich_thumbs:/usr/src/app/upload/thumbs
+      - immich_encoded_video:/usr/src/app/upload/encoded_video
       - /etc/localtime:/etc/localtime:ro
     networks:
       - immich
@@ -81,4 +83,17 @@ volumes:
   pgdata:
   model-cache:
   immich_appdata:
-    external: true
+    driver_opts:
+      type: "nfs"
+      o: "nfsvers=4,addr=192.168.1.14,rw"
+      device: ":/mnt/pool-main/docker_volumes/immich"
+  immich_thumbs:
+    driver_opts:
+      type: "nfs"
+      o: "nfsvers=4,addr=192.168.1.14,rw"
+      device: ":/mnt/pool-main/no_backup/immich_thumbs"
+  immich_encoded_video:
+    driver_opts:
+      type: "nfs"
+      o: "nfsvers=4,addr=192.168.1.14,rw"
+      device: ":/mnt/pool-main/no_backup/immich_encoded_video"
