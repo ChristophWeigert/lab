@@ -232,6 +232,8 @@
       networks: [ arrs, proxy ]
       restart: unless-stopped
       container_name: umlautadaptarr
+      ports:
+        - "5006:5006"
       image: pcjones/umlautadaptarr:0.7.2@sha256:f3e62cc34fecfb93875d3dd490051d2a214edc790b74b85c9ba5e195f8ef2723
       environment:
         - TZ=Europe/Berlin
