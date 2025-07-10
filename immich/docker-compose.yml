@@ -11,9 +11,12 @@ services:
     container_name: immich_server
     image: ghcr.io/immich-app/immich-server:v1.135.3@sha256:df5bbf4e29eff4688063a005708f8b96f13073200b4a7378f7661568459b31e9
     volumes:
-      - immich_appdata:/usr/src/app/upload
+      - immich_upload:/usr/src/app/upload/upload
       - immich_thumbs:/usr/src/app/upload/thumbs
       - immich_encoded_video:/usr/src/app/upload/encoded-video
+      - immich_profile:/usr/src/app/upload/profile
+      - immich_library:/usr/src/app/upload/library
+      - immich_backup:/usr/src/app/upload/backup
       - /etc/localtime:/etc/localtime:ro
     networks:
       - immich
@@ -82,11 +85,26 @@ services:
 volumes:
   pgdata:
   model-cache:
-  immich_appdata:
+  immich_upload:
     driver_opts:
       type: "nfs"
       o: "nfsvers=4,addr=192.168.1.14,rw"
-      device: ":/mnt/pool-main/docker_volumes/immich"
+      device: ":/mnt/pool-main/docker_volumes/immich/upload"
+  immich_backup:
+    driver_opts:
+      type: "nfs"
+      o: "nfsvers=4,addr=192.168.1.14,rw"
+      device: ":/mnt/pool-main/docker_volumes/immich/backup"
+  immich_profile:
+    driver_opts:
+      type: "nfs"
+      o: "nfsvers=4,addr=192.168.1.14,rw"
+      device: ":/mnt/pool-main/docker_volumes/immich/profile"
+  immich_library:
+    driver_opts:
+      type: "nfs"
+      o: "nfsvers=4,addr=192.168.1.14,rw"
+      device: ":/mnt/pool-main/docker_volumes/immich/library"
   immich_thumbs:
     driver_opts:
       type: "nfs"
