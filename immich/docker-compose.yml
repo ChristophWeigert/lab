@@ -16,7 +16,7 @@ services:
       - immich_encoded_video:/usr/src/app/upload/encoded-video
       - immich_profile:/usr/src/app/upload/profile
       - immich_library:/usr/src/app/upload/library
-      - immich_backup:/usr/src/app/upload/backup
+      - immich_backups:/usr/src/app/upload/backups
       - /etc/localtime:/etc/localtime:ro
     networks:
       - immich
