@@ -90,11 +90,11 @@ volumes:
       type: "nfs"
       o: "nfsvers=4,addr=192.168.1.14,rw"
       device: ":/mnt/pool-main/docker_volumes/immich/upload"
-  immich_backup:
+  immich_backups:
     driver_opts:
       type: "nfs"
       o: "nfsvers=4,addr=192.168.1.14,rw"
-      device: ":/mnt/pool-main/docker_volumes/immich/backup"
+      device: ":/mnt/pool-main/docker_volumes/immich/backups"
   immich_profile:
     driver_opts:
       type: "nfs"
