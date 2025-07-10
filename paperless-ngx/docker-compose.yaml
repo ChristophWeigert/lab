@@ -104,7 +104,7 @@ services:
       - "--chromium-allow-list=file:///tmp/.*"
 
   tika:
-    image: apache/tika:3.2.0.0-full@sha256:b957a4f51651b6d7f9dfdfe4dce5786bb38ac77b7e0abda28400b36f82e4d358
+    image: apache/tika:3.2.1.0-full@sha256:94ed7a7758da63b3fd90d0db2378a6c04698f6fb3a807e92ac5dc24f915257fc
     restart: unless-stopped
     networks:
       - internal
