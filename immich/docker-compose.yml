@@ -13,7 +13,7 @@ services:
     volumes:
       - immich_appdata:/usr/src/app/upload
       - immich_thumbs:/usr/src/app/upload/thumbs
-      - immich_encoded_video:/usr/src/app/upload/encoded_video
+      - immich_encoded_video:/usr/src/app/upload/encoded-video
       - /etc/localtime:/etc/localtime:ro
     networks:
       - immich
