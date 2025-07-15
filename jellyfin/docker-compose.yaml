@@ -27,7 +27,8 @@ volumes:
 
 services:
   jellyfin:
-    image: ghcr.io/linuxserver/jellyfin:10.10.7@sha256:8275e69a75a07ba69e76590472a1e0c5bdf5ec2df6ce03eee6d961e8cff0680c
+    #image: ghcr.io/linuxserver/jellyfin:10.10.7@sha256:8275e69a75a07ba69e76590472a1e0c5bdf5ec2df6ce03eee6d961e8cff0680c
+    image: ghcr.io/jellyfin/jellyfin:10.11.0-rc3
     container_name: jellyfin
     group_add:
       - "109"
@@ -61,23 +62,4 @@ services:
       - "traefik.http.routers.jellyfin.tls.certResolver=production"
       - "traefik.http.routers.jellyfin.rule=Host(`jellyfin.$DOMAIN`)"
       - "traefik.http.services.jellyfin.loadbalancer.server.port=8096"
-      - "traefik.docker.network=proxy"
-
-  app:
-    image: fredrikburmester/streamyfin-optimized-versions-server:master@sha256:7c8a2cf483e09e64c7cffb767bf96de7829749af1d522fc967aec4326ec4c104
-    ports:
-      - '3000:3000'
-    depends_on:
-      - jellyfin
-    networks: [ proxy ]
-    environment:
-      - NODE_ENV=development
-      - JELLYFIN_URL=http://jellyfin:8096
-    restart: unless-stopped
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.streamyfin.entryPoints=websecure"
-      - "traefik.http.routers.streamyfin.tls.certResolver=production"
-      - "traefik.http.routers.streamyfin.rule=Host(`streamyfin.$DOMAIN`)"
-      - "traefik.http.services.streamyfin.loadbalancer.server.port=3000"
       - "traefik.docker.network=proxy"
