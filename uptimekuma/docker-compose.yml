@@ -11,11 +11,12 @@ services:
   uptime-kuma:
     container_name: uptime-kuma
     # Once V2 is out switch to ghcr.io
-    image: louislam/uptime-kuma:1.23.16-alpine@sha256:f111cca721507faa0a57e1ffc75210d64c9a9ca0f8375e0336a2a9a88ae2987c
+    image: ghcr.io/louislam/uptime-kuma:2.0.0-beta.3
     environment:
       - TZ=Europe/Berlin
     volumes:
       - data:/app/data
+      - /var/run/docker.sock:/var/run/docker.sock:ro
     restart: unless-stopped
     networks:
       - proxy

@@ -6,39 +6,27 @@ networks:
 services:
   portainer:
     container_name: "portainer"
-    image: portainer/portainer-ee:lts@sha256:9412aec2131d4de6900483ee0b4d133f05712585265db710b4b31595523a47b4
+    image: portainer/portainer-ee:lts
     volumes:
-        - portainer_data:/data
+        - data:/data
         - /var/run/docker.sock:/var/run/docker.sock
     restart: unless-stopped
+    ports:
+      - 9443:9443
     networks:
       - proxy
     labels:
       - "traefik.enable=true"
-      - "traefik.http.middlewares.edge.redirectregex.regex=^http://(.*)"
-      - "traefik.http.middlewares.edge.redirectregex.replacement=https://$${1}"
-      - "traefik.http.routers.edge.entrypoints=websecure"
-      - "traefik.http.routers.edge.rule=Host(`edge.$DOMAIN`)"
-      - "traefik.http.routers.edge.tls.domains[0].main=$DOMAIN"
-      - "traefik.http.routers.edge.tls.domains[0].sans=*.$DOMAIN"
-      - "traefik.http.routers.edge.service=edge"
-      - "traefik.http.routers.edge.tls=true"
-      - "traefik.http.routers.edge.tls.certresolver=production"
       - "traefik.http.routers.frontend.entrypoints=websecure"
-      - "traefik.http.routers.frontend.rule=Host(`portainer.$DOMAIN`)"
-      - "traefik.http.routers.frontend.tls.domains[0].main=$DOMAIN"
-      - "traefik.http.routers.frontend.tls.domains[0].sans=*.$DOMAIN"
+      - "traefik.http.routers.frontend.rule=Host(`portainer.local.weigert.cc`)"
+      - "traefik.http.routers.frontend.tls.domains[0].main=local.weigert.cc"
+      - "traefik.http.routers.frontend.tls.domains[0].sans=*.local.weigert.cc"
       - "traefik.http.routers.frontend.service=frontend"
       - "traefik.http.routers.frontend.tls=true"
       - "traefik.http.routers.frontend.tls.certresolver=production"
-      - "traefik.http.routers.http.middlewares=edge"
-      - "traefik.http.services.edge.loadbalancer.server.port=8000"
       - "traefik.http.services.frontend.loadbalancer.server.port=9443"
       - "traefik.http.services.frontend.loadbalancer.server.scheme=https"
       - "traefik.docker.network=proxy"
 
 volumes:
-  portainer_data:
-    external: true
-
-# docker run -d -v /var/run/docker.sock:/var/run/docker.sock -v /var/lib/docker/volumes:/var/lib/docker/volumes -v /:/host -v portainer_agent_data:/data --restart always -e EDGE=1 -e EDGE_ID=92255856-6a9f-4d7d-abc4-df75e26138f3 -e EDGE_KEY=aHR0cHM6Ly9wb3J0YWluZXIud2VpZ2VydC5jY3xodHRwczovL2VkZ2Uud2VpZ2VydC5jY3x5MnA0OWZGSDJKMGhPWUNFTWRRWjRmdkZZN05CSGJIZXJ1dlVoUVBERDZJPXwxNg -e EDGE_INSECURE_POLL=1 --name portainer_edge_agent portainer/agent:lts
+  data:
