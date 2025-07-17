@@ -22,7 +22,7 @@ services:
     labels:
       traefik.enable: "true"
       traefik.http.routers.ghost.entrypoints: "websecure"
-      traefik.http.routers.ghost.rule: "Host(`$DOMAIN`)"
+      traefik.http.routers.ghost.rule: "Host(`$HOST`)"
       traefik.http.routers.ghost.tls: "true"
       traefik.http.routers.ghost.tls.domains[0].main: "$DOMAIN"
       traefik.http.routers.ghost.tls.domains[0].sans: "*.$DOMAIN"

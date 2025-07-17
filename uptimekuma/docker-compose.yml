@@ -22,7 +22,7 @@ services:
     labels:
       traefik.enable: "true"
       traefik.http.routers.uptime-kuma.entrypoints: "websecure"
-      traefik.http.routers.uptime-kuma.rule: "Host(`$DOMAIN`)"
+      traefik.http.routers.uptime-kuma.rule: "Host(`uptimekuma.$DOMAIN`)"
       traefik.http.routers.uptime-kuma.tls: "true"
       traefik.http.routers.uptime-kuma.tls.certresolver: "production"
       traefik.http.routers.uptime-kuma.tls.domains[0].main: "$DOMAIN"
