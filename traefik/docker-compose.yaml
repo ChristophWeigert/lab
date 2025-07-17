@@ -8,40 +8,6 @@ volumes:
 
 services:
   traefik:
-    command:
-      - "--global.checkNewVersion=false"
-      - "--global.sendAnonymousUsage=false"
-      - '--accesslog.format=json'
-      - '--accesslog.filepath=etc/traefik/access.log'
-      - '--log.format=json'
-      - "--log.filePath=/etc/traefik/traefik.log"
-      - '--metrics.prometheus'
-      - "--api.dashboard=true"
-      - "--api.insecure=false"
-      - "--entrypoints.web.address=:80"
-      - "--entrypoints.web.http.redirections.entrypoint.to=websecure"
-      - "--entrypoints.web.http.redirections.entrypoint.scheme=https"
-      - "--entrypoints.websecure.address=:443"
-      - "--entrypoints.websecure.transport.respondingTimeouts.readTimeout=600s" # for immich large files
-      - "--entrypoints.websecure.transport.respondingTimeouts.idleTimeout=600s" # for immich large files
-      - "--entrypoints.websecure.transport.respondingTimeouts.writeTimeout=600s" # for immich large files
-      - "--entrypoints.websecure.http.tls=true"
-      - "--entrypoints.websecure.http.tls.certResolver=letsencrypt"
-      - "--entrypoints.websecure.http.tls.domains[0].main=$DOMAIN"
-      - "--entrypoints.websecure.http.tls.domains[0].sans=*.$DOMAIN"
-      - "--entrypoints.websecure.http.tls.domains[1].main=$EXTERRNAL_DOMAIN"
-      - "--entrypoints.websecure.http.tls.domains[1].sans=*.$EXTERRNAL_DOMAIN"      
-      - "--certificatesresolvers.production.acme.dnschallenge=true"
-      - "--certificatesresolvers.production.acme.dnschallenge.delayBeforeCheck=15"
-      - "--certificatesresolvers.production.acme.dnschallenge.provider=cloudflare"
-      - "--certificatesresolvers.production.acme.dnsChallenge.resolvers[0]=1.1.1.1:53"
-      - "--certificatesresolvers.production.acme.dnsChallenge.resolvers[1]=1.0.0.18:53"
-      - "--certificatesresolvers.production.acme.email=$EMAIL"
-      - "--certificatesresolvers.production.acme.storage=/etc/traefik/acme.json"
-      - "--serversTransport.insecureSkipVerify=true"
-      - "--providers.docker=true"
-      - "--providers.docker.exposedbydefault=false"
-      - "--ping"
     container_name: "traefik"
     environment:
       CF_DNS_API_TOKEN: $CF_DNS_API_TOKEN

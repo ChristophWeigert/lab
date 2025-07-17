@@ -22,7 +22,7 @@ services:
     labels:
       traefik.enable: "true"
       traefik.http.routers.ghost.entrypoints: "websecure"
-      traefik.http.routers.ghost.rule: "Host(`$DOMAIN`) || Host(`$EXTERNAL_DOMAIN`)"
+      traefik.http.routers.ghost.rule: "Host(`$DOMAIN`)"
       traefik.http.routers.ghost.tls: "true"
       traefik.http.routers.ghost.tls.certresolver: "production"
       traefik.docker.network: "proxy"
