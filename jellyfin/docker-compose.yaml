@@ -56,5 +56,7 @@ services:
       - "traefik.http.routers.jellyfin.entryPoints=websecure"
       - "traefik.http.routers.jellyfin.tls.certResolver=production"
       - "traefik.http.routers.jellyfin.rule=Host(`jellyfin.$DOMAIN`)"
+      - "traefik.http.routers.jellyfin.tls.domains[0].main=$DOMAIN"
+      - "traefik.http.routers.jellyfin.tls.domains[0].sans=*.$DOMAIN"
       - "traefik.http.services.jellyfin.loadbalancer.server.port=8096"
       - "traefik.docker.network=proxy"

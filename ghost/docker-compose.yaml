@@ -24,6 +24,8 @@ services:
       traefik.http.routers.ghost.entrypoints: "websecure"
       traefik.http.routers.ghost.rule: "Host(`$DOMAIN`)"
       traefik.http.routers.ghost.tls: "true"
+      traefik.http.routers.ghost.tls.domains[0].main: "$DOMAIN"
+      traefik.http.routers.ghost.tls.domains[0].sans: "*.$DOMAIN"
       traefik.http.routers.ghost.tls.certresolver: "production"
       traefik.docker.network: "proxy"
     restart: "always"

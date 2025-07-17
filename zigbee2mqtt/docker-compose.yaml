@@ -24,5 +24,7 @@ services:
       traefik.http.routers.zigbee2mqtt.rule: "Host(`zigbee2mqtt.$DOMAIN`)"
       traefik.http.routers.zigbee2mqtt.tls: "true"
       traefik.http.routers.zigbee2mqtt.tls.certresolver: "production"
+      traefik.http.routers.zigbee2mqtt.tls.domains[0].main: "$DOMAIN"
+      traefik.http.routers.zigbee2mqtt.tls.domains[0].sans: "*.$DOMAIN"
       traefik.http.services.zigbee2mqtt.loadbalancer.server.port: 8080
       traefik.docker.network: "proxy"

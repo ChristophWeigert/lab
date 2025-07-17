@@ -35,6 +35,8 @@ services:
       traefik.http.routers.traefik_https.entrypoints: websecure
       traefik.http.routers.traefik_https.tls: true
       traefik.http.routers.traefik_https.tls.certResolver: production
+      traefik.http.routers.traefik_https.tls.domains[0].main: "$DOMAIN"
+      traefik.http.routers.traefik_https.tls.domains[0].sans: "*.$DOMAIN"
       traefik.http.routers.traefik_https.service: api@internal
       traefik.http.routers.traefik_https.middlewares: basic-auth-global
       traefik.http.middlewares.basic-auth-global.basicauth.users: $BASIC_AUTH

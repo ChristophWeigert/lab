@@ -29,5 +29,7 @@ services:
         - "traefik.http.routers.evcc.tls.certResolver=production"
         - "traefik.http.routers.evcc.rule=Host(`evcc.$DOMAIN`)"
         - "traefik.http.services.evcc.loadbalancer.server.port=443"
+        - "traefik.http.routers.evcc.tls.domains[0].main=$DOMAIN"
+        - "traefik.http.routers.evcc.tls.domains[0].sans=*.$DOMAIN"
         - "traefik.http.routers.evcc.tls=true"
     restart: unless-stopped

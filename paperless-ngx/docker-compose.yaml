@@ -53,6 +53,8 @@ services:
       traefik.http.routers.paperless-ngx.rule: "Host(`paperless-ngx.$DOMAIN`)"
       traefik.http.routers.paperless-ngx.tls: "true"
       traefik.http.routers.paperless-ngx.tls.certresolver: "production"
+      traefik.http.routers.paperless-ngx.tls.domains[0].main: "$DOMAIN"
+      traefik.http.routers.paperless-ngx.tls.domains[0].sans: "*.$DOMAIN"
       traefik.docker.network: "proxy"
       homepage.name: paperless-ngx
       homepage.group: Services
@@ -89,6 +91,8 @@ services:
       traefik.http.routers.paperless-ai.rule: "Host(`paperless-ai.$DOMAIN`)"
       traefik.http.routers.paperless-ai.tls: "true"
       traefik.http.routers.paperless-ai.tls.certresolver: "production"
+      traefik.http.routers.paperless-ai.tls.domains[0].main: "$DOMAIN"
+      traefik.http.routers.paperless-ai.tls.domains[0].sans: "*.$DOMAIN"
       traefik.docker.network: "proxy"
 
   gotenberg:

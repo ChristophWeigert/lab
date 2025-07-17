@@ -25,6 +25,8 @@ services:
       traefik.http.routers.freshrss.rule: "Host(`$DOMAIN`)"
       traefik.http.routers.freshrss.tls: "true"
       traefik.http.routers.freshrss.tls.certresolver: "production"
+      traefik.http.routers.freshrss.tls.domains[0].main: "$DOMAIN"
+      traefik.http.routers.freshrss.tls.domains[0].sans: "*.$DOMAIN"
       traefik.docker.network: "proxy"
       homepage.name: Fresh RSS
       homepage.group: Services

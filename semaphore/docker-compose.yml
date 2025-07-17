@@ -33,4 +33,6 @@ services:
       traefik.http.routers.semaphore.rule: "Host(`$DOMAIN`)"
       traefik.http.routers.semaphore.tls: "true"
       traefik.http.routers.semaphore.tls.certresolver: "production"
+      traefik.http.routers.semaphore.tls.domains[0].main: "$DOMAIN"
+      traefik.http.routers.semaphore.tls.domains[0].sans: "*.$DOMAIN"
       traefik.docker.network: "proxy"

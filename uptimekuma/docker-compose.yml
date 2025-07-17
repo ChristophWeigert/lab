@@ -25,4 +25,6 @@ services:
       traefik.http.routers.uptime-kuma.rule: "Host(`$DOMAIN`)"
       traefik.http.routers.uptime-kuma.tls: "true"
       traefik.http.routers.uptime-kuma.tls.certresolver: "production"
+      traefik.http.routers.uptime-kuma.tls.domains[0].main: "$DOMAIN"
+      traefik.http.routers.uptime-kuma.tls.domains[0].sans: "*.$DOMAIN"
       traefik.docker.network: "proxy"
