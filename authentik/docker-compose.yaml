@@ -58,8 +58,12 @@ services:
     labels:
       traefik.enable: "true"
       traefik.http.routers.authentik.entrypoints: "websecure"
-      traefik.http.routers.authentik.rule: "Host(`$DOMAIN`) || Host(`$EXTERNAL_DOMAIN`)"
+      traefik.http.routers.authentik.rule: "Host(`authentik.$DOMAIN`) || Host(`authentik.$EXTERNAL_DOMAIN`)"
       traefik.http.routers.authentik.tls: "true"
+      traefik.http.routers.authentik.tls.domains[0].main: "$DOMAIN"
+      traefik.http.routers.authentik.tls.domains[0].sans: "*.$DOMAIN"
+      traefik.http.routers.authentik.tls.domains[1].main: "$EXTERNAL_DOMAIN"
+      traefik.http.routers.authentik.tls.domains[1].sans: "*.$EXTERNAL_DOMAIN"
       traefik.http.routers.authentik.tls.certresolver: "production"
       traefik.http.services.authentik.loadbalancer.server.port: "9000"
       traefik.docker.network: "proxy"
