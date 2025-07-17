@@ -11,7 +11,7 @@ services:
   uptime-kuma:
     container_name: uptime-kuma
     # Once V2 is out switch to ghcr.io
-    image: ghcr.io/louislam/uptime-kuma:2.0.0-beta.3
+    image: ghcr.io/louislam/uptime-kuma:2.0.0-beta.3@sha256:0c699f39b1952652e809966618c731d7c37b11bcbd7bdc240f263e84f14e1786
     environment:
       - TZ=Europe/Berlin
     volumes:

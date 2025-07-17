@@ -11,7 +11,7 @@ volumes:
 services:
   influxdb:
     container_name: influxdb
-    image: docker.io/library/influxdb:2.7.11-alpine
+    image: docker.io/library/influxdb:2.7.11-alpine@sha256:ef14203d7014ac9a0df4f087d186901ea7d19993410b35782f6c3c421738eb25
     volumes:
       - influxdb:/var/lib/influxdb2
     environment:
@@ -35,7 +35,7 @@ services:
     restart: unless-stopped
 
   grafana:
-    image: grafana/grafana:latest
+    image: grafana/grafana:latest@sha256:b5b59bfc7561634c2d7b136c4543d702ebcc94a3da477f21ff26f89ffd4214fa
     volumes:
       - grafana:/var/lib/grafana
       - /mnt/grafana-provisioning/:/etc/grafana/provisioning/
