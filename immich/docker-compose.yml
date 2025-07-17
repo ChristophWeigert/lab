@@ -30,9 +30,13 @@ services:
     labels:
       traefik.enable: "true"
       traefik.http.routers.immich.entrypoints: "websecure"
-      traefik.http.routers.immich.rule: "Host(`$DOMAIN`)"
+      traefik.http.routers.immich.rule: "Host(`$HOST`) || Host(`$EXTERNAL_HOST`)"
       traefik.http.routers.immich.tls: "true"
       traefik.http.routers.immich.tls.certresolver: "production"
+      traefik.http.routers.immich.tls.domains[0].main: "$DOMAIN"
+      traefik.http.routers.immich.tls.domains[0].sans: "*.$DOMAIN"
+      #traefik.http.routers.immich.tls.domains[1].main: "$EXTERNAL_DOMAIN"
+      #traefik.http.routers.immich.tls.domains[1].sans: "*.$EXTERNAL_DOMAIN"
       traefik.docker.network: "proxy"
       homepage.name: immich
       homepage.group: Services
