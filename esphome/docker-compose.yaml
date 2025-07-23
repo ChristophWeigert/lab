@@ -1,0 +1,26 @@
+networks:
+  proxy:
+    external: true
+
+volumes:
+  esphome_data: {}
+
+services:
+  esphome:
+    container_name: esphome
+    image: esphome/esphome:2025.7.3
+    networks: 
+      - proxy
+    volumes:
+      - esphome_data:/config
+      - /etc/localtime:/etc/localtime:ro
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=proxy"
+      - "traefik.http.routers.esphome.entryPoints=websecure"
+      - "traefik.http.routers.esphome.tls.certResolver=production"
+      - "traefik.http.routers.esphome.rule=Host(`esphome.$DOMAIN`)"
+      - "traefik.http.routers.esphome.tls.domains[0].main=$DOMAIN"
+      - "traefik.http.routers.esphome.tls.domains[0].sans=*.$DOMAIN"
+      - "traefik.http.routers.esphome.tls=true"
+    restart: unless-stopped
