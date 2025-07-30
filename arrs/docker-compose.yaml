@@ -327,7 +327,7 @@
         - PGID=1000
 
     calibre-web-automated-book-downloader:
-      image: ghcr.io/calibrain/calibre-web-automated-book-downloader:latest@sha256:518908641a2260249513f349eef9f30e580f8f428d1adfa830096b43a818e97b
+      image: ghcr.io/calibrain/calibre-web-automated-book-downloader:latest@sha256:7d01e56bfb0f0f150f89da59e4ec5627c4dc53d48d5ff5283e7e10877c737f8c
       networks: 
         - proxy
       environment:
