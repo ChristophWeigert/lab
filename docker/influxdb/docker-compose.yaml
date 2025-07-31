@@ -35,7 +35,7 @@ services:
     restart: unless-stopped
 
   grafana:
-    image: grafana/grafana:latest@sha256:06b316684d506be82587d99885d22d5b3f404b13414fd1d9a382c3ac2bd9169e
+    image: grafana/grafana:latest@sha256:6a4edc3183d1131cb884bdf6132ddbc1d78657a13b68e4f07e41456c0130e874
     volumes:
       - grafana:/var/lib/grafana
       - /mnt/grafana-provisioning/:/etc/grafana/provisioning/
