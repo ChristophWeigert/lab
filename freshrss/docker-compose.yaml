@@ -31,7 +31,7 @@ services:
       homepage.name: Fresh RSS
       homepage.group: Services
       homepage.icon: freshrss.png
-      homepage.href: https://$DOMAIN
+      homepage.href: https://rss.$DOMAIN
       homepage.description: Fresh RSS
       homepage.widget.type: freshrss
       homepage.widget.url: https://$DOMAIN
