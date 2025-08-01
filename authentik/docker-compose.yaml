@@ -67,14 +67,6 @@ services:
       traefik.http.routers.authentik.tls.certresolver: "production"
       traefik.http.services.authentik.loadbalancer.server.port: "9000"
       traefik.docker.network: "proxy"
-      #      homepage.name: immich
-      #      homepage.group: Services
-      #      homepage.icon: immich
-      #      homepage.href: https://$DOMAIN
-      #      homepage.description: immich
-      #      homepage.widget.type: immich
-      #      homepage.widget.url: https://$DOMAIN
-      #      homepage.widget.key: $HOMEPAGE_KEY
     volumes:
       - /mnt/authentik/media:/media
       - /mnt/authentik/custom-templates:/templates
