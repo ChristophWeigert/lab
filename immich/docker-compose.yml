@@ -41,11 +41,11 @@ services:
       homepage.name: immich
       homepage.group: Services
       homepage.icon: immich
-      homepage.href: https://$DOMAIN
+      homepage.href: https://$HOST
       homepage.description: immich
       homepage.widget.type: immich
       homepage.widget.version: 2
-      homepage.widget.url: https://$DOMAIN
+      homepage.widget.url: https://$HOST
       homepage.widget.key: $HOMEPAGE_KEY
     healthcheck:
       disable: false

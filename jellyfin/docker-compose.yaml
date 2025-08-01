@@ -39,7 +39,7 @@ services:
       - TZ=Europe/Berlin
       - JELLYFIN_PublishedServerUrl=https://jellyfin.$DOMAIN
     volumes:
-      - /mnt/jellyfin:/config
+      - jellyfin:/config
       - media_tv:/data/tv
       - media_movies:/data/movies
       - media_books:/data/books
