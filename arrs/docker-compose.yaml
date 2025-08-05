@@ -38,11 +38,6 @@
         type: "nfs"
         o: "nfsvers=4,addr=192.168.1.14,rw"
         device: ":/mnt/pool-main/media/books"
-    media_books_ingest:
-      driver_opts:
-        type: "nfs"
-        o: "nfsvers=4,addr=192.168.1.14,rw"
-        device: ":/mnt/pool-main/media/books-ingest"
     media_music:
       driver_opts:
         type: "nfs"
@@ -325,31 +320,3 @@
         - TZ=Europe/Berlin
         - PUID=1000
         - PGID=1000
-
-    calibre-web-automated-book-downloader:
-      image: ghcr.io/calibrain/calibre-web-automated-book-downloader:latest@sha256:7d01e56bfb0f0f150f89da59e4ec5627c4dc53d48d5ff5283e7e10877c737f8c
-      networks: 
-        - proxy
-      environment:
-        FLASK_PORT: 8084
-        FLASK_DEBUG: false
-        INGEST_DIR: /cwa-book-ingest
-        BOOK_LANGUAGE: de,en
-        TZ: Europe/Berlin
-        APP_ENV: prod
-        UID: 1000
-        GID: 1000
-        CUSTOM_DNS: cloudflare
-        USE_DOH: true
-      restart: unless-stopped
-      labels:
-        - "traefik.enable=true"
-        - "traefik.docker.network=proxy"
-        - "traefik.http.routers.calibre-dl.entryPoints=websecure"
-        - "traefik.http.routers.calibre-dl.tls.certResolver=production"
-        - "traefik.http.routers.calibre-dl.rule=Host(`calibre-dl.$DOMAIN`)"
-        - "traefik.http.routers.calibre-dl.tls.domains[0].main=$DOMAIN"
-        - "traefik.http.routers.calibre-dl.tls.domains[0].sans=*.$DOMAIN"
-        - "traefik.http.services.calibre-dl.loadbalancer.server.port=8084"
-      volumes:
-        - media_books_ingest:/cwa-book-ingest
