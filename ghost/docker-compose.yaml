@@ -10,13 +10,19 @@ networks:
 services:
   ghost:
     environment:
-      - "url=$DOMAIN_GHOST"
-      - "database__client=sqlite3"
-      - "database__connection__filename=/var/lib/ghost/content/data/ghost.db"
-      - "security_staffDeviceVerification=false"
-      - "NODE_ENV=production"
-      - "GHOST_INSTALL=/var/lib/ghost"
-      - "GHOST_CONTENT=/var/lib/ghost/content"
+      url: "$DOMAIN_GHOST"
+      database__client: "sqlite3"
+      database__connection__filename: "/var/lib/ghost/content/data/ghost.db"
+      mail__transport: "SMTP"
+      mail__options__host: "${MAIL_HOST}"
+      mail__options__port: "${MAIL_PORT}"
+      mail__options__secure: false
+      mail__options__auth__user: "${MAIL_USER}"
+      mail__options__auth__pass: "${MAIL_PASS}"
+      mail__from: "${MAIL_FROM}"
+      NODE_ENV: "production"
+      GHOST_INSTALL: "/var/lib/ghost"
+      GHOST_CONTENT: "/var/lib/ghost/content"
     image: "ghost:6.0.0@sha256:cd6144859e1031f19ca04e8c334db158345a410d3c3cf0bf93ef9536d3f54b27"
     networks:
       - proxy
