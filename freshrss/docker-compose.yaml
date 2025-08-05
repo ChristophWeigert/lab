@@ -34,7 +34,7 @@ services:
       homepage.href: https://rss.$DOMAIN
       homepage.description: Fresh RSS
       homepage.widget.type: freshrss
-      homepage.widget.url: https://$DOMAIN
+      homepage.widget.url: https://rss.$DOMAIN
       homepage.widget.username: $HOMEPAGE_USER
       homepage.widget.password: $HOMEPAGE_PASSWORD
     restart: unless-stopped
