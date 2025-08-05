@@ -13,6 +13,7 @@ services:
       - "url=$DOMAIN_GHOST"
       - "database__client=sqlite3"
       - "database__connection__filename=/var/lib/ghost/content/data/ghost.db"
+      - "security_staffDeviceVerification=false"
       - "NODE_ENV=production"
       - "GHOST_INSTALL=/var/lib/ghost"
       - "GHOST_CONTENT=/var/lib/ghost/content"
