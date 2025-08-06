@@ -20,7 +20,7 @@ services:
     networks:
       - internal
   redis:
-    image: docker.io/library/redis:8.2.0-alpine@sha256:c5c1179319b700a8f0436de4cda3099a0cdda93961042d54cc7ee1181a5a7510
+    image: docker.io/library/redis:8.2.0-alpine@sha256:7521abdff715d396aa482183942f3fe643344287c29ccb66eee16ac08a92190f
     command: --save 60 1 --loglevel warning
     restart: unless-stopped
     container_name: "authentik_redis"
