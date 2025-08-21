@@ -27,7 +27,7 @@ volumes:
 
 services:
   jellyfin:
-    image: ghcr.io/jellyfin/jellyfin:10.11.0-rc5
+    image: ghcr.io/jellyfin/jellyfin:10.11.0-rc5@sha256:4942cd79d431aeb5596d764982072aa4c6acdd450da10c229f7f79380245e270
     container_name: jellyfin
     group_add:
       - "109"
