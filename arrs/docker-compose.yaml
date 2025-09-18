@@ -58,7 +58,7 @@
         - PUID=1000
         - PGID=1000
       container_name: sabnzbd
-      image: ghcr.io/linuxserver/sabnzbd:4.5.3@sha256:5a3196d71c12603bb0e7ceb83e4b38876510b7ba008d174d7081b69d6dbabd55
+      image: ghcr.io/linuxserver/sabnzbd:4.5.3@sha256:488becc2dd8b81dadc76ccb82adb2f251cf61f10b969ecd85b53c6ec9c40ff0c
       volumes:
         - sabnzbd:/config
         - downloads_completed:/downloads # completed directory for downloads. this contains the category directories
