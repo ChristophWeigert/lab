@@ -4,30 +4,15 @@ networks:
 
 volumes:
   jellyfin: {}
-  media_tv:
+  media:
     driver_opts:
       type: "nfs"
       o: "nfsvers=4,addr=192.168.1.14,rw"
-      device: ":/mnt/pool-main/media/tv"
-  media_books:
-    driver_opts:
-      type: "nfs"
-      o: "nfsvers=4,addr=192.168.1.14,rw"
-      device: ":/mnt/pool-main/media/books"
-  media_music:
-    driver_opts:
-      type: "nfs"
-      o: "nfsvers=4,addr=192.168.1.14,rw"
-      device: ":/mnt/pool-main/media/music"
-  media_movies:
-    driver_opts:
-      type: "nfs"
-      o: "nfsvers=4,addr=192.168.1.14,rw"
-      device: ":/mnt/pool-main/media/movies"
+      device: ":/mnt/pool-main/media/"
 
 services:
   jellyfin:
-    image: ghcr.io/jellyfin/jellyfin:10.11.0-rc6@sha256:c1540344bbd2855c32beada7296a82270f4f29b3f3895b4b7b34110d3e31f36e
+    image: ghcr.io/jellyfin/jellyfin:10.11.0-rc8
     container_name: jellyfin
     group_add:
       - "109"
@@ -40,10 +25,7 @@ services:
       - JELLYFIN_PublishedServerUrl=https://jellyfin.$DOMAIN
     volumes:
       - jellyfin:/config
-      - media_tv:/data/tv
-      - media_movies:/data/movies
-      - media_books:/data/books
-      - media_music:/data/music
+      - media:/data
       - /etc/localtime:/etc/localtime:ro
       - /var/data/runtime/jellyfin:/cache
     ports:

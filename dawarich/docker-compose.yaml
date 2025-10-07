@@ -1,0 +1,163 @@
+networks:
+  dawarich:
+  proxy:
+    external: true
+services:
+  dawarich_redis:
+    image: redis:7.4-alpine
+    container_name: dawarich_redis
+    command: redis-server
+    networks:
+      - dawarich
+    volumes:
+      - dawarich_shared:/data
+    restart: always
+    healthcheck:
+      test: [ "CMD", "redis-cli", "--raw", "incr", "ping" ]
+      interval: 10s
+      retries: 5
+      start_period: 30s
+      timeout: 10s
+  dawarich_db:
+    image: postgis/postgis:17-3.5-alpine
+    shm_size: 1G
+    container_name: dawarich_db
+    volumes:
+      - dawarich_db_data:/var/lib/postgresql/data
+      - dawarich_shared:/var/shared
+      # - ./postgresql.conf:/etc/postgresql/postgresql.conf # Optional, uncomment if you want to use a custom config
+    networks:
+      - dawarich
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: tUbZfrLsWVPQmEFn_KqHHJA.UzH8
+      POSTGRES_DB: dawarich
+    restart: always
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres -d dawarich" ]
+      interval: 10s
+      retries: 5
+      start_period: 30s
+      timeout: 10s
+    # command: postgres -c config_file=/etc/postgresql/postgresql.conf # Use custom config, uncomment if you want to use a custom config
+  dawarich_app:
+    image: freikin/dawarich:0.33.0
+    container_name: dawarich_app
+    volumes:
+      - dawarich_public:/var/app/public
+      - dawarich_watched:/var/app/tmp/imports/watched
+      - dawarich_storage:/var/app/storage
+      - dawarich_db_data:/dawarich_db_data
+    networks:
+      - dawarich
+      - proxy
+    stdin_open: true
+    tty: true
+    entrypoint: web-entrypoint.sh
+    command: ['bin/rails', 'server', '-p', '3000', '-b', '::']
+    restart: on-failure
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.dawarich.entryPoints=websecure"
+      - "traefik.http.routers.dawarich.tls.certResolver=production"
+      - "traefik.http.routers.dawarich.rule=Host(`dawarich.$DOMAIN`)"
+      - "traefik.http.routers.dawarich.tls.domains[0].main=$DOMAIN"
+      - "traefik.http.routers.dawarich.tls.domains[0].sans=*.$DOMAIN"
+      - "traefik.http.services.dawarich.loadbalancer.server.port=3000"
+      - "traefik.docker.network=proxy"
+    environment:
+      RAILS_ENV: development
+      REDIS_URL: redis://dawarich_redis:6379
+      DATABASE_HOST: dawarich_db
+      DATABASE_USERNAME: postgres
+      DATABASE_PASSWORD: tUbZfrLsWVPQmEFn_KqHHJA.UzH8
+      DATABASE_NAME: dawarich
+      MIN_MINUTES_SPENT_IN_CITY: 60
+      APPLICATION_HOSTS: dawarich.$DOMAIN
+      TIME_ZONE: Europe/Berlin
+      APPLICATION_PROTOCOL: http
+      PROMETHEUS_EXPORTER_ENABLED: "false"
+      PROMETHEUS_EXPORTER_HOST: 0.0.0.0
+      PROMETHEUS_EXPORTER_PORT: 9394
+      SELF_HOSTED: "true"
+      STORE_GEODATA: "true"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "5"
+    healthcheck:
+      test: [ "CMD-SHELL", "wget -qO - http://127.0.0.1:3000/api/v1/health | grep -q '\"status\"\\s*:\\s*\"ok\"'" ]
+      interval: 10s
+      retries: 30
+      start_period: 30s
+      timeout: 10s
+    depends_on:
+      dawarich_db:
+        condition: service_healthy
+        restart: true
+      dawarich_redis:
+        condition: service_healthy
+        restart: true
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'    # Limit CPU usage to 50% of one core
+          memory: '4G'    # Limit memory usage to 4GB
+  dawarich_sidekiq:
+    image: freikin/dawarich:0.33.0
+    container_name: dawarich_sidekiq
+    volumes:
+      - dawarich_public:/var/app/public
+      - dawarich_watched:/var/app/tmp/imports/watched
+      - dawarich_storage:/var/app/storage
+    networks:
+      - dawarich
+    stdin_open: true
+    tty: true
+    entrypoint: sidekiq-entrypoint.sh
+    command: ['sidekiq']
+    restart: on-failure
+    environment:
+      RAILS_ENV: development
+      REDIS_URL: redis://dawarich_redis:6379
+      DATABASE_HOST: dawarich_db
+      DATABASE_USERNAME: postgres
+      DATABASE_PASSWORD: tUbZfrLsWVPQmEFn_KqHHJA.UzH8
+      DATABASE_NAME: dawarich
+      APPLICATION_HOSTS: dawarich.$DOMAIN
+      BACKGROUND_PROCESSING_CONCURRENCY: 10
+      APPLICATION_PROTOCOL: http
+      PROMETHEUS_EXPORTER_ENABLED: "false"
+      PROMETHEUS_EXPORTER_HOST: dawarich_app
+      PROMETHEUS_EXPORTER_PORT: 9394
+      SELF_HOSTED: "true"
+      STORE_GEODATA: "true"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "5"
+    healthcheck:
+      test: [ "CMD-SHELL", "pgrep -f sidekiq" ]
+      interval: 10s
+      retries: 30
+      start_period: 30s
+      timeout: 10s
+    depends_on:
+      dawarich_db:
+        condition: service_healthy
+        restart: true
+      dawarich_redis:
+        condition: service_healthy
+        restart: true
+      dawarich_app:
+        condition: service_healthy
+        restart: true
+
+volumes:
+  dawarich_db_data:
+  dawarich_shared:
+  dawarich_public:
+  dawarich_watched:
+  dawarich_storage:
