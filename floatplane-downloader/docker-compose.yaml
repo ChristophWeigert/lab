@@ -1,6 +1,6 @@
 services:
   floatplane-downloader:
-    image: inrix/floatplane-downloader:dev@sha256:d0edb83edf6cd4dde1246c531de492d19ce5ed57811d931b36525c0c692df30d
+    image: inrix/floatplane-downloader:dev@sha256:f9c8169756ce2875ac2a4952d877a0ce8ec2c8eb15d27e18d7b4613077a35db4
     container_name: floatplane-downloader
     environment:
       - headless=true
