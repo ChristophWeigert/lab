@@ -6,52 +6,49 @@
     ":enableVulnerabilityAlertsWithLabel('security')",
     ":preserveSemverRanges",
     ":rebaseStalePrs",
-    "group:recommended"
+    "group:recommended",
+    ":timezone(Europe/Paris)",
+    ":label(renovate)",
+    ":semanticPrefixFix",
+    ":separateMultipleMajorReleases"
+    //":automergeBranch",
+    //":automergeStableNonMajor",
+    //":automergeDigest",
+    //":skipStatusChecks"
   ],
-  "labels": [
-    "renovate"
-  ],
+  "dependencyDashboardTitle": "🤖 Renovate Dashboard",
+  "commitMessageTopic": "{{depName}}",
+  "commitMessageExtra": "to {{newVersion}}",
+  "commitMessageSuffix": "",
+  "ignorePaths": [],
   "packageRules": [
     {
-      "groupName": "devDependencies (non-major)",
-      "matchDepTypes": [
-        "devDependencies",
-        "require-dev"
-      ],
-      "matchUpdateTypes": [
-        "digest",
-        "minor",
-        "patch",
-        "pin",
-        "digest",
-        "pinDigest"
-      ]
+      "matchDatasources": ["helm"],
+      "commitMessageTopic": "chart {{depName}}"
     },
     {
-      "description": "Update PostgreSQL on a minor version or patch level only, bumps to major versions might break compatibilty with an application",
-      "enabled": false,
-      "matchManagers": [
-        "docker-compose",
-        "dockerfile"
-      ],
-      "matchUpdateTypes": [
-        "major"
-      ],
-      "matchPackageNames": [
-        "/^([^/]+\\/)*postgres(:.+)?$/"
-      ]
+      "matchDatasources": ["docker"],
+      "commitMessageTopic": "image {{depName}}"
     },
     {
-      "description": "Catch a potential `security` suffix as part of the patch release as Grafana does not follow semver for security releases",
-      "matchManagers": [
-        "docker-compose",
-        "dockerfile"
-      ],
-      "versioning": "regex:^(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+(?:-security-\\d+)?)$",
-      "matchPackageNames": [
-        "/^([^/]+\\/)*grafana/grafana-oss(:.+)?$/"
-      ]
+      // example: 1.31.2.4975-ls107
+      "versioning": "regex:^(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)\\.(?<revision>\\d+)-ls(?<build>\\d+)$",
+    },
+    {
+      // example: v1.5.1-ls295
+      "versioning": "regex:^v(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)-ls(?<build>\\d+)$",
+    },
+    {
+      // example: 10.10.6ubu2404-ls53
+      "versioning": "regex:^(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)(?<compatibility>ubu\\d+)-ls(?<build>\\d+)$",
+    },
+    {
+      // example: 5.0.3-r0-ls373
+      "versioning": "regex:^(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)-(?<compatibility>r\\d)-ls(?<build>\\d+)$"
+    },
+    {
+      "matchPackageNames": ["/longhorn/", "/crocodilestick\\/calibre-web-automated/"],
+      "enabled": false
     }
-  ],
-  "platformAutomerge": true
+  ]
 }
