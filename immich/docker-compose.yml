@@ -74,7 +74,7 @@ services:
 
   database:
     container_name: immich_postgres
-    image: ghcr.io/immich-app/postgres:14-vectorchord0.3.0-pgvectors0.2.0@sha256:c570d9e1c2494f65d2a0a379a7f6df66e8441964254a30aa62cc58e8ebf1dee0
+    image: ghcr.io/immich-app/postgres:15-vectorchord0.3.0-pgvectors0.2.0@sha256:e4f336e5098a278bca43641ae118435dde58b2d9d3029effc682dc35f9fbb488
     networks:
       - immich
     environment:
