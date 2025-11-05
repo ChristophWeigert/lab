@@ -12,7 +12,7 @@ services:
     container_name: evcc
     networks: 
       - proxy
-    image: evcc/evcc:0.209.6@sha256:675b10de3c53442c840802945443bcec526a0a5b9fb98e0f4f0841ebad6d657a
+    image: evcc/evcc:0.209.7@sha256:355e5745333d6458bcaafa3081f24fa9613c05385a0e62a135389ad2667e4f3e
     ports:
       - 8887:8887/tcp
       - 9522:9522/udp
