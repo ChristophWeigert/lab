@@ -1,37 +1,18 @@
 ---
 volumes:
   teamspeak_data:
-    external: true
 
 services:
   teamspeak:
-    entrypoint:
-      - "/init"
-    environment:
-      - "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
-      - "TIME_ZONE=America/Los_Angeles"
-      - "DIST_UPDATE=1"
-      - "TS_UPDATE=1"
-      - "TS_UPDATE_BACKUP=1"
-      - "UID=1000"
-      - "GID=1000"
-      - "INIFILE=0"
-      - "DEBUG=0"
-      - "QEMU_OFFSET=0x8000"
-      - "TS_ARCHITECTURE=x86"
-      - "SYSTEM_ARCHITECTURE=arm"
-      - "EMULATOR=qemu"
-      - "TS3SERVER_LICENSE=accept"
-      - "LANG=en_US.UTF-8"
-      - "serveradmin_password=$serveradmin_password"
-    image: "ertagh/teamspeak3-server:latest-predownloaded@sha256:c690a7d5d304467ee8b67bc88a00fc4b589ee281f8fe8a4e1b4b32f096c2afe7"
+    image: teamspeak:3.13.7
+    restart: always
     ports:
       - "10011:10011/tcp"
       - "1337:1337/udp"
       - "30033:30033/tcp"
       - "9987:9987/udp"
-    restart: "always"
-    network_mode: "bridge"
+    environment:
+      TS3SERVER_LICENSE: accept
+      TIME_ZONE: Europe/Berlin
     volumes:
-      - "teamspeak_data:/teamspeak/save"
-    working_dir: "/teamspeak"
+      - teamspeak_data:/var/ts3server/
