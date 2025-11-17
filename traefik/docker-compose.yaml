@@ -45,7 +45,7 @@ services:
       traefik.http.routers.http-catchall.middlewares: redirect-to-https
       traefik.http.middlewares.redirect-to-https.redirectscheme.scheme: https
       homepage.name: Traefik
-      homepage.group: Hosting
+      homepage.group: Services
       homepage.icon: traefik
       homepage.href: https://traefik.$DOMAIN
       homepage.description: Traefikmanagement
