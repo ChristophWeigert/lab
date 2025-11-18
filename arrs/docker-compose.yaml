@@ -245,7 +245,7 @@
       container_name: umlautadaptarr
       ports:
         - "5006:5006"
-      image: pcjones/umlautadaptarr:0.7.4@sha256:8567a1b32bb5d857f3615fd1a2d1e8bc4750cbf9a24913c5735e887b8e521b25
+      image: pcjones/umlautadaptarr:0.7.5@sha256:2c6689d49afe51fcaa5e8a27e139855e0c8782e1e42ec595d8694b74094f991f
       environment:
         - TZ=Europe/Berlin
         - PUID=1000
