@@ -1,0 +1,55 @@
+volumes:
+  mealie-data:
+
+networks:
+  proxy:
+    external: true
+
+services:
+  mealie:
+    image: ghcr.io/mealie-recipes/mealie:v3.5.0 #
+    container_name: mealie
+    restart: always
+    deploy:
+      resources:
+        limits:
+          memory: 1000M
+    volumes:
+      - mealie-data:/app/data/
+    environment:
+      ALLOW_SIGNUP: "false"
+      PUID: 1000
+      PGID: 1000
+      TZ: Europe/Berlin
+      BASE_URL: https://mealie.$DOMAIN
+      ALLOW_PASSWORD_LOGIN: true
+      SMTP_HOST: $SMTP_HOST
+      SMTP_PORT: $SMTP_PORT
+      SMTP_FROM_NAME: $SMTP_FROM_NAME
+      SMTP_AUTH_STRATEGY: $SMTP_AUTH_STRATEGY
+      SMTP_FROM_EMAIL: $SMTP_FROM_EMAIL
+      SMTP_USER: $SMTP_USER
+      SMTP_PASSWORD: $SMTP_PASSWORD
+      OIDC_AUTH_ENABLED: True
+      OIDC_CONFIGURATION_URL: $OIDC_CONFIGURATION_URL
+      OIDC_CLIENT_ID: $OIDC_CLIENT_ID
+      OIDC_CLIENT_SECRET: $OIDC_CLIENT_SECRET
+      OIDC_USER_GROUP: $OIDC_USER_GROUP
+      OIDC_ADMIN_GROUP: $OIDC_ADMIN_GROUP
+      OIDC_AUTO_REDIRECT: True
+      OIDC_REMEMBER_ME: True
+      OIDC_SIGNING_ALGORITHM: RS256
+      OIDC_USER_CLAIM: email
+      OIDC_NAME_CLAIM: name
+      OPENAI_API_KEY: $OPENAI_API_KEY
+    networks:
+      - proxy
+    labels:
+      traefik.enable: "true"
+      traefik.http.routers.mealie.entrypoints: "websecure"
+      traefik.http.routers.mealie.rule: "Host(`mealie.$DOMAIN`)"
+      traefik.http.routers.mealie.tls: "true"
+      traefik.http.routers.mealie.tls.certresolver: "production"
+      traefik.http.routers.mealie.tls.domains[0].main: "$DOMAIN"
+      traefik.http.routers.mealie.tls.domains[0].sans: "*.$DOMAIN"
+      traefik.docker.network: "proxy"
