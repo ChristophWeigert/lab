@@ -10,13 +10,3 @@
         msg: 'disk space has reached 80% threshold'
       with_items: '{{ ansible_mounts | rejectattr("fstype", "in", ["squashfs", "nfs", "nfs4"]) | list }}'
 
-    # - name: Send discord message when disk space is over 80%
-    #   uri:
-    #     url: "your-webhook"
-    #     method: POST
-    #     body_format: json
-    #     body: '{"content": "Disk space on {{ inventory_hostname }} is above 80%!"}'
-    #     headers:
-    #       Content-Type: application/json
-    #     status_code: 204
-    #   when: disk_usage.stdout[:-1]|int > 80

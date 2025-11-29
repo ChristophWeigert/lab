@@ -9,7 +9,7 @@
         containers: false
         images: true
         images_filters:
-          dangling: false
+          dangling: true
         networks: false
         volumes: false
-        builder_cache: false
+        builder_cache: true
