@@ -19,7 +19,7 @@ services:
       start_period: 30s
       timeout: 10s
   dawarich_db:
-    image: postgis/postgis:17-3.5-alpine@sha256:f439e384b4111f0bc21b4a49e223f8fd7f40516285fc3825d7a8af15e710d47c
+    image: postgis/postgis:17-3.5-alpine@sha256:5c37f065b662a82a113880662a5ef019109282c9a855435207a801e69036832e
     shm_size: 1G
     container_name: dawarich_db
     volumes:
