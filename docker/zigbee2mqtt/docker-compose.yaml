@@ -4,7 +4,6 @@ networks:
 
 volumes:
   zigbee2mqtt:
-  grafana:
 
 services:
   zigbee2mqtt:
@@ -14,10 +13,10 @@ services:
     networks:
       - proxy
     volumes:
-        - zigbee2mqtt:/app/data
-        - /run/udev:/run/udev:ro
+      - zigbee2mqtt:/app/data
+      - /run/udev:/run/udev:ro
     environment:
-        - TZ=Europe/Berlin
+      - TZ=Europe/Berlin
     labels:
       traefik.enable: "true"
       traefik.http.routers.zigbee2mqtt.entrypoints: "websecure"
