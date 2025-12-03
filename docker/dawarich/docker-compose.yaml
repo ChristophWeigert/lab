@@ -168,6 +168,22 @@ services:
 volumes:
   dawarich_db_data:
   dawarich_shared:
+    driver_opts:
+    type: "nfs"
+    o: "nfsvers=4,addr=192.168.1.14,rw"
+    device: ":/mnt/pool-main/docker_volumes/dawarich/shared"
   dawarich_public:
+    driver_opts:
+    type: "nfs"
+    o: "nfsvers=4,addr=192.168.1.14,rw"
+    device: ":/mnt/pool-main/docker_volumes/dawarich/public"
   dawarich_watched:
+    driver_opts:
+    type: "nfs"
+    o: "nfsvers=4,addr=192.168.1.14,rw"
+    device: ":/mnt/pool-main/docker_volumes/dawarich/watched"
   dawarich_storage:
+    driver_opts:
+    type: "nfs"
+    o: "nfsvers=4,addr=192.168.1.14,rw"
+    device: ":/mnt/pool-main/docker_volumes/dawarich/storage"
