@@ -1,7 +1,7 @@
 ---
 services:
   postgresql:
-    image: docker.io/library/postgres:16.11@sha256:cf2a05fe40887b721e4b3dbac8fd32673c08292dcc8ba6b62b52b7f640433bd0
+    image: docker.io/library/postgres:16.11-alpine
     container_name: "authentik_postgresql"
     restart: unless-stopped
     healthcheck:
@@ -16,31 +16,14 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?error}
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_DB: ${POSTGRES_DB}
-      TZ: ${TZ:-UTC}
     networks:
       - internal
-  redis:
-    image: docker.io/library/redis:8.4.0-alpine@sha256:6cbef353e480a8a6e7f10ec545f13d7d3fa85a212cdcc5ffaf5a1c818b9d3798
-    command: --save 60 1 --loglevel warning
-    restart: unless-stopped
-    container_name: "authentik_redis"
-    healthcheck:
-      test: ["CMD-SHELL", "redis-cli ping | grep PONG"]
-      start_period: 20s
-      interval: 30s
-      retries: 5
-      timeout: 3s
-    networks:
-      - internal
-    volumes:
-      - redis:/data
   server:
     image: ghcr.io/goauthentik/server:2025.10.2@sha256:8322e449feefcc2416f0401038d5a1a28552c4403b079a59d3b4d978d8f3f530
     restart: unless-stopped
     command: server
     container_name: "authentik_server"
     environment:
-      AUTHENTIK_REDIS__HOST: redis
       AUTHENTIK_POSTGRESQL__HOST: authentik_postgresql
       AUTHENTIK_POSTGRESQL__USER: ${POSTGRES_USER}
       AUTHENTIK_POSTGRESQL__NAME: ${POSTGRES_DB}
@@ -70,21 +53,19 @@ services:
     volumes:
       - /mnt/authentik/media:/media
       - /mnt/authentik/custom-templates:/templates
-      - /mnt/authentik/custom.css:/web/dist/custom.css:ro
       - /etc/timezone:/etc/timezone:ro
     networks:
       - internal
       - proxy
     depends_on:
-      - postgresql
-      - redis
+      postgresql:
+        condition: service_healthy
   worker:
     image: ghcr.io/goauthentik/server:2025.10.2@sha256:8322e449feefcc2416f0401038d5a1a28552c4403b079a59d3b4d978d8f3f530
     restart: unless-stopped
     command: worker
     container_name: "authentik_worker"
     environment:
-      AUTHENTIK_REDIS__HOST: redis
       AUTHENTIK_POSTGRESQL__HOST: authentik_postgresql
       AUTHENTIK_POSTGRESQL__USER: ${POSTGRES_USER}
       AUTHENTIK_POSTGRESQL__NAME: ${POSTGRES_DB}
@@ -103,19 +84,16 @@ services:
       - /mnt/authentik/media:/media
       - /mnt/authentik/certs:/certs
       - /mnt/authentik/custom-templates:/templates
-      - /mnt/authentik/custom.css:/web/dist/custom.css:ro
       - /etc/timezone:/etc/timezone:ro
+      - /var/run/docker.sock:/var/run/docker.sock
     networks:
       - internal
     depends_on:
-      - postgresql
-      - redis
+      postgresql:
+        condition: service_healthy
 
 volumes:
   database:
-    driver: local
-  redis:
-    driver: local
 
 networks:
   proxy:
