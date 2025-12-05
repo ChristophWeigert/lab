@@ -8,7 +8,7 @@ volumes:
 services:
   esphome:
     container_name: esphome
-    image: esphome/esphome:2025.11.3@sha256:c9db5a84e817185b5ff6c1fbf240565f453e754b1cd29feca8e75eeeb485f078
+    image: esphome/esphome:2025.11.4@sha256:0ebf60cda539151e630db84ef0274877f9f100a37d4da78469c203e76d11d1fd
     networks: 
       - proxy
     volumes:
