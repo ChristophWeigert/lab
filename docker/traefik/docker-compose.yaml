@@ -11,7 +11,7 @@ services:
     container_name: "traefik"
     environment:
       CF_DNS_API_TOKEN: $CF_DNS_API_TOKEN
-    image: traefik:v3.6.4@sha256:beebe9d00a6f7cd8cf35581eb9c065d30d1ac0b961a5561fb106c64d10d8d76d
+    image: traefik:v3.6.4@sha256:c5bd185c41ba3dbb42cf8a1b9fbdc368bdc96f90c8e598134879935f64e7a7f1
     networks:
       - proxy
     security_opt:
