@@ -15,7 +15,6 @@ volumes:
   prowlarr: {}
   mediathekarr: {}
   configarr: {}
-  huntarr: {}
   downloads_completed:
     driver_opts:
       type: "nfs"
@@ -96,7 +95,7 @@ services:
   sonarr:
     networks: [ arrs, proxy ]
     restart: unless-stopped
-    image: ghcr.io/linuxserver/sonarr:4.0.16@sha256:60e5edcac39172294ad22d55d1b08c2c0a9fe658cad2f2c4d742ae017d7874de
+    image: ghcr.io/linuxserver/sonarr:4.0.16@sha256:8b9f2138ec50fc9e521960868f79d2ad0d529bc610aef19031ea8ff80b54c5e0
     container_name: sonarr
     environment:
       - DOCKER_MODS=ghcr.io/gilbn/theme.park:sonarr
@@ -287,34 +286,12 @@ services:
       - "traefik.http.routers.mediathekarr.tls.domains[0].sans=*.$DOMAIN"
       - "traefik.http.services.mediathekarr.loadbalancer.server.port=5007"
 
-  huntarr:
-    networks: [ arrs, proxy ]
-    image: ghcr.io/plexguide/huntarr:8.2.10@sha256:b5a47c2b43806165f433d308d69a21e74a687ce59f4fcccb612d6a7acb3af6d7
-    container_name: huntarr
-    restart: unless-stopped
-    volumes:
-      - huntarr:/config
-    labels:
-      - "traefik.enable=true"
-      - "traefik.docker.network=proxy"
-      - "traefik.http.routers.huntarr.entryPoints=websecure"
-      - "traefik.http.routers.huntarr.tls.certResolver=production"
-      - "traefik.http.routers.huntarr.rule=Host(`huntarr.$DOMAIN`)"
-      - "traefik.http.routers.huntarr.tls.domains[0].main=$DOMAIN"
-      - "traefik.http.routers.huntarr.tls.domains[0].sans=*.$DOMAIN"
-      - "traefik.http.services.huntarr.loadbalancer.server.port=9705"
-    environment:
-      - TZ=Europe/Berlin
-
   configarr:
     networks: [ arrs, proxy ]
     restart: unless-stopped
-    image: ghcr.io/raydak-labs/configarr:1.18.0@sha256:98d1fb3e87e01c9f56a0dd085d54e2910b77210eb3178a996648578e55b3015b
+    image: ghcr.io/raydak-labs/configarr:1.19.0@sha256:dd7f44d10f6705f7c1d8cd03f3edf8a5c6390482d0770785f36dbf93df435869
     container_name: configarr
-    user: 1000:1000
     volumes:
       - configarr:/app
     environment:
       - TZ=Europe/Berlin
-      - PUID=1000
-      - PGID=1000
