@@ -15,7 +15,6 @@ volumes:
   prowlarr: {}
   mediathekarr: {}
   configarr: {}
-  huntarr: {}
   downloads_completed:
     driver_opts:
       type: "nfs"
@@ -56,7 +55,7 @@ services:
       - PUID=1000
       - PGID=1000
     container_name: sabnzbd
-    image: ghcr.io/linuxserver/sabnzbd:4.5.5@sha256:ed10a7e9fc019aded46f1591f236e9be6d75c99e7017b897b502667cd65afc4c
+    image: ghcr.io/linuxserver/sabnzbd:4.5.5@sha256:a46e75d861e6b26d7ee263b22743d6fdaaa4a5ccd42168b6ea563a2f047d9438
     volumes:
       - sabnzbd:/config
       - downloads_completed:/downloads # completed directory for downloads. this contains the category directories
@@ -96,7 +95,7 @@ services:
   sonarr:
     networks: [ arrs, proxy ]
     restart: unless-stopped
-    image: ghcr.io/linuxserver/sonarr:4.0.16@sha256:60e5edcac39172294ad22d55d1b08c2c0a9fe658cad2f2c4d742ae017d7874de
+    image: ghcr.io/linuxserver/sonarr:4.0.16@sha256:02b4d538d351d6e35882a021c08e8600fe95d28860fb1dd724b597166e7221ca
     container_name: sonarr
     environment:
       - DOCKER_MODS=ghcr.io/gilbn/theme.park:sonarr
@@ -122,7 +121,7 @@ services:
   bazarr:
     networks: [ arrs, proxy ]
     restart: unless-stopped
-    image: ghcr.io/linuxserver/bazarr:1.5.3@sha256:648f694532a3a53d8cf78bc888919ef538659bad41af4c680b0427ad1047d171
+    image: ghcr.io/linuxserver/bazarr:1.5.4@sha256:7d0a091a63889ce1e4ac4c90595ebd2c50ba5a5df7039a4f4d2be6c2aed6d4ae
     container_name: bazarr
     environment:
       - TZ=Europe/Berlin
@@ -172,7 +171,7 @@ services:
   lidarr:
     networks: [ arrs, proxy ]
     restart: unless-stopped
-    image: blampe/lidarr:latest@sha256:64082fc1e7e90a27d2c0354955c00faccf4d58f3667a9829822a5f47dea80a2a
+    image: blampe/lidarr:latest@sha256:37cda9b639588faef8b82cda286948d29b947ece80f8c93cccb5b9141d4a25c0
     container_name: lidarr
     environment:
       - TZ=Europe/Berlin
@@ -196,7 +195,7 @@ services:
   radarr:
     networks: [ arrs, proxy ]
     restart: unless-stopped
-    image: ghcr.io/linuxserver/radarr:6.0.4@sha256:6c0948b42c149e36bb3dbc0b64d36c77b2d3c9dccf1b424c4f72af1e57ba0c21
+    image: ghcr.io/linuxserver/radarr:6.0.4@sha256:270f25698624b57b86ca119cc95399d7ff15be8297095b4e1223fd5b549b732c
     container_name: radarr
     environment:
       - TZ=Europe/Berlin
@@ -219,7 +218,7 @@ services:
   prowlarr:
     networks: [ arrs, proxy ]
     restart: unless-stopped
-    image: ghcr.io/linuxserver/prowlarr:2.3.0@sha256:67a8aaedcfd6989f3030b937a6a07007310b1dfc7ee8df16d2cbfa48d1c1158c
+    image: ghcr.io/linuxserver/prowlarr:2.3.0@sha256:d3e9307b320b6772749a2cf8fc2712e9e824c4930b034680ad4d08a9e2f25884
     container_name: prowlarr
     environment:
       - TZ=Europe/Berlin
@@ -264,7 +263,7 @@ services:
   mediathekarr:
     networks: [ arrs, proxy ]
     restart: unless-stopped
-    image: pcjones/mediathekarr:beta@sha256:7a3ad22f504134d694a41c2e8f81376377253c0e37bdbedd6f9315c47870d8b7
+    image: pcjones/mediathekarr:beta@sha256:c1cf5b8c2f775f3bfe846f0217af0fe568b0d5e29330ce65020cd0f0871b315c
     container_name: mediathekarr
     environment:
       - TZ=Europe/Berlin
@@ -287,34 +286,12 @@ services:
       - "traefik.http.routers.mediathekarr.tls.domains[0].sans=*.$DOMAIN"
       - "traefik.http.services.mediathekarr.loadbalancer.server.port=5007"
 
-  huntarr:
-    networks: [ arrs, proxy ]
-    image: ghcr.io/plexguide/huntarr:8.2.10@sha256:b5a47c2b43806165f433d308d69a21e74a687ce59f4fcccb612d6a7acb3af6d7
-    container_name: huntarr
-    restart: unless-stopped
-    volumes:
-      - huntarr:/config
-    labels:
-      - "traefik.enable=true"
-      - "traefik.docker.network=proxy"
-      - "traefik.http.routers.huntarr.entryPoints=websecure"
-      - "traefik.http.routers.huntarr.tls.certResolver=production"
-      - "traefik.http.routers.huntarr.rule=Host(`huntarr.$DOMAIN`)"
-      - "traefik.http.routers.huntarr.tls.domains[0].main=$DOMAIN"
-      - "traefik.http.routers.huntarr.tls.domains[0].sans=*.$DOMAIN"
-      - "traefik.http.services.huntarr.loadbalancer.server.port=9705"
-    environment:
-      - TZ=Europe/Berlin
-
   configarr:
     networks: [ arrs, proxy ]
     restart: unless-stopped
-    image: ghcr.io/raydak-labs/configarr:1.18.0@sha256:98d1fb3e87e01c9f56a0dd085d54e2910b77210eb3178a996648578e55b3015b
+    image: ghcr.io/raydak-labs/configarr:1.20.0@sha256:40180ae49ed3caab864f65682da14b172281edb19924e60a5fd357b2234cb987
     container_name: configarr
-    user: 1000:1000
     volumes:
       - configarr:/app
     environment:
       - TZ=Europe/Berlin
-      - PUID=1000
-      - PGID=1000

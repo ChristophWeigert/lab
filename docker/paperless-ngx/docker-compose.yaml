@@ -1,7 +1,7 @@
 ---
 services:
   broker:
-    image: docker.io/library/redis:8.4.0@sha256:3906b477e4b60250660573105110c28bfce93b01243eab37610a484daebceb04
+    image: docker.io/library/redis:8.4.0@sha256:73dad4271642c5966db88db7a7585fae7cf10b685d1e48006f31e0294c29fdd7
     restart: unless-stopped
     networks:
       - internal
@@ -9,7 +9,7 @@ services:
       - redisdata:/data
 
   webserver:
-    image: ghcr.io/paperless-ngx/paperless-ngx:2.20.3@sha256:57ad9565bff3bdf2378ab1dcc21ea649dfd68ee58e0eeca2bfba0120a26563e8
+    image: ghcr.io/paperless-ngx/paperless-ngx:2.20.4@sha256:06ca6a6c2a21cfebcc7c5f2e0d38f892dba4bcb090b8781a55d003c63cce386a
     restart: unless-stopped
     container_name: "webserver"
     depends_on:

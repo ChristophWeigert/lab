@@ -1,0 +1,39 @@
+# yamllint disable rule:line-length
+networks:
+  proxy:
+    external: true
+
+volumes:
+  vaultwarden:
+
+services:
+  vaultwarden:
+    image: ghcr.io/dani-garcia/vaultwarden:1.35.2@sha256:d89a6d21e361254670c24a4272b4b5f245e402c284f2f55de2c379fdbcfa1fa5
+    volumes:
+      - vaultwarden:/data
+    environment:
+      - ADMIN_TOKEN=${ADMIN_TOKEN}
+      - WEBSOCKET_ENABLED=true
+      - SIGNUPS_ALLOWED=false
+    networks:
+      - proxy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80/"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 90s
+    labels:
+      traefik.enable: "true"
+      traefik.http.routers.vaultwarden.entrypoints: "websecure"
+      traefik.http.routers.vaultwarden.rule: "Host(`vaultwarden.$DOMAIN`)"
+      traefik.http.routers.vaultwarden.tls.domains[0].main: "$DOMAIN"
+      traefik.http.routers.vaultwarden.tls.domains[0].sans: "*.$DOMAIN"
+      traefik.http.routers.vaultwarden.tls: "true"
+      traefik.http.routers.vaultwarden.tls.certresolver: "production"
+      traefik.http.routers.vaultwarden.service: "vaultwarden"
+      traefik.http.services.vaultwarden.loadbalancer.passhostheader: "true"
+      traefik.http.routers.vaultwarden.middlewares: "compresstraefik"
+      traefik.http.middlewares.compresstraefik.compress: "true"
+      traefik.docker.network: "proxy"
+    restart: unless-stopped
