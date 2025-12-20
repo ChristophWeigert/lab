@@ -309,7 +309,7 @@ services:
   configarr:
     networks: [ arrs, proxy ]
     restart: unless-stopped
-    image: ghcr.io/raydak-labs/configarr:1.18.0@sha256:98d1fb3e87e01c9f56a0dd085d54e2910b77210eb3178a996648578e55b3015b
+    image: ghcr.io/raydak-labs/configarr:1.19.0@sha256:dd7f44d10f6705f7c1d8cd03f3edf8a5c6390482d0770785f36dbf93df435869
     container_name: configarr
     user: 1000:1000
     volumes:
