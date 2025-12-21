@@ -7,7 +7,7 @@ volumes:
 
 services:
   vaultwarden:
-    image: ghcr.io/dani-garcia/vaultwarden:testing@sha256:84d5a0fdd4215feb77284b8654bd506ceaef3985929ce9a7ee336238e3d01739
+    image: ghcr.io/dani-garcia/vaultwarden:testing@sha256:1296f569deb74fa6a950ff0c9a83d13dfa474239f861c9b311d3dd866a0ec6a8
     volumes:
       - vaultwarden:/data
     environment:
