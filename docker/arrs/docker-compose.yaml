@@ -15,7 +15,6 @@ volumes:
   prowlarr: {}
   mediathekarr: {}
   configarr: {}
-  huntarr: {}
   downloads_completed:
     driver_opts:
       type: "nfs"
@@ -286,25 +285,6 @@ services:
       - "traefik.http.routers.mediathekarr.tls.domains[0].main=$DOMAIN"
       - "traefik.http.routers.mediathekarr.tls.domains[0].sans=*.$DOMAIN"
       - "traefik.http.services.mediathekarr.loadbalancer.server.port=5007"
-
-  huntarr:
-    networks: [ arrs, proxy ]
-    image: ghcr.io/plexguide/huntarr:8.2.10@sha256:b5a47c2b43806165f433d308d69a21e74a687ce59f4fcccb612d6a7acb3af6d7
-    container_name: huntarr
-    restart: unless-stopped
-    volumes:
-      - huntarr:/config
-    labels:
-      - "traefik.enable=true"
-      - "traefik.docker.network=proxy"
-      - "traefik.http.routers.huntarr.entryPoints=websecure"
-      - "traefik.http.routers.huntarr.tls.certResolver=production"
-      - "traefik.http.routers.huntarr.rule=Host(`huntarr.$DOMAIN`)"
-      - "traefik.http.routers.huntarr.tls.domains[0].main=$DOMAIN"
-      - "traefik.http.routers.huntarr.tls.domains[0].sans=*.$DOMAIN"
-      - "traefik.http.services.huntarr.loadbalancer.server.port=9705"
-    environment:
-      - TZ=Europe/Berlin
 
   configarr:
     networks: [ arrs, proxy ]
