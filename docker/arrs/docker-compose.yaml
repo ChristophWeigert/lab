@@ -291,10 +291,7 @@ services:
     restart: unless-stopped
     image: ghcr.io/raydak-labs/configarr:1.19.0@sha256:dd7f44d10f6705f7c1d8cd03f3edf8a5c6390482d0770785f36dbf93df435869
     container_name: configarr
-    user: 1000:1000
     volumes:
       - configarr:/app
     environment:
       - TZ=Europe/Berlin
-      - PUID=1000
-      - PGID=1000
