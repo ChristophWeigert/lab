@@ -94,11 +94,11 @@ services:
 
 volumes:
   database:
+  media:
+  certs:
+  custom-templates:
 
 networks:
   proxy:
     external: true
   internal:
-  media:
-  certs:
-  custom-templates:
