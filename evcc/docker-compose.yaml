@@ -18,7 +18,7 @@ services:
       - 9522:9522/udp
       - 4712:4712/tcp
     volumes:
-      - /mnt/evcc/evcc.yaml:/etc/evcc.yaml
+      #- /mnt/evcc/evcc.yaml:/etc/evcc.yaml
       - evcc_data:/root/.evcc
       - /etc/machine-id:/etc/machine-id:ro
       - /var/lib/dbus/machine-id:/var/lib/dbus/machine-id:ro
