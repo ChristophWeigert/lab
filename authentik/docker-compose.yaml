@@ -51,8 +51,8 @@ services:
       traefik.http.services.authentik.loadbalancer.server.port: "9000"
       traefik.docker.network: "proxy"
     volumes:
-      - /mnt/authentik/media:/media
-      - /mnt/authentik/custom-templates:/templates
+      - media:/media
+      - custom-templates:/templates
       - /etc/timezone:/etc/timezone:ro
     networks:
       - internal
@@ -81,9 +81,9 @@ services:
       AUTHENTIK_EMAIL__USE_SSL: ${EMAIL_USE_SSL:-false}
       AUTHENTIK_EMAIL__TIMEOUT: ${EMAIL_TIMEOUT:-10}
     volumes:
-      - /mnt/authentik/media:/media
-      - /mnt/authentik/certs:/certs
-      - /mnt/authentik/custom-templates:/templates
+      - media:/media
+      - certs:/certs
+      - custom-templates:/templates
       - /etc/timezone:/etc/timezone:ro
       - /var/run/docker.sock:/var/run/docker.sock
     networks:
@@ -99,3 +99,6 @@ networks:
   proxy:
     external: true
   internal:
+  media:
+  certs:
+  custom-templates:
