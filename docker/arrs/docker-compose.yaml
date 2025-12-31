@@ -171,7 +171,7 @@ services:
   lidarr:
     networks: [ arrs, proxy ]
     restart: unless-stopped
-    image: blampe/lidarr:latest@sha256:64082fc1e7e90a27d2c0354955c00faccf4d58f3667a9829822a5f47dea80a2a
+    image: blampe/lidarr:latest@sha256:ef9baee50fef62476b0138d8f18640c5e14bd07d8bd6ffe791546bd70db96468
     container_name: lidarr
     environment:
       - TZ=Europe/Berlin
