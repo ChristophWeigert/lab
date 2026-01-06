@@ -1,3 +1,4 @@
+# yamllint disable rule:line-length
 networks:
   proxy:
     external: true
@@ -7,7 +8,7 @@ volumes:
 
 services:
   vaultwarden:
-    image: ghcr.io/dani-garcia/vaultwarden:testing@sha256:a76c5857f1593a077f3c1b096d4b77b45433e516a25c72d535974bfed5edc440
+    image: ghcr.io/dani-garcia/vaultwarden:1.35.1
     volumes:
       - vaultwarden:/data
     environment:
