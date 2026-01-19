@@ -1,7 +1,7 @@
 ---
 services:
   postgresql:
-    image: docker.io/library/postgres:16.11-alpine@sha256:23e88eb049fd5d54894d70100df61d38a49ed97909263f79d4ff4c30a5d5fca2
+    image: docker.io/library/postgres:16.14-alpine@sha256:57c72fd2a128e416c7fcc499958864df5301e940bca0a56f58fddf30ffc07777
     container_name: "authentik_postgresql"
     restart: unless-stopped
     healthcheck:
@@ -19,7 +19,7 @@ services:
     networks:
       - internal
   server:
-    image: ghcr.io/goauthentik/server:2025.12.1@sha256:94e25e04a05cfbb2450803e7782b8d1297b5c898df43b28a7fd6e47fe276301c
+    image: ghcr.io/goauthentik/server:2026.5.6@sha256:ed120caf710ccf82ef0026f0bc74e51615bc95ebff228a7a2d6fc60c441c3868
     restart: unless-stopped
     command: server
     container_name: "authentik_server"
@@ -61,7 +61,7 @@ services:
       postgresql:
         condition: service_healthy
   worker:
-    image: ghcr.io/goauthentik/server:2025.12.1@sha256:94e25e04a05cfbb2450803e7782b8d1297b5c898df43b28a7fd6e47fe276301c
+    image: ghcr.io/goauthentik/server:2026.5.6@sha256:ed120caf710ccf82ef0026f0bc74e51615bc95ebff228a7a2d6fc60c441c3868
     restart: unless-stopped
     command: worker
     container_name: "authentik_worker"

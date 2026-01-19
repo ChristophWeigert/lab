@@ -7,7 +7,7 @@ networks:
 
 services:
   mealie:
-    image: ghcr.io/mealie-recipes/mealie:v3.9.2@sha256:57713693dceca9a124f00f165eaf8f5c41de757e7f63f8a7b80625488605dc61 #
+    image: ghcr.io/mealie-recipes/mealie:v3.22.0@sha256:36c28f0642fb6c75fae8997a2d55994631b9b4bcffba3016c208fc132a4c1e69 #
     container_name: mealie
     restart: always
     deploy:
@@ -42,6 +42,7 @@ services:
       OIDC_USER_CLAIM: email
       OIDC_NAME_CLAIM: name
       OPENAI_API_KEY: $OPENAI_API_KEY
+      OIDC_REQUIRES_EMAIL_VERIFICATION : false
     networks:
       - proxy
     labels:

@@ -12,10 +12,8 @@ services:
     container_name: evcc
     networks: 
       - proxy
-    image: evcc/evcc:0.300.4@sha256:c12a2dcd2ad02594a6850cbe752567f0e7df01787fdce9d764dc63d44429dea5
+    image: evcc/evcc:0.312.1@sha256:380cd375dff3159b65789f97218da09a168d0a355a164e31e9e2b278261b7a9a
     ports:
-      - 8887:8887/tcp
-      - 9522:9522/udp
       - 4712:4712/tcp
     volumes:
       #- /mnt/evcc/evcc.yaml:/etc/evcc.yaml
@@ -28,7 +26,7 @@ services:
         - "traefik.http.routers.evcc.entryPoints=websecure"
         - "traefik.http.routers.evcc.tls.certResolver=production"
         - "traefik.http.routers.evcc.rule=Host(`evcc.$DOMAIN`)"
-        - "traefik.http.services.evcc.loadbalancer.server.port=443"
+        - "traefik.http.services.evcc.loadbalancer.server.port=7070"
         - "traefik.http.routers.evcc.tls.domains[0].main=$DOMAIN"
         - "traefik.http.routers.evcc.tls.domains[0].sans=*.$DOMAIN"
         - "traefik.http.routers.evcc.tls=true"
