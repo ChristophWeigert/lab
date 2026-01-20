@@ -55,7 +55,7 @@ services:
       - PUID=1000
       - PGID=1000
     container_name: sabnzbd
-    image: ghcr.io/linuxserver/sabnzbd:4.5.5@sha256:a46e75d861e6b26d7ee263b22743d6fdaaa4a5ccd42168b6ea563a2f047d9438
+    image: ghcr.io/linuxserver/sabnzbd:4.5.5@sha256:a4f65481b436424d90c53f0975f3d5cc6cabb95f5c00624b78c370dddf9b83ad
     volumes:
       - sabnzbd:/config
       - downloads_completed:/downloads # completed directory for downloads. this contains the category directories
@@ -121,7 +121,7 @@ services:
   bazarr:
     networks: [ arrs, proxy ]
     restart: unless-stopped
-    image: ghcr.io/linuxserver/bazarr:1.5.4@sha256:7d0a091a63889ce1e4ac4c90595ebd2c50ba5a5df7039a4f4d2be6c2aed6d4ae
+    image: ghcr.io/linuxserver/bazarr:1.5.5@sha256:d40ee61030a9afafddfdd58d160281b865bfcad7cb66e920116fd6fd40668cbb
     container_name: bazarr
     environment:
       - TZ=Europe/Berlin
@@ -195,7 +195,7 @@ services:
   radarr:
     networks: [ arrs, proxy ]
     restart: unless-stopped
-    image: ghcr.io/linuxserver/radarr:6.0.4@sha256:270f25698624b57b86ca119cc95399d7ff15be8297095b4e1223fd5b549b732c
+    image: ghcr.io/linuxserver/radarr:6.0.4@sha256:ba2693dd704b84eb0b404d40b3902bd3e62a1768dc5ee0d89b1f1d7cd51a66eb
     container_name: radarr
     environment:
       - TZ=Europe/Berlin
@@ -218,7 +218,7 @@ services:
   prowlarr:
     networks: [ arrs, proxy ]
     restart: unless-stopped
-    image: ghcr.io/linuxserver/prowlarr:2.3.0@sha256:d3e9307b320b6772749a2cf8fc2712e9e824c4930b034680ad4d08a9e2f25884
+    image: ghcr.io/linuxserver/prowlarr:2.3.0@sha256:5339e9050cfcc0cb5331e9c98610ed9d4ce70ef481a5461ea664a13dda3f1eb0
     container_name: prowlarr
     environment:
       - TZ=Europe/Berlin

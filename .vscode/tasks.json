@@ -1,0 +1,253 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "ansible-lint-all",
+      "type": "shell",
+      "command": "ansible-lint",
+      "args": ["-p", "ansible/"],
+      "group": "test",
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "ansible-syntax-check",
+      "type": "shell",
+      "command": "find ansible/ -name '*.y*ml' -exec ansible-playbook --syntax-check {} \\;",
+      "group": "test",
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "ansible-run-playbook",
+      "type": "shell",
+      "command": "ansible-playbook",
+      "args": [
+        "${input:playbookPath}"
+      ],
+      "group": "none",
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "ansible-install-docker",
+      "type": "shell",
+      "command": "ansible-playbook",
+      "args": ["ansible/installation/inst-docker-ubuntu.yaml"],
+      "group": "none",
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "ansible-maintenance-apt",
+      "type": "shell",
+      "command": "ansible-playbook",
+      "args": ["ansible/update/upd-apt.yaml"],
+      "group": "none",
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "ansible-maintenance-diskspace",
+      "type": "shell",
+      "command": "ansible-playbook",
+      "args": ["ansible/maintenance/maint-diskspace.yaml"],
+      "group": "none",
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "ansible-maintenance-reboot",
+      "type": "shell",
+      "command": "ansible-playbook",
+      "args": ["ansible/maintenance/maint-reboot-required.yaml"],
+      "group": "none",
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "ansible-mailcow-backup",
+      "type": "shell",
+      "command": "ansible-playbook",
+      "args": ["ansible/mailcow/mailcow-backup.yaml"],
+      "group": "none",
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "ansible-docker-cleanup",
+      "type": "shell",
+      "command": "ansible-playbook",
+      "args": ["ansible/maintenance/maint-docker-clean.yaml"],
+      "group": "none",
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "docker-compose-validate",
+      "type": "shell",
+      "command": "Get-ChildItem -Path docker -Filter docker-compose.y*ml -Recurse | ForEach-Object { Write-Host \"Validating $($_.FullName)\"; docker-compose -f $_.FullName config -q }",
+      "group": "test",
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "docker-ps",
+      "type": "shell",
+      "command": "docker ps",
+      "group": "none",
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "docker-services-list",
+      "type": "shell",
+      "command": "Get-ChildItem -Path docker -Directory | Select-Object -ExpandProperty Name | Sort-Object",
+      "group": "none",
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "docker-service-up",
+      "type": "shell",
+      "command": "docker-compose",
+      "args": [
+        "-f",
+        "docker/${input:serviceName}/docker-compose.yaml",
+        "up",
+        "-d"
+      ],
+      "group": "none",
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "docker-service-down",
+      "type": "shell",
+      "command": "docker-compose",
+      "args": [
+        "-f",
+        "docker/${input:serviceName}/docker-compose.yaml",
+        "down"
+      ],
+      "group": "none",
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "docker-service-restart",
+      "type": "shell",
+      "command": "docker-compose",
+      "args": [
+        "-f",
+        "docker/${input:serviceName}/docker-compose.yaml",
+        "restart"
+      ],
+      "group": "none",
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "docker-logs",
+      "type": "shell",
+      "command": "docker-compose",
+      "args": [
+        "-f",
+        "docker/${input:serviceName}/docker-compose.yaml",
+        "logs",
+        "-f"
+      ],
+      "group": "none",
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "yaml-lint",
+      "type": "shell",
+      "command": "yamllint",
+      "args": ["."],
+      "group": "test",
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "validate-all",
+      "type": "shell",
+      "command": "echo 'Running all validations...'",
+      "group": "test",
+      "dependsOn": [
+        "ansible-lint-all",
+        "ansible-syntax-check",
+        "docker-compose-validate"
+      ],
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    }
+  ],
+  "inputs": [
+    {
+      "id": "serviceName",
+      "type": "promptString",
+      "description": "Enter the service name (e.g., traefik, portainer, authentik)"
+    },
+    {
+      "id": "playbookPath",
+      "type": "promptString",
+      "description": "Enter the path to the Ansible playbook (e.g., ansible/update/upd-apt.yaml)"
+    }
+  ]
+}

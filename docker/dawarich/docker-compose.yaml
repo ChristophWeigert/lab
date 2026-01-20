@@ -4,7 +4,7 @@ networks:
     external: true
 services:
   dawarich_redis:
-    image: redis:8.4-alpine@sha256:6cbef353e480a8a6e7f10ec545f13d7d3fa85a212cdcc5ffaf5a1c818b9d3798
+    image: redis:8.4-alpine@sha256:4eec4565e45aa0b3966554c866bc73211e281b0b3d89fe9a33c982e6faca809d
     container_name: dawarich_redis
     command: redis-server
     networks:
@@ -19,7 +19,7 @@ services:
       start_period: 30s
       timeout: 10s
   dawarich_db:
-    image: postgis/postgis:17-3.5-alpine@sha256:0ccc4f581a6d6016d9ebee67f0496702005e6b5650b710b9ae6edbd5ccf7ceff
+    image: postgis/postgis:17-3.5-alpine@sha256:c4aab7d4fbfcfc96f9b14216f0846cd0b55ebcbada378534258a9d807f30faec
     shm_size: 1G
     container_name: dawarich_db
     volumes:
@@ -40,7 +40,7 @@ services:
       timeout: 10s
     # command: postgres -c config_file=/etc/postgresql/postgresql.conf # Use custom config, uncomment if you want to use a custom config
   dawarich_app:
-    image: freikin/dawarich:0.37.3@sha256:efab2e677baf912f5cc68363ec26e648015fa2c703b4a0cf8e03418415e1ed0d
+    image: freikin/dawarich:1.0.4@sha256:69d9c81d08886c83c0259dbe03ab9b27330fceee25d890725dc1347382f304e0
     container_name: dawarich_app
     volumes:
       - dawarich_public:/var/app/public
@@ -112,7 +112,7 @@ services:
           cpus: '0.50'    # Limit CPU usage to 50% of one core
           memory: '4G'    # Limit memory usage to 4GB
   dawarich_sidekiq:
-    image: freikin/dawarich:0.37.3@sha256:efab2e677baf912f5cc68363ec26e648015fa2c703b4a0cf8e03418415e1ed0d
+    image: freikin/dawarich:1.0.4@sha256:69d9c81d08886c83c0259dbe03ab9b27330fceee25d890725dc1347382f304e0
     container_name: dawarich_sidekiq
     volumes:
       - dawarich_public:/var/app/public
