@@ -40,7 +40,7 @@ services:
       timeout: 10s
     # command: postgres -c config_file=/etc/postgresql/postgresql.conf # Use custom config, uncomment if you want to use a custom config
   dawarich_app:
-    image: freikin/dawarich:1.0.1@sha256:ce2a337a1c2d521cf7d5265abe5abb1f9a645322e7184b6a20fd8ff59943a9e1
+    image: freikin/dawarich:1.0.2@sha256:8ff048f87b09dc4b8f583767384d6cf73d46ecd47cac4ceb28578466ebf264ec
     container_name: dawarich_app
     volumes:
       - dawarich_public:/var/app/public
@@ -112,7 +112,7 @@ services:
           cpus: '0.50'    # Limit CPU usage to 50% of one core
           memory: '4G'    # Limit memory usage to 4GB
   dawarich_sidekiq:
-    image: freikin/dawarich:1.0.1@sha256:ce2a337a1c2d521cf7d5265abe5abb1f9a645322e7184b6a20fd8ff59943a9e1
+    image: freikin/dawarich:1.0.2@sha256:8ff048f87b09dc4b8f583767384d6cf73d46ecd47cac4ceb28578466ebf264ec
     container_name: dawarich_sidekiq
     volumes:
       - dawarich_public:/var/app/public
