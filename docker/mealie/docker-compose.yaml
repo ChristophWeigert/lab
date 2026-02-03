@@ -7,7 +7,7 @@ networks:
 
 services:
   mealie:
-    image: ghcr.io/mealie-recipes/mealie:v3.10.0@sha256:80a3b928a767d4da5d00bd9532318a7db0643d1e06b9982cfbcf1902fa4aa910 #
+    image: ghcr.io/mealie-recipes/mealie:v3.10.1@sha256:bf48f06fcb2bd3f242d6f703cd7860f18913df3b1a3c8e8b8194196a8b53f6f6 #
     container_name: mealie
     restart: always
     deploy:
