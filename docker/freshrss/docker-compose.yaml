@@ -18,6 +18,7 @@ services:
       OIDC_CLIENT_SECRET: $OIDC_CLIENT_SECRET
       OIDC_X_FORWARDED_HEADERS: X-Forwarded-Port X-Forwarded-Proto X-Forwarded-Host
       OIDC_SCOPES: openid email profile
+      OIDC_SESSION_MAX_DURATION: 0
     image: freshrss/freshrss:1.28.1@sha256:9100f649f5c946f589f54cdb9be7a65996528f48f691ef90eb262a0e06e5a522
     labels:
       traefik.enable: "true"
