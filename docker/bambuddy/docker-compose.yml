@@ -1,0 +1,29 @@
+networks:
+  proxy:
+    external: true
+
+services:
+  bambuddy:
+    image: ghcr.io/maziggy/bambuddy:0.1.7
+    container_name: bambuddy
+    networks:
+      - proxy
+    volumes:
+      - bambuddy_data:/app/data
+      - bambuddy_logs:/app/logs
+    environment:
+      - TZ=Europe/Berlin
+      - PORT=${PORT:-8000}
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.bambuddy.entryPoints=websecure"
+      - "traefik.http.routers.bambuddy.tls.certResolver=production"
+      - "traefik.http.routers.bambuddy.rule=Host(`bambuddy.$DOMAIN`)"
+      - "traefik.http.routers.bambuddy.tls.domains[0].main=$DOMAIN"
+      - "traefik.http.routers.bambuddy.tls.domains[0].sans=*.$DOMAIN"
+      - "traefik.http.routers.bambuddy.tls=true"
+    restart: unless-stopped
+
+volumes:
+  bambuddy_data:
+  bambuddy_logs:
