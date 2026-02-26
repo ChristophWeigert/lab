@@ -19,7 +19,7 @@ services:
     networks:
       - internal
   server:
-    image: ghcr.io/goauthentik/server:2025.12.4@sha256:33a92b246b798f23931ce62027e045ecf302c3bc198b6389225973db6448a886
+    image: ghcr.io/goauthentik/server:2026.2.0@sha256:cfd955129ff142be93e7818682a04194b39c2ae8909a33f18e98b055baac27bf
     restart: unless-stopped
     command: server
     container_name: "authentik_server"
@@ -61,7 +61,7 @@ services:
       postgresql:
         condition: service_healthy
   worker:
-    image: ghcr.io/goauthentik/server:2025.12.4@sha256:33a92b246b798f23931ce62027e045ecf302c3bc198b6389225973db6448a886
+    image: ghcr.io/goauthentik/server:2026.2.0@sha256:cfd955129ff142be93e7818682a04194b39c2ae8909a33f18e98b055baac27bf
     restart: unless-stopped
     command: worker
     container_name: "authentik_worker"
