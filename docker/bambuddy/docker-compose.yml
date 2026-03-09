@@ -4,7 +4,7 @@ networks:
 
 services:
   bambuddy:
-    image: ghcr.io/maziggy/bambuddy:0.2.3b1@sha256:8b4bbf96285ae50fb0ce3e09d07d3b79756401767af725ad0c29a0360c7cbb86
+    image: ghcr.io/maziggy/bambuddy:0.2.3b1@sha256:5b9935e3dd14707e81708ce077fd82cdc1cae5b2ae022817d372e9fbe9d3ffbb
     container_name: bambuddy
     networks:
       - proxy
