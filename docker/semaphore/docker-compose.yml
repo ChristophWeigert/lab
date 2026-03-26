@@ -12,7 +12,7 @@ networks:
 services:
   semaphore:
     container_name: semaphore
-    image: semaphoreui/semaphore:v2.17.28@sha256:c7851afd6c37d23dc18f4ea7728e901662e2268844038ed53ace93192968d93d
+    image: semaphoreui/semaphore:v2.17.31@sha256:a2afaa57b25e9b3b5c6ca8bd92c8924dfd90d5de981da69c8885958692709473
     environment:
       - SEMAPHORE_DB_DIALECT=bolt
       - SEMAPHORE_ADMIN_PASSWORD=$ADMINPASSWORD
