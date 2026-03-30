@@ -96,7 +96,7 @@ services:
       traefik.docker.network: "proxy"
 
   gotenberg:
-    image: docker.io/gotenberg/gotenberg:8.28.0@sha256:f172b1ce5ec7516ab9452d33bfe3f198d778d3de39655825aa550f4a33946666
+    image: docker.io/gotenberg/gotenberg:8.29.1@sha256:36c925776fa0db0fd1030408d131fde7ac3453027a559883555155b72adb16a7
     restart: unless-stopped
     networks:
       - internal
