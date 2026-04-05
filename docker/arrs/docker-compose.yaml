@@ -70,11 +70,11 @@ services:
       - "traefik.http.routers.sabnzbd.tls=true"
       - "traefik.docker.network=proxy"
 
-  jellyseerr:
+  seerr:
     networks: [ arrs, proxy ]
     restart: unless-stopped
-    image: ghcr.io/fallenbagel/jellyseerr:2.7.3@sha256:9cc9e9ee6cd5cf5a23feb45c37742ba34cfd6314d81d259cddb373a97ac92cdd
-    container_name: jellyseerr
+    image: ghcr.io/seerr-team/seerr:v3.1.0
+    container_name: seerr
     environment:
       - LOG_LEVEL=debug
       - TZ=Europe/Berlin
@@ -83,12 +83,18 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.docker.network=proxy"
-      - "traefik.http.routers.jellyseerr.entryPoints=websecure"
-      - "traefik.http.routers.jellyseerr.tls.certResolver=production"
-      - "traefik.http.routers.jellyseerr.rule=Host(`request.$DOMAIN`)"
-      - "traefik.http.routers.jellyseerr.tls.domains[0].main=$DOMAIN"
-      - "traefik.http.routers.jellyseerr.tls.domains[0].sans=*.$DOMAIN"
-      - "traefik.http.routers.jellyseerr.tls=true"
+      - "traefik.http.routers.seerr.entryPoints=websecure"
+      - "traefik.http.routers.seerr.tls.certResolver=production"
+      - "traefik.http.routers.seerr.rule=Host(`request.$DOMAIN`)"
+      - "traefik.http.routers.seerr.tls.domains[0].main=$DOMAIN"
+      - "traefik.http.routers.seerr.tls.domains[0].sans=*.$DOMAIN"
+      - "traefik.http.routers.seerr.tls=true"
+    healthcheck:
+      test: wget --no-verbose --tries=1 --spider http://localhost:5055/api/v1/status || exit 1
+      start_period: 20s
+      timeout: 3s
+      interval: 15s
+      retries: 3
     volumes:
       - jellyseerr:/app/config
 
@@ -115,8 +121,6 @@ services:
       - "traefik.http.routers.sonarr.rule=Host(`sonarr.$DOMAIN`)"
       - "traefik.http.routers.sonarr.tls.domains[0].main=$DOMAIN"
       - "traefik.http.routers.sonarr.tls.domains[0].sans=*.$DOMAIN"
-      - "traefik.http.services.sonarr.loadbalancer.server.port=8989"
-      - "traefik.port=8989"
 
   bazarr:
     networks: [ arrs, proxy ]
@@ -141,8 +145,6 @@ services:
       - "traefik.http.routers.bazarr.rule=Host(`bazarr.$DOMAIN`)"
       - "traefik.http.routers.bazarr.tls.domains[0].main=$DOMAIN"
       - "traefik.http.routers.bazarr.tls.domains[0].sans=*.$DOMAIN"
-      - "traefik.http.services.bazarr.loadbalancer.server.port=6767"
-      - "traefik.port=6767"
   
   readarr:
     networks: [ arrs, proxy ]
@@ -165,8 +167,6 @@ services:
       - "traefik.http.routers.readarr.rule=Host(`readarr.$DOMAIN`)"
       - "traefik.http.routers.readarr.tls.domains[0].main=$DOMAIN"
       - "traefik.http.routers.readarr.tls.domains[0].sans=*.$DOMAIN"
-      - "traefik.http.services.readarr.loadbalancer.server.port=8787"
-      - "traefik.port=8787"
   
   lidarr:
     networks: [ arrs, proxy ]
@@ -189,8 +189,6 @@ services:
       - "traefik.http.routers.lidarr.rule=Host(`lidarr.$DOMAIN`)"
       - "traefik.http.routers.lidarr.tls.domains[0].main=$DOMAIN"
       - "traefik.http.routers.lidarr.tls.domains[0].sans=*.$DOMAIN"
-      - "traefik.http.services.lidarr.loadbalancer.server.port=8686"
-      - "traefik.port=8686"
   
   radarr:
     networks: [ arrs, proxy ]
@@ -213,7 +211,6 @@ services:
       - "traefik.http.routers.radarr.rule=Host(`radarr.$DOMAIN`)"
       - "traefik.http.routers.radarr.tls.domains[0].main=$DOMAIN"
       - "traefik.http.routers.radarr.tls.domains[0].sans=*.$DOMAIN"
-      - "traefik.http.services.radarr.loadbalancer.server.port=7878"
   
   prowlarr:
     networks: [ arrs, proxy ]
@@ -234,7 +231,6 @@ services:
       - "traefik.http.routers.prowlarr.rule=Host(`prowlarr.$DOMAIN`)"
       - "traefik.http.routers.prowlarr.tls.domains[0].main=$DOMAIN"
       - "traefik.http.routers.prowlarr.tls.domains[0].sans=*.$DOMAIN"
-      - "traefik.http.services.prowlarr.loadbalancer.server.port=9696"
 
   umlautadaptarr:
     networks: [ arrs, proxy ]
@@ -284,7 +280,6 @@ services:
       - "traefik.http.routers.mediathekarr.rule=Host(`mediathekarr.$DOMAIN`)"
       - "traefik.http.routers.mediathekarr.tls.domains[0].main=$DOMAIN"
       - "traefik.http.routers.mediathekarr.tls.domains[0].sans=*.$DOMAIN"
-      - "traefik.http.services.mediathekarr.loadbalancer.server.port=5007"
 
   configarr:
     networks: [ arrs, proxy ]
