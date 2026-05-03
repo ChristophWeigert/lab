@@ -9,7 +9,7 @@ services:
       - redisdata:/data
 
   webserver:
-    image: ghcr.io/paperless-ngx/paperless-ngx:dev@sha256:961b20ef0ebae76c608196e7e15291d600dc802743b98212602fa282da9596bb
+    image: ghcr.io/paperless-ngx/paperless-ngx:dev@sha256:e25e644306f1c7a9619ec4eeda89d87b9d956b06c5ae0e1cd34f150b7722f622
     restart: unless-stopped
     container_name: "webserver"
     depends_on:
