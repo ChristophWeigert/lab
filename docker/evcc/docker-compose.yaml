@@ -12,7 +12,7 @@ services:
     container_name: evcc
     networks: 
       - proxy
-    image: evcc/evcc:0.305.1@sha256:1415b1462cf7df97539ddb47d93d1caac6af8204f4d2d61b2966be96798e647e
+    image: evcc/evcc:0.306.1@sha256:b15bb235b1dd3d035bcb716373a3e870dba9eaf14b624f8bb12bfd2d4b211643
     ports:
       - 4712:4712/tcp
     volumes:
