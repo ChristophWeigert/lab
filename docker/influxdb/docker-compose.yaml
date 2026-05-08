@@ -11,7 +11,7 @@ volumes:
 services:
   influxdb:
     container_name: influxdb
-    image: docker.io/library/influxdb:2.8.0-alpine@sha256:41dd20908d395acc7b839b64e4350e2b5f41a368beb2a1368ca52e8c76c94b3d
+    image: docker.io/library/influxdb:2.9.0-alpine@sha256:20c190638610b37cf296e4c2751d276862adaeb76909529ebe5f49b44008ac4b
     volumes:
       - influxdb:/var/lib/influxdb2
     environment:
