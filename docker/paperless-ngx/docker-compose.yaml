@@ -9,7 +9,7 @@ services:
       - redisdata:/data
 
   webserver:
-    image: ghcr.io/paperless-ngx/paperless-ngx:dev@sha256:e25e644306f1c7a9619ec4eeda89d87b9d956b06c5ae0e1cd34f150b7722f622
+    image: ghcr.io/paperless-ngx/paperless-ngx:3.0.0-beta.rc1
     restart: unless-stopped
     container_name: "webserver"
     depends_on:
@@ -38,9 +38,8 @@ services:
       PAPERLESS_OCR_ROTATE_PAGES: true
       PAPERLESS_CONSUMER_ENABLE_BARCODES: true
       PAPERLESS_CONSUMER_ENABLE_ASN_BARCODE: true
-      PAPERLESS_CONSUMER_BARCODE_SCANNER: ZXING
       PAPERLESS_CONSUMER_DELETE_DUPLICATES: true
-      PAPERLESS_CONSUMER_POLLING: 15
+      PAPERLESS_CONSUMER_POLLING_INTERVAL: 15
       PAPERLESS_CONSUMER_BARCODE_UPSCALE: 1.75
       PAPERLESS_APPS: allauth.socialaccount.providers.openid_connect
       PAPERLESS_SOCIALACCOUNT_PROVIDERS: $PAPERLESS_SOCIALACCOUNT_PROVIDERS
