@@ -12,7 +12,7 @@ volumes:
 
 services:
   homepage:
-    image: ghcr.io/gethomepage/homepage:v2.1.1@sha256:4fb41cb942d6f4f6e1facfe9425c80ca33cc4670db50b7c25b73a02d3b74eee5
+    image: ghcr.io/gethomepage/homepage:v2.1.2@sha256:da9dca9ec258c628146bed1445da0853f2b88f0b10bafd97c091de807c363d60
     container_name: homepage
     volumes:
       - homepage:/app/config
