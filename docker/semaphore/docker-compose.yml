@@ -12,7 +12,7 @@ networks:
 services:
   semaphore:
     container_name: semaphore
-    image: semaphoreui/semaphore:v2.19.8@sha256:7da3364f331a80d5d47998866f5833c8de978bd57ad49beb69ad2d1d0f3c5f20
+    image: semaphoreui/semaphore:v2.19.10@sha256:13a3ee1ec73b2f2f8746abdd3de7fcc43814b6e4d9ba44dd3c6d70ce113e7f8a
     environment:
       - SEMAPHORE_MIGRATE_FROM_BOLTDB=true
       - SEMAPHORE_ADMIN_PASSWORD=$ADMINPASSWORD
