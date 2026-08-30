@@ -66,35 +66,6 @@ services:
       homepage.widget.username: $HOMEPAGE_USERNAME
       homepage.widget.password: $HOMEPAGE_PASSWORD
 
-  paperless-ai:
-    image: clusterzx/paperless-ai:3.0.9@sha256:2b65888163fd59716f1c8285b31c5bd0b30c9c3c192c42b516688e3887d4ba60
-    container_name: paperless-ai
-    networks:
-      - internal
-      - proxy
-    restart: unless-stopped
-    depends_on:
-      - webserver
-    cap_drop:
-      - ALL
-    security_opt:
-      - no-new-privileges=true
-    environment:
-      - PUID=1000
-      - PGID=1000
-      - PAPERLESS_AI_PORT=3000
-    volumes:
-      - data_ai:/app/data
-    labels:
-      traefik.enable: "true"
-      traefik.http.routers.paperless-ai.entrypoints: "websecure"
-      traefik.http.routers.paperless-ai.rule: "Host(`paperless-ai.$DOMAIN`)"
-      traefik.http.routers.paperless-ai.tls: "true"
-      traefik.http.routers.paperless-ai.tls.certresolver: "production"
-      traefik.http.routers.paperless-ai.tls.domains[0].main: "$DOMAIN"
-      traefik.http.routers.paperless-ai.tls.domains[0].sans: "*.$DOMAIN"
-      traefik.docker.network: "proxy"
-
   gotenberg:
     image: docker.io/gotenberg/gotenberg:8.36.0@sha256:87c16b9f364279d321bc9772d31fa58aa6abe036423c270698bd636c3a8e9466
     restart: unless-stopped
