@@ -38,6 +38,10 @@
       "commitMessageTopic": "image {{depName}}"
     },
     {
+      "matchPackageNames": ["/jellyfin/"],
+      "allowedVersions": "<=200"
+    },
+    {
       "matchPackageNames": ["/longhorn/", "/crocodilestick\\/calibre-web-automated/"],
       "enabled": false
     }
