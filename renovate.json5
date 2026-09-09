@@ -16,6 +16,13 @@
     //":automergeDigest",
     //":skipStatusChecks"
   ],
+  "hostRules": [
+    {
+      "matchHost": "ghcr.io",
+      "hostType": "docker",
+      "enabled": true
+    }
+  ],
   "dependencyDashboardTitle": "🤖 Renovate Dashboard",
   "commitMessageTopic": "{{depName}}",
   "commitMessageExtra": "to {{newVersion}}",
