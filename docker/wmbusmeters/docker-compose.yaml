@@ -4,7 +4,7 @@ volumes:
 
 services:
   wmbusmeters:
-    image: wmbusmeters/wmbusmeters:latest@sha256:79cd4fbf207a943de2558c61a07e16d6cfec4a2a19f06d98c735e961743b9ce0
+    image: wmbusmeters/wmbusmeters:latest@sha256:d6609eb9071fd9e26911d815eca95a57e712bd77be149606c46f8cd37db3ca57
     container_name: wmbusmeters
     privileged: true
     restart: always
