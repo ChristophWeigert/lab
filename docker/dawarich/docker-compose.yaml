@@ -4,7 +4,7 @@ networks:
     external: true
 services:
   dawarich_redis:
-    image: redis:8.10-alpine@sha256:7d509f5640f5ed199d8781b5f5a45050133efe700aed34491f0b060665066d76
+    image: redis:8.10-alpine@sha256:bd999b5cfee25fb24b8320a31fddbd69f462df44c8138c66e369582937beebc0
     container_name: dawarich_redis
     command: redis-server
     networks:
