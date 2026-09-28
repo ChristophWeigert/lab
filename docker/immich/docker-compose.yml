@@ -52,7 +52,7 @@ services:
 
   immich-machine-learning:
     container_name: immich_machine_learning
-    image: ghcr.io/immich-app/immich-machine-learning:v3.2.2@sha256:60dfcf266a9ef3b7376f5678e8c980d4fb61db5fc48c078fe8a326ab1535d60d
+    image: ghcr.io/immich-app/immich-machine-learning:v3.2.2-openvino@sha256:60dfcf266a9ef3b7376f5678e8c980d4fb61db5fc48c078fe8a326ab1535d60d
     volumes:
       - model-cache:/cache
       - /dev/bus/usb:/dev/bus/usb
