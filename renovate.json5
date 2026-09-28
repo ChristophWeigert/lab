@@ -12,9 +12,9 @@
     ":semanticPrefixFix",
     ":separateMultipleMajorReleases"
     //":automergeBranch",
-    //":automergeStableNonMajor",
-    //":automergeDigest",
-    //":skipStatusChecks"
+    ":automergeStableNonMajor",
+    ":automergeDigest",
+    ":skipStatusChecks"
   ],
   "hostRules": [
     {
