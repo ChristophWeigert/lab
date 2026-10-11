@@ -84,7 +84,7 @@ services:
       - "traefik.http.services.shelfmark.loadbalancer.server.port=8084"
 
   mariadb:
-    image: lscr.io/linuxserver/mariadb:11.4.5
+    image: lscr.io/linuxserver/mariadb:11.8.8@sha256:7f993451c80a8984dabda504bce9660f4809f6aa1dc9ae4d534462af7058fd4b
     container_name: grimmory-mariadb
     networks: [ internal ]
     restart: unless-stopped
