@@ -34,7 +34,7 @@ services:
       - DATABASE_USERNAME=grimmory
       - DATABASE_PASSWORD=$DB_PASSWORD
       - API_DOCS_ENABLED=false
-      - DISK_TYPE=network
+      - DISK_TYPE=local
     depends_on:
       mariadb:
         condition: service_healthy
