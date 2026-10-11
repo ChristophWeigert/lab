@@ -1,0 +1,105 @@
+---
+networks:
+  proxy:
+    external: true
+  internal:
+
+volumes:
+  grimmory_data: {}
+  grimmory_bookdrop: {}
+  mariadb_config: {}
+  shelfmark: {}
+  downloads_completed:
+    driver_opts:
+      type: "nfs"
+      o: "nfsvers=4,addr=192.168.1.14,rw"
+      device: ":/mnt/pool-main/media/downloads/completed"
+  media_books:
+    driver_opts:
+      type: "nfs"
+      o: "nfsvers=4,addr=192.168.1.14,rw"
+      device: ":/mnt/pool-main/media/books"
+
+services:
+  grimmory:
+    image: grimmory/grimmory:latest
+    container_name: grimmory
+    networks: [ internal, proxy ]
+    restart: unless-stopped
+    environment:
+      - USER_ID=1000
+      - GROUP_ID=1000
+      - TZ=Europe/Berlin
+      - DATABASE_URL=jdbc:mariadb://mariadb:3306/grimmory
+      - DATABASE_USERNAME=grimmory
+      - DATABASE_PASSWORD=$DB_PASSWORD
+      - API_DOCS_ENABLED=false
+      - DISK_TYPE=network
+    depends_on:
+      mariadb:
+        condition: service_healthy
+    volumes:
+      - grimmory_data:/app/data
+      - media_books:/books
+      - grimmory_bookdrop:/bookdrop
+    healthcheck:
+      test: wget -q -O - http://localhost:6060/api/v1/healthcheck
+      interval: 60s
+      retries: 5
+      start_period: 60s
+      timeout: 10s
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=proxy"
+      - "traefik.http.routers.grimmory.entryPoints=websecure"
+      - "traefik.http.routers.grimmory.tls=true"
+      - "traefik.http.routers.grimmory.tls.certResolver=production"
+      - "traefik.http.routers.grimmory.rule=Host(`grimmory.$DOMAIN`)"
+      - "traefik.http.routers.grimmory.tls.domains[0].main=$DOMAIN"
+      - "traefik.http.routers.grimmory.tls.domains[0].sans=*.$DOMAIN"
+      - "traefik.http.services.grimmory.loadbalancer.server.port=6060"
+
+  shelfmark:
+    image: ghcr.io/calibrain/shelfmark:latest
+    container_name: shelfmark
+    networks: [ proxy ]
+    restart: unless-stopped
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Berlin
+    volumes:
+      - media_books:/books # default destination for book downloads
+      - shelfmark:/config
+      - downloads_completed:/downloads # required for torrent / usenet - must match the download client's path (sabnzbd uses /downloads)
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=proxy"
+      - "traefik.http.routers.shelfmark.entryPoints=websecure"
+      - "traefik.http.routers.shelfmark.tls=true"
+      - "traefik.http.routers.shelfmark.tls.certResolver=production"
+      - "traefik.http.routers.shelfmark.rule=Host(`shelfmark.$DOMAIN`)"
+      - "traefik.http.routers.shelfmark.tls.domains[0].main=$DOMAIN"
+      - "traefik.http.routers.shelfmark.tls.domains[0].sans=*.$DOMAIN"
+      - "traefik.http.services.shelfmark.loadbalancer.server.port=8084"
+
+  mariadb:
+    image: lscr.io/linuxserver/mariadb:11.4.5
+    container_name: grimmory-mariadb
+    networks: [ internal ]
+    restart: unless-stopped
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Berlin
+      - MYSQL_ROOT_PASSWORD=$MYSQL_ROOT_PASSWORD
+      - MYSQL_DATABASE=grimmory
+      - MYSQL_USER=grimmory
+      - MYSQL_PASSWORD=$DB_PASSWORD
+    volumes:
+      - mariadb_config:/config
+    healthcheck:
+      test: ["CMD", "mariadb-admin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
