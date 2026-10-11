@@ -22,7 +22,7 @@ volumes:
 
 services:
   grimmory:
-    image: grimmory/grimmory:latest
+    image: grimmory/grimmory:latest@sha256:bf6fe21c6e247597f7869664a440b5a34242e2d2940575cae39c17bfaa66dc0b
     container_name: grimmory
     networks: [ internal, proxy ]
     restart: unless-stopped
@@ -60,7 +60,7 @@ services:
       - "traefik.http.services.grimmory.loadbalancer.server.port=6060"
 
   shelfmark:
-    image: ghcr.io/calibrain/shelfmark:latest
+    image: ghcr.io/calibrain/shelfmark:latest@sha256:4ef757349c3c7a7d90ba95b1e2a46ce4dd460a4776efbcf2aa1b1c476e7d5de5
     container_name: shelfmark
     networks: [ proxy ]
     restart: unless-stopped
