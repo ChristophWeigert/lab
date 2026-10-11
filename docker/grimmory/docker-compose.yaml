@@ -69,7 +69,7 @@ services:
       - PGID=1000
       - TZ=Europe/Berlin
     volumes:
-      - media_books:/books # default destination for book downloads
+      - grimmory_bookdrop:/books # default destination for book downloads, picked up by grimmory's /bookdrop
       - shelfmark:/config
       - downloads_completed:/downloads # required for torrent / usenet - must match the download client's path (sabnzbd uses /downloads)
     labels:
