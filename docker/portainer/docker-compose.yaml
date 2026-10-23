@@ -6,7 +6,7 @@ networks:
 services:
   portainer:
     container_name: "portainer"
-    image: portainer/portainer-ee:2.45.2@sha256:64593d0645eec314e84b93c03aba51db67c72ec12c760927335b52b1652765d7
+    image: portainer/portainer-ee:2.45.3@sha256:8166e2376756d1ad3194e336cd1707c28a5764af7acc8bb9f21a5f28d1903566
     volumes:
         - data:/data
         - /var/run/docker.sock:/var/run/docker.sock
