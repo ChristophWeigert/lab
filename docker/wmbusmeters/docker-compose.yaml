@@ -8,6 +8,15 @@ services:
     container_name: wmbusmeters
     privileged: true
     restart: always
+    labels:
+      - autoheal=true
+    healthcheck:
+      # wmbusmeters keeps running without a dongle, so check the serial port is open
+      test: ['CMD-SHELL', 'ls -l /proc/[0-9]*/fd 2>/dev/null | grep -q ttyACM']
+      interval: 60s
+      timeout: 5s
+      retries: 3
+      start_period: 60s
     volumes:
       - wmbusmeters:/wmbusmeters_data
       - /etc/localtime:/etc/localtime:ro
@@ -18,3 +27,12 @@ services:
       - MQTT_PASSWORD=$MQTT_PASSWORD
       - MQTT_USER=$MQTT_USER
       - MQTT_HOST=$MQTT_HOST
+
+  autoheal:
+    image: willfarrell/autoheal:latest
+    container_name: wmbusmeters-autoheal
+    restart: always
+    environment:
+      - AUTOHEAL_CONTAINER_LABEL=autoheal
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
