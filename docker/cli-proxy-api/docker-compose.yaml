@@ -3,6 +3,7 @@ networks:
     external: true
 
 volumes:
+  cli_proxy_api_config: {}
   cli_proxy_api_auths: {}
   cli_proxy_api_logs: {}
 
@@ -12,8 +13,20 @@ services:
     image: eceasy/cli-proxy-api:v8.0.45@sha256:ce9583e43fb56e632a279b79e6203bbdedc34f09900a60fc0ced0e3f255bc63c
     networks:
       - proxy
+    # No config file needed: seed a minimal one into the volume on first start.
+    # API keys and providers are then managed in the UI and saved to that volume.
+    entrypoint:
+      - sh
+      - -c
+      - |
+        [ -f /CLIProxyAPI/config/config.yaml ] || echo 'port: 8317' > /CLIProxyAPI/config/config.yaml
+        exec ./CLIProxyAPI -config /CLIProxyAPI/config/config.yaml
+    environment:
+      # Login key for the UI at /management.html; also enables remote management.
+      - MANAGEMENT_PASSWORD=${MANAGEMENT_PASSWORD}
+      - TZ=Europe/Berlin
     volumes:
-      - ./config.yaml:/CLIProxyAPI/config.yaml
+      - cli_proxy_api_config:/CLIProxyAPI/config
       - cli_proxy_api_auths:/root/.cli-proxy-api
       - cli_proxy_api_logs:/CLIProxyAPI/logs
     labels:
