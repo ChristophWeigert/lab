@@ -17,6 +17,9 @@ services:
       # Same layout as the HA add-on's /addon_configs/db21ed7f_birdnet-go: config.yaml, birdnet.db, clips/, logs/
       - birdnet-go_config:/config
       - birdnet-go_data:/data
+    # Intel iGPU for OpenVINO inference; check System > AI Models & Inference in the UI. Revert if the host freezes (Alder Lake-N i915 bug, tphakala/birdnet-go#4482).
+    devices:
+      - /dev/dri/renderD128:/dev/dri/renderD128
     environment:
       - TZ=Europe/Berlin
     labels:
