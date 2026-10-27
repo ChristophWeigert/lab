@@ -1,0 +1,29 @@
+networks:
+  proxy:
+    external: true
+
+volumes:
+  cli_proxy_api_auths: {}
+  cli_proxy_api_logs: {}
+
+services:
+  cli-proxy-api:
+    container_name: cli-proxy-api
+    image: eceasy/cli-proxy-api:v8.0.45@sha256:ce9583e43fb56e632a279b79e6203bbdedc34f09900a60fc0ced0e3f255bc63c
+    networks:
+      - proxy
+    volumes:
+      - ./config.yaml:/CLIProxyAPI/config.yaml
+      - cli_proxy_api_auths:/root/.cli-proxy-api
+      - cli_proxy_api_logs:/CLIProxyAPI/logs
+    labels:
+        - "traefik.enable=true"
+        - "traefik.docker.network=proxy"
+        - "traefik.http.routers.cli-proxy-api.entryPoints=websecure"
+        - "traefik.http.routers.cli-proxy-api.tls.certResolver=production"
+        - "traefik.http.routers.cli-proxy-api.rule=Host(`cliproxy.$DOMAIN`)"
+        - "traefik.http.services.cli-proxy-api.loadbalancer.server.port=8317"
+        - "traefik.http.routers.cli-proxy-api.tls.domains[0].main=$DOMAIN"
+        - "traefik.http.routers.cli-proxy-api.tls.domains[0].sans=*.$DOMAIN"
+        - "traefik.http.routers.cli-proxy-api.tls=true"
+    restart: unless-stopped
