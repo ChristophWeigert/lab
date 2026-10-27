@@ -105,6 +105,7 @@ hetzner-lab/
 - **Floatplane Downloader** - Content downloader
 
 ### Home Automation
+- **BirdNET-Go** - Bird sound identification
 - **ESPHome** - ESP device management
 - **EVCC** - EV charging controller
 - **Zigbee2MQTT** - Zigbee bridge
