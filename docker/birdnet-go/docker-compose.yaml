@@ -1,0 +1,31 @@
+networks:
+  proxy:
+    external: true
+
+volumes:
+  birdnet-go_config:
+  birdnet-go_data:
+
+services:
+  birdnet-go:
+    container_name: birdnet-go
+    image: ghcr.io/tphakala/birdnet-go:20261014@sha256:4dec04b29548de6c27d1559e8ad0e7e20e2727655ef8a712571e6929e329290a
+    restart: unless-stopped
+    networks:
+      - proxy
+    volumes:
+      # Same layout as the HA add-on's /addon_configs/db21ed7f_birdnet-go: config.yaml, birdnet.db, clips/, logs/
+      - birdnet-go_config:/config
+      - birdnet-go_data:/data
+    environment:
+      - TZ=Europe/Berlin
+    labels:
+      traefik.enable: "true"
+      traefik.http.routers.birdnet-go.entrypoints: "websecure"
+      traefik.http.routers.birdnet-go.rule: "Host(`birdnet.$DOMAIN`)"
+      traefik.http.routers.birdnet-go.tls: "true"
+      traefik.http.routers.birdnet-go.tls.certresolver: "production"
+      traefik.http.routers.birdnet-go.tls.domains[0].main: "$DOMAIN"
+      traefik.http.routers.birdnet-go.tls.domains[0].sans: "*.$DOMAIN"
+      traefik.http.services.birdnet-go.loadbalancer.server.port: 8080
+      traefik.docker.network: "proxy"
