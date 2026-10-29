@@ -9,7 +9,7 @@ services:
       - xpeng-solver-debug:/data/debug
 
   xpeng-renew:
-    image: ghcr.io/xpengtoolkit/xpeng-renew:latest@sha256:cc7a1189e7b35e74494d23ddb940588d074bf868e5eae8f89d470dfddc73fc28
+    image: ghcr.io/xpengtoolkit/xpeng-renew:0.1.21@sha256:cc7a1189e7b35e74494d23ddb940588d074bf868e5eae8f89d470dfddc73fc28
     restart: unless-stopped
     depends_on:
       - xpeng-slider-solver
