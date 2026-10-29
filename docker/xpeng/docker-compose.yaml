@@ -1,0 +1,50 @@
+services:
+  xpeng-slider-solver:
+    image: ghcr.io/xpengtoolkit/xpeng-slider-solver:0.1.2@sha256:2e02ca5f7beb5c497894f01ac61be662103b5450aa0845fcec02f86357ab2a12
+    restart: unless-stopped
+    environment:
+      SOLVER_TOKEN: ${SOLVER_TOKEN:?set SOLVER_TOKEN}
+      DEBUG_DIR: "/data/debug"
+    volumes:
+      - xpeng-solver-debug:/data/debug
+
+  xpeng-renew:
+    image: ghcr.io/xpengtoolkit/xpeng-renew:0.1.21@sha256:cc7a1189e7b35e74494d23ddb940588d074bf868e5eae8f89d470dfddc73fc28
+    restart: unless-stopped
+    depends_on:
+      - xpeng-slider-solver
+    ports:
+      - "${RENEW_PORT:-8090}:8090"   # POST /renew, GET /healthz
+    environment:
+      EMAIL: "${XPENG_EMAIL:?set XPENG_EMAIL in .env}"
+      PASSWORD: "${XPENG_PASSWORD:?set XPENG_PASSWORD in .env}"
+      SOLVER_URL: "http://xpeng-slider-solver:8080"
+      SOLVER_TOKEN: ${SOLVER_TOKEN}
+      RENEW_TOKEN: ${RENEW_TOKEN:-}
+      PAIR_DIR: "/share/xpengcredentials"
+      CORE_API: "${HA_URL:?set HA_URL, e.g. http://<vm2-ip>:8123/api}"
+      SUPERVISOR_TOKEN: "${HA_TOKEN:?set HA_TOKEN in .env}"
+      COMMAND_MODE: "${COMMAND_MODE:-safe_plus}"
+      NOTIFY_ON_SUCCESS: "${NOTIFY_ON_SUCCESS:-true}"
+    volumes:
+      # Same absolute path as the HA network storage "xpengcredentials" (Share).
+      - xpeng-credentials:/share/xpengcredentials
+      # Fixed path: the renewal code looks for the certs here.
+      - xpeng-client-certs:/config/xpeng-certs:ro
+      - xpeng-renew-data:/data
+
+volumes:
+  xpeng-solver-debug:
+  xpeng-renew-data:
+  xpeng-credentials:
+    driver: local
+    driver_opts:
+      type: nfs
+      o: addr=${NAS_IP:?set NAS_IP},nfsvers=4.2,rw
+      device: ":/mnt/pool-main/docker_volumes/xpeng-credentials"
+  xpeng-client-certs:
+    driver: local
+    driver_opts:
+      type: nfs
+      o: addr=${NAS_IP},nfsvers=4.2,ro
+      device: ":/mnt/pool-main/docker_volumes/xpeng-client-certs"
