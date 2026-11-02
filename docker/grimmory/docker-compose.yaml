@@ -60,7 +60,7 @@ services:
       - "traefik.http.services.grimmory.loadbalancer.server.port=6060"
 
   shelfmark:
-    image: ghcr.io/calibrain/shelfmark:latest@sha256:51091200afb8afd9f1dba07596e9e81a96d499e42ff96fee676b29a7cac24016
+    image: ghcr.io/calibrain/shelfmark:latest@sha256:0e5c9ff5f858a9695dc18bc355d8aa29dfee5c0d9c634919484c2bab9955ad5a
     container_name: shelfmark
     networks: [ proxy ]
     restart: unless-stopped
