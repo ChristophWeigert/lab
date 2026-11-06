@@ -1,0 +1,37 @@
+---
+networks:
+  proxy:
+    external: true
+
+services:
+  unifi-network-mcp:
+    container_name: unifi-network-mcp
+    image: ghcr.io/sirkirby/unifi-network-mcp:0.45.0@sha256:5c14d804e23b714850b58c4b45b722aeed9159d0acf47b182a3bfa92d2d17e7c
+    networks:
+      - proxy
+    environment:
+      # Local UniFi admin/service account, not a Ubiquiti SSO account.
+      - UNIFI_HOST=${UNIFI_HOST}
+      - UNIFI_USERNAME=${UNIFI_USERNAME}
+      - UNIFI_PASSWORD=${UNIFI_PASSWORD}
+      - UNIFI_VERIFY_SSL=false
+      - UNIFI_MCP_HTTP_ENABLED=true
+      - UNIFI_MCP_HTTP_TRANSPORT=streamable-http
+      - UNIFI_MCP_HOST=0.0.0.0
+      - UNIFI_MCP_PORT=3000
+      # Host header check: only the Traefik hostname may reach the server.
+      - UNIFI_MCP_ALLOWED_HOSTS=unifi-mcp.${DOMAIN}
+      # Required: clients send "Authorization: Bearer <token>" (32+ chars).
+      - UNIFI_MCP_HTTP_AUTH_TOKEN=${UNIFI_MCP_HTTP_AUTH_TOKEN}
+      - TZ=Europe/Berlin
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=proxy"
+      - "traefik.http.routers.unifi-mcp.entryPoints=websecure"
+      - "traefik.http.routers.unifi-mcp.tls.certResolver=production"
+      - "traefik.http.routers.unifi-mcp.rule=Host(`unifi-mcp.$DOMAIN`)"
+      - "traefik.http.services.unifi-mcp.loadbalancer.server.port=3000"
+      - "traefik.http.routers.unifi-mcp.tls.domains[0].main=$DOMAIN"
+      - "traefik.http.routers.unifi-mcp.tls.domains[0].sans=*.$DOMAIN"
+      - "traefik.http.routers.unifi-mcp.tls=true"
+    restart: unless-stopped
