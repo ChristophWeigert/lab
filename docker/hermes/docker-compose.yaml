@@ -1,0 +1,44 @@
+---
+networks:
+  proxy:
+    external: true
+
+volumes:
+  hermes_data: {}
+
+services:
+  hermes:
+    container_name: hermes
+    image: nousresearch/hermes-agent:v0.23.0@sha256:adb7890916de63245523492be8f68f9d2095fecbec4e2a6dab7960381f0fc002
+    # First start only, to pick the model provider and messaging platforms:
+    #   docker compose run --rm hermes setup
+    # Keys and allowlists (e.g. TELEGRAM_ALLOWED_USERS) land in /opt/data/.env.
+    command: gateway run
+    networks:
+      - proxy
+    environment:
+      - HERMES_DASHBOARD=1
+      - HERMES_DASHBOARD_PUBLIC_URL=https://hermes.${DOMAIN}
+      # Authentik: public OAuth2/OIDC provider (auth code + PKCE),
+      # redirect URI https://hermes.<domain>/auth/callback.
+      - HERMES_DASHBOARD_OIDC_ISSUER=${HERMES_OIDC_ISSUER}
+      - HERMES_DASHBOARD_OIDC_CLIENT_ID=${HERMES_OIDC_CLIENT_ID}
+      - TZ=Europe/Berlin
+    volumes:
+      - hermes_data:/opt/data
+    deploy:
+      resources:
+        limits:
+          memory: 4G
+          cpus: "2.0"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=proxy"
+      - "traefik.http.routers.hermes.entryPoints=websecure"
+      - "traefik.http.routers.hermes.tls.certResolver=production"
+      - "traefik.http.routers.hermes.rule=Host(`hermes.$DOMAIN`)"
+      - "traefik.http.services.hermes.loadbalancer.server.port=9119"
+      - "traefik.http.routers.hermes.tls.domains[0].main=$DOMAIN"
+      - "traefik.http.routers.hermes.tls.domains[0].sans=*.$DOMAIN"
+      - "traefik.http.routers.hermes.tls=true"
+    restart: unless-stopped
