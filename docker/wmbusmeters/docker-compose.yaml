@@ -29,7 +29,7 @@ services:
       - MQTT_HOST=$MQTT_HOST
 
   autoheal:
-    image: willfarrell/autoheal:latest@sha256:2fb036bb6d0bcd4d7ff8408a86d60b0703fa610cc645cacd742f2f3bb1a7e124
+    image: willfarrell/autoheal:latest@sha256:7c9c34206a6c30dbc67a2d4f9b54adf0aec32348cf18c7e25f34452a56eea94e
     container_name: wmbusmeters-autoheal
     restart: always
     environment:
