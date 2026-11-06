@@ -19,7 +19,17 @@ services:
       - sh
       - -c
       - |
-        [ -f /CLIProxyAPI/config/config.yaml ] || echo 'port: 8317' > /CLIProxyAPI/config/config.yaml
+        [ -f /CLIProxyAPI/config/config.yaml ] || cat > /CLIProxyAPI/config/config.yaml <<'YAML'
+        port: 8317
+        # Keep a Claude Code session on one account so its prompt cache stays warm.
+        routing:
+          strategy: round-robin
+          session-affinity: true
+          session-affinity-ttl: 1h
+          retry:
+            request-retry: 3
+            max-retry-interval: 30
+        YAML
         exec ./CLIProxyAPI -config /CLIProxyAPI/config/config.yaml
     environment:
       # Login key for the UI at /management.html; also enables remote management.
