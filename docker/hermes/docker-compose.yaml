@@ -10,9 +10,14 @@ services:
   hermes:
     container_name: hermes
     image: nousresearch/hermes-agent:v0.23.0@sha256:adb7890916de63245523492be8f68f9d2095fecbec4e2a6dab7960381f0fc002
-    # First start only, to pick the model provider and messaging platforms:
-    #   docker compose run --rm hermes setup
-    # Keys and allowlists (e.g. TELEGRAM_ALLOWED_USERS) land in /opt/data/.env.
+    # One-time, after the first deploy (then restart the stack):
+    #   docker exec -it hermes hermes setup
+    #     model provider + messaging platforms; keys and allowlists
+    #     (e.g. TELEGRAM_ALLOWED_USERS) land in /opt/data/.env
+    #   docker exec hermes hermes config set dashboard.trusted_proxies \
+    #     "[$(docker network inspect proxy -f '{{(index .IPAM.Config 0).Subnet}}')]"
+    #     lets Traefik's X-Forwarded-Proto mark cookies Secure; every
+    #     container on `proxy` can then send forwarding headers
     command: gateway run
     networks:
       - proxy
@@ -21,6 +26,8 @@ services:
       - HERMES_DASHBOARD_PUBLIC_URL=https://hermes.${DOMAIN}
       # Authentik: public OAuth2/OIDC provider (auth code + PKCE),
       # redirect URI https://hermes.<domain>/auth/callback.
+      # Bind a policy so only your user can open it: Hermes has no user
+      # allowlist, anyone Authentik admits gets full (shell-capable) access.
       - HERMES_DASHBOARD_OIDC_ISSUER=${HERMES_OIDC_ISSUER}
       - HERMES_DASHBOARD_OIDC_CLIENT_ID=${HERMES_OIDC_CLIENT_ID}
       - TZ=Europe/Berlin
