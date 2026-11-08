@@ -10,7 +10,7 @@ volumes:
 services:
   cli-proxy-api:
     container_name: cli-proxy-api
-    image: eceasy/cli-proxy-api:v8.0.60@sha256:873ec3df3b673a82f7d956d4636c7736b0c961dc6ee28f9fb403238b2898dc0d
+    image: eceasy/cli-proxy-api:v8.0.61@sha256:fc714b4339f20b59ee4781eb0f35a9e563aa357daece3081b0e266caeb11187e
     networks:
       - proxy
     # No config file needed: seed a minimal one into the volume on first start.
