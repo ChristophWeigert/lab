@@ -42,6 +42,11 @@
       "allowedVersions": "<=200"
     },
     {
+      // wmbusmeters tags releases as release-X.Y.Z, which default docker versioning can't parse
+      "matchPackageNames": ["wmbusmeters/wmbusmeters"],
+      "versioning": "regex:^release-(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)$"
+    },
+    {
       "matchPackageNames": ["/longhorn/", "/crocodilestick\\/calibre-web-automated/"],
       "enabled": false
     }
