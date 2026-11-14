@@ -4,7 +4,7 @@ volumes:
 
 services:
   wmbusmeters:
-    image: wmbusmeters/wmbusmeters:latest@sha256:a9d4e1ca7ae9cd5174aed2d37fac3007dca64691e4708cddb03618b140b3f880
+    image: wmbusmeters/wmbusmeters:release-3.1.1@sha256:bc36af48c90c2823d66faa09637343bd0a39947efa0dfd6ab4b098424c3c633d
     container_name: wmbusmeters
     privileged: true
     restart: always
@@ -29,7 +29,7 @@ services:
       - MQTT_HOST=$MQTT_HOST
 
   autoheal:
-    image: willfarrell/autoheal:latest@sha256:6c5160b1eb691c38148e7747a582e1a7fe19f9e170107cd2f915c0edb0660f99
+    image: willfarrell/autoheal:1.2.0@sha256:31f580ef0279eaced5b38d631b08c474d70d8403c1c2fdd6ddcf2e879d5f3f7c
     container_name: wmbusmeters-autoheal
     restart: always
     environment:
