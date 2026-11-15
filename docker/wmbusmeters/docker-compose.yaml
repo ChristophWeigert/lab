@@ -29,7 +29,8 @@ services:
       - MQTT_HOST=$MQTT_HOST
 
   autoheal:
-    image: willfarrell/autoheal:1.2.0@sha256:31f580ef0279eaced5b38d631b08c474d70d8403c1c2fdd6ddcf2e879d5f3f7c
+    # latest on purpose: the last release (1.2.0, 2021) is far older than the rebuilt latest image
+    image: willfarrell/autoheal:latest@sha256:a7ecfb0f179d50c2b5c008726fedf8c939eace5bd5faa95b48f20976f869e17a
     container_name: wmbusmeters-autoheal
     restart: always
     environment:
