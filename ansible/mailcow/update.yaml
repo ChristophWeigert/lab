@@ -1,7 +1,9 @@
 ---
 # Optional vars (set them in the Semaphore inventory or environment):
 #   mailcow__kuma_push_url: Uptime Kuma push monitor URL, e.g. http://uptime-kuma:3001/api/push/<token>.
-#     Pushes "up" when fine, "down" when a major release is held or the run fails; no push = job didn't run.
+#     Pushes "up" when fine, "down" when a major release is held or the run fails; no push = job didn't run,
+#     so set the monitor's heartbeat interval above the schedule (e.g. 25h for a daily run).
+#     Any query string on the URL (Kuma's copy button adds ?status=up&msg=OK&ping=) is replaced.
 #   mailcow__major_update_delay_days (default 7): hold a new major release this long before auto-applying it.
 #     mailcow fixes security issues only in its newest release, so a major can't be held forever.
 - name: Update mailcow if needed
@@ -98,7 +100,7 @@
 
         - name: Report status to Uptime Kuma
           ansible.builtin.uri:
-            url: "{{ mailcow__kuma_push_url }}?status={{ 'down' if hold_major | bool else 'up' }}&msg={{ kuma_msg | urlencode }}"
+            url: "{{ mailcow__kuma_push_url | split('?') | first }}?status={{ 'down' if hold_major | bool else 'up' }}&msg={{ kuma_msg | urlencode }}"
           vars:
             kuma_msg: >-
               {{ ('mailcow major ' ~ pending_majors | join(', ') ~ ' pending, auto-applies in '
@@ -111,8 +113,9 @@
       rescue:
         - name: Report failure to Uptime Kuma
           ansible.builtin.uri:
-            url: "{{ mailcow__kuma_push_url }}?status=down&msg={{ ('mailcow update failed at: ' ~ ansible_failed_task.name) | urlencode }}"
+            url: "{{ mailcow__kuma_push_url | split('?') | first }}?status=down&msg={{ ('mailcow update failed at: ' ~ ansible_failed_task.name) | urlencode }}"
           delegate_to: localhost
+          failed_when: false  # an unreachable Kuma must not hide the real failure below
           when: mailcow__kuma_push_url | default('') | length > 0
 
         - name: Fail the run
