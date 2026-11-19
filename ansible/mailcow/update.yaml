@@ -21,7 +21,8 @@
       changed_when: true
       when: update_check_output.rc == 0
 
-    # backup_and_restore.sh exits 0 even when its backups fail, so require fresh non-empty archives.
+    # backup_and_restore.sh exits 0 even when its backups fail, so require both fresh non-empty
+    # archives in one backup dir (a dir listed twice holds both names).
     # shortcut: checks archives exist, not that mariabackup inside them succeeded; test a restore if that matters
     - name: Verify a fresh backup exists
       ansible.builtin.find:
@@ -32,7 +33,9 @@
         age: -2h
         size: 1k
       register: fresh_backups
-      failed_when: fresh_backups.files | map(attribute='path') | map('basename') | unique | length < 2
+      failed_when: >-
+        (fresh_backups.files | map(attribute='path') | map('dirname') | list | length)
+        == (fresh_backups.files | map(attribute='path') | map('dirname') | unique | list | length)
       when: update_check_output.rc == 0
 
     # --force answers update.sh's prompts (incl. the major-release warning, so read release notes)
