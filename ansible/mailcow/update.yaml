@@ -1,56 +1,120 @@
 ---
+# Optional vars (set them in the Semaphore inventory or environment):
+#   mailcow__kuma_push_url: Uptime Kuma push monitor URL, e.g. http://uptime-kuma:3001/api/push/<token>.
+#     Pushes "up" when fine, "down" when a major release is held or the run fails; no push = job didn't run.
+#   mailcow__major_update_delay_days (default 7): hold a new major release this long before auto-applying it.
+#     mailcow fixes security issues only in its newest release, so a major can't be held forever.
 - name: Update mailcow if needed
   hosts: mailcow
   gather_facts: false
   tasks:
-    # update.sh --check exits 0 = update available, 3 = up to date, anything else = error
-    - name: Check for mailcow updates
-      ansible.builtin.command: ./update.sh --check
-      args:
-        chdir: "{{ mailcow__install_path }}"
-      register: update_check_output
-      changed_when: false
-      failed_when: update_check_output.rc not in [0, 3]
+    - name: Update mailcow and report to Uptime Kuma
+      block:
+        # update.sh --check exits 0 = update available, 3 = up to date, anything else = error
+        - name: Check for mailcow updates
+          ansible.builtin.command: ./update.sh --check
+          args:
+            chdir: "{{ mailcow__install_path }}"
+          register: update_check_output
+          changed_when: false
+          failed_when: update_check_output.rc not in [0, 3]
 
-    - name: Back up mailcow before upgrading
-      ansible.builtin.command: ./helper-scripts/backup_and_restore.sh backup all --delete-days 3
-      args:
-        chdir: "{{ mailcow__install_path }}"
-      environment:
-        MAILCOW_BACKUP_LOCATION: /mnt/mailcow_backups
-      changed_when: true
-      when: update_check_output.rc == 0
+        # Reuses mailcow's own detect_major_update (refreshed by --check above). It prints one
+        # "YYYY-MM - <release notes url>" line per pending major, then exits 1 on our "n" answer.
+        - name: Find pending major releases
+          ansible.builtin.shell: |
+            source _modules/scripts/core.sh
+            SCRIPT_DIR="$PWD"
+            BRANCH="$(git rev-parse --abbrev-ref HEAD)"
+            detect_major_update
+          args:
+            chdir: "{{ mailcow__install_path }}"
+            executable: /bin/bash
+            stdin: "n"
+          register: major_check
+          changed_when: false
+          failed_when: major_check.rc != (1 if major_check.stdout is search('(?m)^[0-9]{4}-[0-9]{2} - ') else 0)
+          when: update_check_output.rc == 0
 
-    # backup_and_restore.sh exits 0 even when its backups fail, so require both fresh non-empty
-    # archives in one backup dir (a dir listed twice holds both names).
-    # shortcut: checks archives exist, not that mariabackup inside them succeeded; test a restore if that matters
-    - name: Verify a fresh backup exists
-      ansible.builtin.find:
-        paths: /mnt/mailcow_backups
-        patterns: backup_vmail.tar.zst,backup_mariadb.tar.zst
-        recurse: true
-        depth: 2
-        age: -2h
-        size: 1k
-      register: fresh_backups
-      failed_when: >-
-        (fresh_backups.files | map(attribute='path') | map('dirname') | list | length)
-        == (fresh_backups.files | map(attribute='path') | map('dirname') | unique | list | length)
-      when: update_check_output.rc == 0
+        - name: Note pending major releases
+          ansible.builtin.set_fact:
+            pending_majors: "{{ major_check.stdout | default('') | regex_findall('(?m)^([0-9]{4}-[0-9]{2}) - ') }}"
 
-    # --force answers update.sh's prompts (incl. the major-release warning, so read release notes)
-    # and removes unused images itself, so no separate --gc run.
-    # async keeps update.sh running if SSH drops after it has stopped the containers.
-    - name: Upgrade mailcow
-      ansible.builtin.command: ./update.sh --force
-      args:
-        chdir: "{{ mailcow__install_path }}"
-      async: 3600
-      poll: 30
-      changed_when: true
-      when: update_check_output.rc == 0
+        - name: Look up when the newest pending major was released
+          ansible.builtin.uri:
+            url: "https://api.github.com/repos/mailcow/mailcow-dockerized/releases/tags/{{ pending_majors | max }}"
+          register: major_release
+          when: pending_majors | length > 0
 
-    - name: Print message if no updates available
-      ansible.builtin.debug:
-        msg: "No updates are available"
-      when: update_check_output.rc == 3
+        - name: Work out how old the newest pending major is
+          ansible.builtin.set_fact:
+            major_age_days: >-
+              {{ (now(utc=true) - (major_release.json.published_at | to_datetime('%Y-%m-%dT%H:%M:%SZ'))).days
+                 if pending_majors | length > 0 else 0 }}
+
+        - name: Decide whether to hold the major release
+          ansible.builtin.set_fact:
+            hold_major: >-
+              {{ pending_majors | length > 0
+                 and (major_age_days | int) < (mailcow__major_update_delay_days | default(7) | int) }}
+
+        - name: Back up mailcow before upgrading
+          ansible.builtin.command: ./helper-scripts/backup_and_restore.sh backup all --delete-days 3
+          args:
+            chdir: "{{ mailcow__install_path }}"
+          environment:
+            MAILCOW_BACKUP_LOCATION: /mnt/mailcow_backups
+          changed_when: true
+          when: update_check_output.rc == 0 and not hold_major | bool
+
+        # backup_and_restore.sh exits 0 even when its backups fail, so require both fresh non-empty
+        # archives in one backup dir (a dir listed twice holds both names).
+        # shortcut: checks archives exist, not that mariabackup inside them succeeded; test a restore if that matters
+        - name: Verify a fresh backup exists
+          ansible.builtin.find:
+            paths: /mnt/mailcow_backups
+            patterns: backup_vmail.tar.zst,backup_mariadb.tar.zst
+            recurse: true
+            depth: 2
+            age: -2h
+            size: 1k
+          register: fresh_backups
+          failed_when: >-
+            (fresh_backups.files | map(attribute='path') | map('dirname') | list | length)
+            == (fresh_backups.files | map(attribute='path') | map('dirname') | unique | list | length)
+          when: update_check_output.rc == 0 and not hold_major | bool
+
+        # --force answers update.sh's prompts (incl. the major-release one, which the hold above replaces)
+        # and removes unused images itself, so no separate --gc run.
+        # async keeps update.sh running if SSH drops after it has stopped the containers.
+        - name: Upgrade mailcow
+          ansible.builtin.command: ./update.sh --force
+          args:
+            chdir: "{{ mailcow__install_path }}"
+          async: 3600
+          poll: 30
+          changed_when: true
+          when: update_check_output.rc == 0 and not hold_major | bool
+
+        - name: Report status to Uptime Kuma
+          ansible.builtin.uri:
+            url: "{{ mailcow__kuma_push_url }}?status={{ 'down' if hold_major | bool else 'up' }}&msg={{ kuma_msg | urlencode }}"
+          vars:
+            kuma_msg: >-
+              {{ ('mailcow major ' ~ pending_majors | join(', ') ~ ' pending, auto-applies in '
+                  ~ ((mailcow__major_update_delay_days | default(7) | int) - (major_age_days | int)) ~ ' day(s). Release notes: '
+                  ~ 'https://github.com/mailcow/mailcow-dockerized/releases/tag/' ~ pending_majors | max)
+                 if hold_major | bool else 'OK' }}
+          delegate_to: localhost
+          when: mailcow__kuma_push_url | default('') | length > 0
+
+      rescue:
+        - name: Report failure to Uptime Kuma
+          ansible.builtin.uri:
+            url: "{{ mailcow__kuma_push_url }}?status=down&msg={{ ('mailcow update failed at: ' ~ ansible_failed_task.name) | urlencode }}"
+          delegate_to: localhost
+          when: mailcow__kuma_push_url | default('') | length > 0
+
+        - name: Fail the run
+          ansible.builtin.fail:
+            msg: "{{ ansible_failed_task.name }} failed: {{ ansible_failed_result.msg | default('see above') }}"
