@@ -3,24 +3,30 @@
   hosts: mailcow
   gather_facts: false
   tasks:
-    - name: Execute update.sh -c
-      ansible.builtin.command: ./update.sh -c
+    # update.sh --check exits 0 = update available, 3 = up to date, anything else = error
+    - name: Check for mailcow updates
+      ansible.builtin.command: ./update.sh --check
       args:
         chdir: "{{ mailcow__install_path }}"
       register: update_check_output
-      changed_when: update_check_output.rc == 0
-      failed_when: update_check_output.rc > 3
+      changed_when: false
+      failed_when: update_check_output.rc not in [0, 3]
 
-    - name: Upgrade Mailcow
-      ansible.builtin.command: printf "%s\n" "y" "y" | ./update.sh
+    - name: Back up mailcow before upgrading
+      ansible.builtin.command: ./helper-scripts/backup_and_restore.sh backup all --delete-days 3
       args:
         chdir: "{{ mailcow__install_path }}"
+      environment:
+        MAILCOW_BACKUP_LOCATION: /mnt/mailcow_backups
+      changed_when: true
       when: update_check_output.rc == 0
 
-    - name: Collect garbage
-      ansible.builtin.command: echo 'y' | ./update.sh --gc
+    # --force answers update.sh's prompts and also removes unused images, so no separate --gc run
+    - name: Upgrade mailcow
+      ansible.builtin.command: ./update.sh --force
       args:
         chdir: "{{ mailcow__install_path }}"
+      changed_when: true
       when: update_check_output.rc == 0
 
     - name: Print message if no updates available
