@@ -20,6 +20,7 @@ services:
       - SEMAPHORE_ADMIN_EMAIL=$SEMAPHORE_ADMIN_EMAIL
       - SEMAPHORE_ADMIN=$SEMAPHORE_ADMIN_NAME
       - SEMAPHORE_ACCESS_KEY_ENCRYPTION=$KEY  # add to your access key encryption !
+      - SEMAPHORE_WEB_ROOT=https://semaphoreui.$DOMAIN  # public URL; alert e-mail links are built from it
       - TZ=Europe/Berlin
     volumes:
       - config:/etc/semaphore:rw
