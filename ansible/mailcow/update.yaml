@@ -21,11 +21,29 @@
       changed_when: true
       when: update_check_output.rc == 0
 
-    # --force answers update.sh's prompts and also removes unused images, so no separate --gc run
+    # backup_and_restore.sh exits 0 even when its backups fail, so require fresh non-empty archives.
+    # shortcut: checks archives exist, not that mariabackup inside them succeeded; test a restore if that matters
+    - name: Verify a fresh backup exists
+      ansible.builtin.find:
+        paths: /mnt/mailcow_backups
+        patterns: backup_vmail.tar.zst,backup_mariadb.tar.zst
+        recurse: true
+        depth: 2
+        age: -2h
+        size: 1k
+      register: fresh_backups
+      failed_when: fresh_backups.files | map(attribute='path') | map('basename') | unique | length < 2
+      when: update_check_output.rc == 0
+
+    # --force answers update.sh's prompts (incl. the major-release warning, so read release notes)
+    # and removes unused images itself, so no separate --gc run.
+    # async keeps update.sh running if SSH drops after it has stopped the containers.
     - name: Upgrade mailcow
       ansible.builtin.command: ./update.sh --force
       args:
         chdir: "{{ mailcow__install_path }}"
+      async: 3600
+      poll: 30
       changed_when: true
       when: update_check_output.rc == 0
 
