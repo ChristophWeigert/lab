@@ -6,7 +6,7 @@ networks:
 services:
   unifi-network-mcp:
     container_name: unifi-network-mcp
-    image: ghcr.io/sirkirby/unifi-network-mcp:0.50.0@sha256:86ccf7729ec8a89e47fe08cf3a2904d4d0aba1543202ba061222d89638b494b6
+    image: ghcr.io/sirkirby/unifi-network-mcp:0.50.2@sha256:998a13aca929db477158fd4efb94a6189ec8cc200f2fb391a61e8d888797c2a3
     networks:
       - proxy
     environment:
