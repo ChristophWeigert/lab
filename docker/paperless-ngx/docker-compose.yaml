@@ -1,7 +1,7 @@
 ---
 services:
   broker:
-    image: docker.io/library/redis:8.12.0@sha256:e18c13184a50fce8f4214e549ed62b0937200b14053d11908836f4ce8264fb65
+    image: docker.io/library/redis:8.12.0@sha256:3c4881844c6421f29fb9f9e8ca4f573d9fbdfb35967d65834504b6994cf6cd3b
     restart: unless-stopped
     networks:
       - internal
