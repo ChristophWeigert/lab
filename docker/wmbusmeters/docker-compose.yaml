@@ -30,7 +30,7 @@ services:
 
   autoheal:
     # latest on purpose: the last release (1.2.0, 2021) is far older than the rebuilt latest image
-    image: willfarrell/autoheal:latest@sha256:02bcb7b529d0e51424b2e9b67b43f639af454258924ab3a3b97f1cc7e6da367f
+    image: willfarrell/autoheal:latest@sha256:2dffb82665e1eda5fb6337f08db9f20ee894a22d6171ec538e25b23195912551
     container_name: wmbusmeters-autoheal
     restart: always
     environment:
